@@ -123,7 +123,7 @@ p  { color: var(--ink); }
   z-index: 1;
 }
 
-section { position: relative; padding: clamp(3.6rem, 9vw, 7rem) 0; }
+section { position: relative; padding: clamp(2.9rem, 5.6vw, 4.6rem) 0; }
 
 /* ---------- hero zone (canvas spans header + hero, no seam) ---------- */
 
@@ -149,10 +149,10 @@ html[data-theme="dark"] .mark-pair .m-light { opacity: 0; }
   display: flex; align-items: center; gap: .62rem;
   text-decoration: none;
 }
-.brand img { width: 34px; height: 34px; }
+.brand img { width: 42px; height: 42px; }
 .brand b {
   font-family: "Nunito", ui-rounded, sans-serif;
-  font-weight: 900; font-size: 1.3rem; letter-spacing: .14em;
+  font-weight: 900; font-size: 1.62rem; letter-spacing: .15em;
 }
 .brand .tag {
   font-size: .95rem; color: var(--ink-soft); font-style: italic;
@@ -174,19 +174,10 @@ html[data-theme="dark"] .mark-pair .m-light { opacity: 0; }
 }
 .toggle:hover { transform: scale(1.06); border-color: var(--ink-soft); }
 .toggle:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
-.toggle i {
-  width: 17px; height: 17px; border-radius: 50%;
-  background: transparent;
-  box-shadow: inset 5px -3.5px 0 0 var(--ink);
-  transform: rotate(12deg);
-  transition: all .35s ease;
-}
-html[data-theme="dark"] .toggle i {
-  background: var(--red);
-  width: 12px; height: 12px;
-  box-shadow: 0 0 0 3.5px var(--panel-soft), 0 0 0 5px var(--red);
-  transform: none;
-}
+.toggle svg { width: 20px; height: 20px; color: var(--ink); grid-area: 1 / 1; transition: opacity .3s ease, transform .35s ease; }
+.toggle .ic-sun { opacity: 0; transform: rotate(-40deg) scale(.7); }
+html[data-theme="dark"] .toggle .ic-sun { opacity: 1; transform: none; }
+html[data-theme="dark"] .toggle .ic-moon { opacity: 0; transform: rotate(40deg) scale(.7); }
 
 /* ---------- hero ---------- */
 
@@ -242,6 +233,12 @@ html[data-theme="dark"] .toggle i {
 .cta:active { transform: translateY(0); }
 .cta:focus-visible { outline: 2.5px solid var(--ink); outline-offset: 3px; }
 .cta .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--on-red); box-shadow: 0 0 0 3px rgba(253,248,239,.35); }
+@keyframes rec-breathe {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(253,248,239,.35); }
+  50%      { box-shadow: 0 0 0 6px rgba(253,248,239,.18); }
+}
+.cta .dot { animation: rec-breathe 2.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .cta .dot { animation: none; } }
 
 .promise {
   margin-top: 1.15rem;
@@ -257,6 +254,13 @@ html[data-theme="dark"] .toggle i {
   font-size: .92rem;
   color: var(--ink-soft);
 }
+
+.badge-row { margin-top: 1.1rem; }
+.badge-row a { display: inline-block; border-radius: 8px; }
+.badge-row a:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+.badge-row img { height: 44px; width: auto; }
+.badge-row.centered { text-align: center; }
+/* Apple's badge ships with its own black plate + white border — never alter it */
 
 /* ---------- hear-it demo (appears only when real exports exist) ---------- */
 
@@ -376,7 +380,13 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
   border-radius: 22px;
   padding: 1.6rem 1.5rem 2rem;
   box-shadow: 0 1px 0 var(--highlight) inset, 0 18px 34px -22px var(--shadow);
-  transition: background-color .35s ease, border-color .35s ease;
+  transition: background-color .35s ease, border-color .35s ease, transform .25s ease, box-shadow .25s ease;
+}
+@media (hover: hover) {
+  .step:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1px 0 var(--highlight) inset, 0 26px 44px -22px var(--shadow);
+  }
 }
 .step .num {
   font-family: "Nunito", ui-rounded, sans-serif;
@@ -388,8 +398,14 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 }
 .step h3 { margin: .5rem 0 .45rem; }
 .step p { font-size: .99rem; color: var(--ink-soft); }
-.step .device { width: min(64vw, 218px); margin-top: 1.5rem; }
-.step .device .screen { border-radius: 24px; }
+/* zoomed feature crops, tape.it-style: the relevant panel, big, no status bar */
+.step .device { width: 100%; margin-top: 1.5rem; }
+.step .device .screen { border-radius: 20px; aspect-ratio: 332 / 400; }
+.step .device .screen img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 50% var(--focus, 0%);
+}
 
 /* ---------- words / rhyme section ---------- */
 
@@ -449,7 +465,7 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 .rf4 { color: var(--rhyme-violet); }
 .rhyme-demo .demo-note { margin-top: .9rem; }
 
-.words .device { width: min(76vw, 300px); }
+.words .device { width: min(80vw, 340px); }
 
 /* ---------- calibration ---------- */
 
@@ -625,7 +641,7 @@ html[data-theme="dark"] .screen > img:only-child { filter: brightness(.86) satur
 }
 .card p { margin-top: .45rem; font-size: .96rem; color: var(--ink-soft); }
 
-.keep .device { width: min(72vw, 290px); }
+.keep .device { width: min(78vw, 330px); }
 
 /* ---------- makers ---------- */
 

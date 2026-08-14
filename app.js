@@ -29,21 +29,16 @@ function setTheme(theme, persist) {
   doc.setAttribute("data-theme", theme);
   const btn = document.getElementById("themeToggle");
   if (btn) btn.setAttribute("aria-label", theme === "light" ? "Switch to dark" : "Switch to light");
-  if (persist) { try { localStorage.setItem("hook-theme", theme); } catch (e) {} }
   broadcastTheme(theme);
   paperTheme(theme);
 }
 
-let saved = null;
-try { saved = localStorage.getItem("hook-theme"); } catch (e) {}
-const prefersDark = matchMedia("(prefers-color-scheme: dark)");
-setTheme(saved || (prefersDark.matches ? "dark" : "light"), false);
-prefersDark.addEventListener?.("change", e => { if (!saved) setTheme(e.matches ? "dark" : "light", false); });
+/* always open on light paper; the moon is the invitation to go dark */
+setTheme("light", false);
 
 document.getElementById("themeToggle")?.addEventListener("click", () => {
   const next = doc.getAttribute("data-theme") === "light" ? "dark" : "light";
-  saved = next;
-  setTheme(next, true);
+  setTheme(next, false);
 });
 
 /* ---------- iframe: post content height to the WP embed ---------- */
@@ -51,7 +46,12 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
 if (IS_EMBEDDED) {
   let lastH = 0;
   const postH = () => {
-    const h = doc.scrollHeight;
+    /* measure the CONTENT's true bottom, not scrollHeight — scrollHeight can never
+       shrink below the iframe's viewport, so the frame could grow but never shrink,
+       leaving a huge blank tail after any reflow to a shorter layout */
+    const foot = document.querySelector("footer");
+    let h = foot ? Math.ceil(foot.getBoundingClientRect().bottom + (window.scrollY || 0)) : 0;
+    if (!isFinite(h) || h < 600) h = doc.scrollHeight;
     if (Math.abs(h - lastH) > 8) { lastH = h; parent.postMessage({ hook: "h", h }, "*"); }
   };
   new ResizeObserver(postH).observe(doc);
@@ -254,7 +254,9 @@ initPaper();
   const mirror = document.getElementById("rhymeMirror");
   if (!input || !mirror) return;
 
-  const STOP = new Set(["the", "a", "an", "and", "in", "on", "at", "to", "or", "but", "as", "with", "for", "from", "by", "is", "was", "its", "it's"]);
+  /* the app's exact skip list (RhymeAnalyzer.skip) — grammatical glue only.
+     "to" stays out on purpose: it carries a full vowel and singers land on it. */
+  const STOP = new Set(["a", "an", "the", "of", "i", "oh", "and", "but", "or", "nor", "as", "at", "in", "on", "it", "if"]);
   const EXC = {
     night: "ite", bright: "ite", light: "ite", right: "ite", sight: "ite", might: "ite",
     tight: "ite", flight: "ite", tonight: "ite",
@@ -310,37 +312,90 @@ initPaper();
     return m[1] + m[3] + cls;
   }
 
+  /* the vowel alone (plus r/l coloring, like the app's vowelColorant) — the
+     key for assonance joins: "me" rides with deep/keep because they share the vowel */
+  function vowelKeyOf(r) {
+    const m = r.match(/^([aeiouy]+)([^aeiouy]*?)(e?)$/);
+    if (!m) return r;
+    const col = m[2].startsWith("r") ? "r" : m[2].startsWith("l") ? "l" : "";
+    return m[1] + m[3] + col;
+  }
+
+  /* mirrors the app's RhymeAnalyzer shape:
+     • per paragraph — a blank line starts a new set of rhymes
+     • full/slant families need 2+ members and always paint
+     • a leftover word JOINS a painted family that shares its vowel
+     • leftover-only vowel bands paint at 3+ members, max 3 per paragraph
+     • the color counter runs across paragraphs */
   function paint() {
     const text = input.value;
-    const tokens = text.split(/([A-Za-z']+)/);
-    /* families: rime -> word indices; color the first five with >= 2 members */
-    const fam = new Map();
-    tokens.forEach((t, i) => {
-      if (i % 2 === 0) return;
-      const r = rime(t);
-      if (!r) return;
-      const k = familyKey(r);
-      (fam.get(k) || fam.set(k, []).get(k)).push(i);
-    });
-    const colored = new Map();
-    let next = 0;
-    for (const [k, idxs] of fam) {
-      if (idxs.length >= 2 && next < 5) colored.set(k, "rf" + next++);
-    }
     const frag = document.createDocumentFragment();
-    tokens.forEach((t, i) => {
-      if (!t) return;
-      const r = i % 2 === 1 ? rime(t) : null;
-      const cls = r ? colored.get(familyKey(r)) : null;
-      if (cls) {
-        const el = document.createElement("i");
-        el.className = cls;
-        el.textContent = t;
-        frag.appendChild(el);
-      } else {
-        frag.appendChild(document.createTextNode(t));
+    let colorIdx = 0;
+
+    for (const para of text.split(/(\n[ \t]*\n)/)) {
+      if (/^\n[ \t]*\n$/.test(para)) { frag.appendChild(document.createTextNode(para)); continue; }
+      const tokens = para.split(/([A-Za-z][A-Za-z'’]*)/);
+
+      const words = [];
+      tokens.forEach((t, i) => {
+        if (i % 2 === 0) return;
+        const r = rime(t);
+        if (!r) return;
+        /* a long word's bare final vowel is a schwa, not the stressed vowel the app
+           keys assonance on — velvet/secrets must not band or join by their tails */
+        const poly = ((t.toLowerCase().replace(/[^a-z]/g, "").match(/[aeiouy]+/g)) || []).length > 1;
+        words.push({ i, key: familyKey(r), vowel: vowelKeyOf(r), weak: poly && /^[aeiou]$/.test(vowelKeyOf(r)) });
+      });
+
+      const fam = new Map(), vowelOfKey = new Map(), order = [];
+      for (const w of words) {
+        if (!fam.has(w.key)) { fam.set(w.key, []); vowelOfKey.set(w.key, w.vowel); order.push(w.key); }
+        fam.get(w.key).push(w.i);
       }
-    });
+      const connected = order.filter(k => fam.get(k).length >= 2);
+
+      const vowelHost = new Map();
+      for (const k of connected) {
+        const v = vowelOfKey.get(k);
+        if (!vowelHost.has(v)) vowelHost.set(v, k);
+      }
+      const loose = new Map();
+      for (const w of words) {
+        if (fam.get(w.key).length >= 2) continue;
+        if (w.weak) continue;
+        const host = vowelHost.get(w.vowel);
+        if (host) fam.get(host).push(w.i);
+        else {
+          if (!loose.has(w.vowel)) loose.set(w.vowel, []);
+          loose.get(w.vowel).push(w.i);
+        }
+      }
+
+      const classOf = new Map();
+      for (const k of connected) {
+        const cls = "rf" + (colorIdx++ % 5);
+        for (const i of fam.get(k)) classOf.set(i, cls);
+      }
+      const bands = [...loose.values()].filter(idxs => idxs.length >= 3)
+        .sort((a, b) => b.length - a.length).slice(0, 3);
+      for (const idxs of bands) {
+        const cls = "rf" + (colorIdx++ % 5);
+        for (const i of idxs) classOf.set(i, cls);
+      }
+
+      tokens.forEach((t, i) => {
+        if (!t) return;
+        const cls = classOf.get(i);
+        if (cls) {
+          const el = document.createElement("i");
+          el.className = cls;
+          el.textContent = t;
+          frag.appendChild(el);
+        } else {
+          frag.appendChild(document.createTextNode(t));
+        }
+      });
+    }
     /* keep a trailing newline's height so the caret never outruns the mirror */
     if (text.endsWith("\n") || text === "") frag.appendChild(document.createTextNode("​"));
     mirror.replaceChildren(frag);
@@ -390,12 +445,14 @@ initPaper();
 
   const btn = document.getElementById("driftBtn");
   const status = document.getElementById("driftStatus");
+  const label2 = document.getElementById("driftLabel2");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   btn.addEventListener("click", () => {
     if (root.classList.contains("snapped")) {
       root.classList.remove("snapped");
       btn.lastChild.textContent = "Measure my headphones";
+      label2.innerHTML = "What Bluetooth recorded &mdash; late";
       status.innerHTML = "Bluetooth holds the sound back &mdash; your overdub records <b>late</b>, behind the beat.";
       return;
     }
@@ -405,6 +462,7 @@ initPaper();
       root.classList.remove("listening");
       root.classList.add("snapped");
       btn.lastChild.textContent = "Put the drift back";
+      label2.innerHTML = "What Hook keeps &mdash; in time";
       status.innerHTML = "Measured. Now every layer lands <b>where you played it</b> — your headphones, your number, remembered.";
     }, reduced ? 60 : 750);
   });
