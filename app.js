@@ -538,6 +538,176 @@ initPaper();
   });
 })();
 
+/* ---------- live chord calculator: tap a word, build a chord, hang it on ----------
+   The picker is a chord-symbol keyboard, exactly like the app: each key types its
+   token, delete pops the last, Add hangs the built chord over the chosen word.
+   Fully guarded — if anything throws, the static lyric line still reads fine. */
+
+(() => {
+  try {
+    const lab = document.getElementById("chordlab");
+    if (!lab) return;
+
+    const LINE = ["Catch", "the", "melody", "before", "the", "coffee", "gets", "cold."];
+    const chords = { 0: "C", 5: "Am" };   // pre-hung, so it reads as a chart at a glance
+    let target = 2;                        // "melody"
+
+    const GROUPS = {
+      letter: [
+        { label: "Root", cols: 7, keys: "A B C D E F G".split(" ").map(t => ({ t, kind: "root", hot: true })) },
+        { label: "", cols: 4, keys: [
+          { t: "♯", kind: "acc" }, { t: "♭", kind: "acc" },
+          { t: "Aa", fn: "case" }, { t: "/", sub: "bass", kind: "sep" } ] },
+        { label: "Quality", cols: 4, keys: [
+          { t: "m", kind: "q" }, { t: "maj", kind: "q" }, { t: "dim", kind: "q" }, { t: "aug", kind: "q" } ] },
+        { label: "", cols: 6, keys: [
+          { t: "sus2", kind: "q" }, { t: "sus4", kind: "q" }, { t: "add", kind: "q" },
+          { t: "°", kind: "q" }, { t: "ø", kind: "q" }, { t: "+", kind: "q" } ] },
+        { label: "Extension", cols: 8, keys: "2 4 5 6 7 9 11 13".split(" ").map(t => ({ t, kind: "ext" })) },
+      ],
+      roman: [
+        { label: "Degree", cols: 7, keys: "I II III IV V VI VII".split(" ").map(t => ({ t, kind: "root", hot: true })) },
+        { label: "", cols: 4, keys: [
+          { t: "♭", kind: "acc" }, { t: "♯", kind: "acc" },
+          { t: "VII", sub: "major", fn: "case" }, { t: "/", sub: "applied", kind: "sep" } ] },
+        { label: "Quality", cols: 4, keys: [
+          { t: "°", sub: "dim", kind: "q" }, { t: "ø", sub: "half-dim", kind: "q" },
+          { t: "+", sub: "aug", kind: "q" }, { t: "7", kind: "ext" } ] },
+        { label: "Inversion — figured bass", cols: 6, keys:
+          ["6", "6/4", "6/5", "4/3", "4/2", "9"].map(t => ({ t, kind: "inv" })) },
+      ],
+    };
+
+    let mode = "letter";
+    let tokens = [];          // [{t, kind}]
+    let lower = false;
+    const recents = [];
+
+    const $ = id => document.getElementById(id);
+    const lineEl = $("chordline"), chordEl = $("cpChord"), targetEl = $("cpTarget"),
+          groupsEl = $("cpGroups"), recentEl = $("cpRecent"), recentLabel = $("cpRecentLabel"),
+          addBtn = $("cpAdd");
+
+    const renderTok = tk => (tk.kind === "root" && lower) ? tk.t.toLowerCase() : tk.t;
+    const display = () => tokens.map(renderTok).join("");
+
+    function drawLine() {
+      lineEl.replaceChildren();
+      LINE.forEach((w, i) => {
+        const span = document.createElement("span");
+        span.className = "lw" + (i === target ? " on" : "");
+        span.dataset.i = i;
+        if (chords[i]) {
+          const c = document.createElement("span");
+          c.className = "lw-chord";
+          c.textContent = chords[i];
+          c.title = "Remove this chord";
+          c.addEventListener("click", ev => { ev.stopPropagation(); delete chords[i]; drawLine(); });
+          span.appendChild(c);
+        }
+        span.appendChild(document.createTextNode(w));
+        span.addEventListener("click", () => {
+          target = i;
+          tokens = chords[i] ? [{ t: chords[i], kind: "root" }] : [];
+          drawAll();
+        });
+        lineEl.appendChild(span);
+        if (i < LINE.length - 1) lineEl.appendChild(document.createTextNode(" "));
+      });
+    }
+
+    function drawChord() {
+      chordEl.textContent = display();
+      targetEl.textContent = LINE[target] ? LINE[target].replace(/\W+$/, "") : "—";
+      addBtn.disabled = !display().trim() || target == null;
+    }
+
+    function drawRecents() {
+      recentEl.replaceChildren();
+      recentLabel.hidden = recents.length === 0;
+      recents.forEach(c => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "cp-chip"; b.textContent = c;
+        b.addEventListener("click", () => { tokens = [{ t: c, kind: "root" }]; drawChord(); });
+        recentEl.appendChild(b);
+      });
+    }
+
+    function drawGroups() {
+      groupsEl.replaceChildren();
+      for (const g of GROUPS[mode]) {
+        const wrap = document.createElement("div");
+        wrap.className = "cp-group";
+        if (g.label) {
+          const l = document.createElement("p");
+          l.className = "cp-group-label"; l.textContent = g.label;
+          wrap.appendChild(l);
+        }
+        const row = document.createElement("div");
+        row.className = "cp-row";
+        row.style.gridTemplateColumns = "repeat(" + g.cols + ", 1fr)";
+        for (const k of g.keys) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cp-key" + (k.hot ? " cp-hot" : "");
+          const main = document.createElement("span");
+          main.className = "k"; main.textContent = k.t;
+          btn.appendChild(main);
+          if (k.sub) {
+            const sub = document.createElement("span");
+            sub.className = "ksub"; sub.textContent = k.sub;
+            btn.appendChild(sub);
+          }
+          btn.addEventListener("click", () => press(k));
+          row.appendChild(btn);
+        }
+        wrap.appendChild(row);
+        groupsEl.appendChild(wrap);
+      }
+    }
+
+    function press(k) {
+      if (k.fn === "case") { lower = !lower; drawChord(); return; }
+      tokens.push({ t: k.t, kind: k.kind || "misc" });
+      drawChord();
+    }
+
+    function drawAll() { drawLine(); drawChord(); drawRecents(); }
+
+    // foot + clear + add + mode
+    lab.querySelectorAll("[data-act]").forEach(b => b.addEventListener("click", () => {
+      const a = b.dataset.act;
+      if (a === "delete") tokens.pop();
+      else if (a === "space") tokens.push({ t: " ", kind: "space" });
+      drawChord();
+    }));
+    $("cpClear").addEventListener("click", () => { tokens = []; drawChord(); });
+    addBtn.addEventListener("click", () => {
+      const c = display().trim();
+      if (!c || target == null) return;
+      chords[target] = c;
+      const idx = recents.indexOf(c);
+      if (idx > -1) recents.splice(idx, 1);
+      recents.unshift(c);
+      if (recents.length > 4) recents.length = 4;
+      tokens = [];
+      drawAll();
+    });
+    lab.querySelectorAll(".cp-mode-btn").forEach(b => b.addEventListener("click", () => {
+      mode = b.dataset.mode;
+      lab.querySelectorAll(".cp-mode-btn").forEach(x => {
+        const on = x === b;
+        x.classList.toggle("is-on", on);
+        x.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      tokens = []; lower = false;
+      drawGroups(); drawChord();
+    }));
+
+    drawGroups(); drawAll();
+  } catch (e) { /* static line stays readable */ }
+})();
+
 /* ---------- assets that light up only when Clay drops the real files in ----------
    One manifest that always exists (no 404 noise): set a filename in
    assets/media-manifest.json and the matching feature appears. */

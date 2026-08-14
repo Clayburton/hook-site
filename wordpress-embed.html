@@ -4,7 +4,15 @@
      The page needs nothing else. The iframe grows to fit its content,
      and the light/dark toggle inside also repaints the WordPress page
      behind it so the frame is invisible.
+
+     The style below hides the WordPress THEME's own footer (#colophon)
+     on this page only — it is 1,124 px of site-menu links that sat under
+     the embed and, painted over by the background sync, read as a huge
+     blank space below Hook's own footer. Hook's page brings its own
+     footer; the theme's is redundant here. (Scoped: this block only
+     exists on /hook/, so no other page loses its footer.)
      ============================================================ -->
+<style>#colophon{display:none !important}</style>
 <div id="hook-embed" style="margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);width:100vw;">
   <iframe id="hook-frame"
     src="https://clayburton.github.io/hook-site/"

@@ -505,6 +505,148 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 
 .words .device { width: min(80vw, 340px); }
 
+/* ---------- live chord calculator ---------- */
+
+.chordwrap { margin-top: clamp(2.4rem, 5vw, 3.6rem); }
+.chordlab {
+  max-width: 560px;
+  margin-inline: auto;
+}
+.chordlab > .micro { display: block; text-align: center; margin-bottom: 1.1rem; }
+
+/* the lyric line you hang chords on */
+.chordline {
+  text-align: center;
+  font-size: clamp(1.3rem, 3.2vw, 1.7rem);
+  line-height: 2.5;
+  margin-bottom: 1.6rem;
+}
+.lw {
+  position: relative;
+  cursor: pointer;
+  padding: 0 .06em;
+  border-radius: 5px;
+  transition: background-color .18s ease, color .18s ease;
+}
+.lw:hover { background: var(--panel); }
+.lw.on { background: var(--red); color: var(--on-red); }
+.lw-chord {
+  position: absolute;
+  left: 50%;
+  bottom: 1.15em;
+  transform: translateX(-50%);
+  font-family: "Nunito", ui-rounded, sans-serif;
+  font-weight: 800;
+  font-size: .5em;
+  color: var(--red);
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 0 .2em;
+}
+.lw.on .lw-chord { color: var(--on-red); }
+.lw-chord:hover { text-decoration: line-through; }
+
+/* the picker panel */
+.chordpicker {
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  border-radius: 24px;
+  padding: 1.3rem 1.3rem 1.1rem;
+  box-shadow: 0 1px 0 var(--highlight) inset, 0 22px 40px -26px var(--shadow);
+  transition: background-color .35s ease, border-color .35s ease;
+}
+.cp-top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: .5rem;
+}
+.cp-over { font-size: .95rem; color: var(--ink-soft); }
+.cp-over b { color: var(--ink); font-weight: 700; }
+.cp-add {
+  font-family: "Nunito", ui-rounded, sans-serif;
+  font-weight: 800; font-size: .98rem;
+  color: var(--on-red); background: var(--red);
+  border: 0; border-radius: 999px; padding: .5rem 1.35rem; cursor: pointer;
+  box-shadow: 0 8px 18px -8px var(--red-deep);
+  transition: transform .15s ease, background-color .2s ease, opacity .2s ease;
+}
+.cp-add:hover { transform: translateY(-1px); background: var(--red-deep); }
+.cp-add:disabled { opacity: .4; cursor: default; transform: none; box-shadow: none; }
+
+.cp-display {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem; padding: .3rem 0 .9rem; border-bottom: 1px solid var(--line);
+  margin-bottom: 1rem; min-height: 3.4rem;
+}
+.cp-chord {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-weight: 600; font-style: normal;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  color: var(--red); line-height: 1; letter-spacing: -.01em;
+}
+.cp-chord:empty::before { content: "—"; color: var(--ink-faint); }
+.cp-clear {
+  font-family: "Nunito", ui-rounded, sans-serif;
+  font-weight: 800; font-size: .72rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-soft);
+  background: none; border: 0; cursor: pointer; padding: .3rem;
+}
+.cp-clear:hover { color: var(--red); }
+
+.cp-label {
+  font-family: "Nunito", ui-rounded, sans-serif;
+  font-weight: 800; font-size: .68rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-soft);
+  margin: .2rem 0 .5rem;
+}
+.cp-recent { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+.cp-recent:empty { display: none; }
+.cp-recent .cp-chip {
+  font-family: "Source Serif 4", Georgia, serif; font-weight: 600;
+  font-size: 1rem; color: var(--ink);
+  background: var(--panel-soft); border: 1.5px solid var(--line);
+  border-radius: 10px; padding: .35rem .8rem; cursor: pointer;
+  transition: border-color .18s ease;
+}
+.cp-recent .cp-chip:hover { border-color: var(--red); }
+
+.cp-group { margin-bottom: .9rem; }
+.cp-group-label {
+  font-family: "Nunito", ui-rounded, sans-serif;
+  font-weight: 800; font-size: .68rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-soft); margin: 0 0 .5rem;
+}
+.cp-row { display: grid; gap: .45rem; }
+.cp-key {
+  font-family: "Nunito", ui-rounded, sans-serif;
+  font-weight: 800; font-size: 1.05rem; color: var(--ink);
+  background: var(--panel-soft); border: 1.5px solid var(--line);
+  border-radius: 12px; padding: .7rem .2rem; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: .05rem;
+  line-height: 1.05;
+  transition: background-color .12s ease, border-color .12s ease, transform .08s ease;
+}
+.cp-key:hover { border-color: var(--ink-soft); }
+.cp-key:active { transform: scale(.94); background: var(--line); }
+.cp-key.cp-hot .k { color: var(--red); }
+.cp-key .ksub {
+  font-size: .58rem; font-weight: 700; letter-spacing: .04em;
+  color: var(--ink-faint); text-transform: none;
+}
+.cp-foot { display: grid; grid-template-columns: 1fr auto; gap: .45rem; margin-top: .3rem; }
+.cp-foot .cp-key { font-size: .95rem; padding: .65rem .9rem; }
+
+.cp-mode {
+  display: grid; grid-template-columns: 1fr 1fr; gap: .4rem;
+  margin-top: .9rem; background: var(--panel-soft);
+  border: 1.5px solid var(--line); border-radius: 12px; padding: .3rem;
+}
+.cp-mode-btn {
+  font-family: "Nunito", ui-rounded, sans-serif; font-weight: 800; font-size: .98rem;
+  color: var(--ink-soft); background: none; border: 0; border-radius: 9px;
+  padding: .55rem; cursor: pointer; transition: background-color .2s ease, color .2s ease;
+}
+.cp-mode-btn.is-on { color: var(--on-red); background: var(--red); }
+
 /* ---------- calibration ---------- */
 
 .calib .wrap {
