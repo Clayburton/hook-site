@@ -22,6 +22,8 @@
   --rhyme-teal: #2E9E8F;
   --rhyme-ochre: #B8842F;
   --rhyme-denim: #4E86BE;
+  --rhyme-green: #3E9B57;
+  --rhyme-violet: #8A6FC0;
   color-scheme: light;
 }
 
@@ -41,6 +43,8 @@ html[data-theme="dark"] {
   --rhyme-teal: #3FB8A7;
   --rhyme-ochre: #DCA84E;
   --rhyme-denim: #6D9FD1;
+  --rhyme-green: #5BB574;
+  --rhyme-violet: #A48BD8;
   color-scheme: dark;
 }
 
@@ -409,19 +413,41 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
   box-shadow: 0 1px 0 var(--highlight) inset, 0 18px 34px -22px var(--shadow);
   transition: background-color .35s ease, border-color .35s ease;
 }
-.rhyme-demo .micro { display: block; margin-bottom: .9rem; }
-.rhyme-demo i { font-style: normal; font-weight: 600; }
-.rh-a { color: var(--rhyme-teal); }
-.rh-b { color: var(--rhyme-ochre); }
-.rh-c { color: var(--rhyme-denim); }
-.rhyme-demo .chord {
-  font-family: "Nunito", ui-rounded, sans-serif;
-  font-weight: 800;
-  font-size: .68em;
-  color: var(--ink-soft);
-  vertical-align: .55em;
-  margin-right: .18em;
+.rhyme-demo .micro { display: block; margin-bottom: .9rem; cursor: text; }
+.rhyme-demo:focus-within { border-color: var(--red); }
+
+/* live editor: transparent textarea over a colored mirror — caret stays native */
+.rhyme-editor { position: relative; }
+.rhyme-mirror, .rhyme-input {
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: normal;
+  margin: 0; padding: 0; border: 0;
 }
+.rhyme-mirror { color: var(--ink); min-height: 5.2em; }
+.rhyme-mirror i { font-style: normal; font-weight: 600; }
+.rhyme-input {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  background: transparent;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  caret-color: var(--red);
+  resize: none;
+  overflow: hidden;
+  outline: none;
+  display: block;
+}
+.rf0 { color: var(--rhyme-teal); }
+.rf1 { color: var(--rhyme-ochre); }
+.rf2 { color: var(--rhyme-denim); }
+.rf3 { color: var(--rhyme-green); }
+.rf4 { color: var(--rhyme-violet); }
+.rhyme-demo .demo-note { margin-top: .9rem; }
 
 .words .device { width: min(76vw, 300px); }
 
@@ -490,6 +516,51 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 
 /* light-only screenshots read as deliberate paper prints in dark mode, not bugs */
 html[data-theme="dark"] .screen > img:only-child { filter: brightness(.86) saturate(.96); }
+
+/* the drift demo — the overdub sits late, one press snaps it home */
+.calib .drift { grid-column: 1 / -1; margin-top: 1.4rem; }
+.drift {
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  border-radius: 24px;
+  padding: 1.8rem 1.9rem 1.9rem;
+  box-shadow: 0 1px 0 var(--highlight) inset, 0 20px 36px -24px var(--shadow);
+  transition: background-color .35s ease, border-color .35s ease;
+}
+.drift .micro { display: inline-flex; align-items: center; gap: .55rem; }
+.drift .micro::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+.drift-stage { margin-top: 1.3rem; }
+.drift-label {
+  font-family: "Nunito", ui-rounded, sans-serif;
+  font-weight: 800;
+  font-size: .72rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: .9rem 0 .35rem;
+}
+.drift-label:first-child { margin-top: 0; }
+.drift-svg { display: block; width: 100%; height: auto; aspect-ratio: 720 / 84; overflow: visible; }
+.drift-svg .beat { stroke: var(--line); stroke-width: 2; transition: stroke .35s ease; }
+.drift-svg .beat.one { stroke: var(--ink-faint); }
+.drift-svg .pulse rect { transition: fill .35s ease; }
+#driftLane1 .pulse rect { fill: var(--ink-soft); }
+#driftLane2 .pulse rect { fill: var(--red); }
+#driftLane2 .pulses { transform: translateX(34px); transition: transform .6s cubic-bezier(.2, .85, .25, 1.12); }
+#drift.snapped #driftLane2 .pulses { transform: translateX(0); }
+#drift.listening #driftBtn { opacity: .6; pointer-events: none; }
+.drift-row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+.drift-status { font-size: .98rem; color: var(--ink-soft); font-style: italic; max-width: 34em; }
+.drift-status b { color: var(--ink); font-style: normal; }
+@media (prefers-reduced-motion: reduce) {
+  #driftLane2 .pulses { transition: none; }
+}
 
 /* the chirp — sound leaves, sound returns */
 .chirp {

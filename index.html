@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=10">
+<link rel="stylesheet" href="styles.css?v=11">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -141,13 +141,17 @@
           can see the shape of a verse the way you&rsquo;d hear it.
           Touch a word, hang a chord on it.</p>
         </div>
-        <blockquote class="rhyme-demo">
-          <span class="micro">As you type it</span>
-          Falling through the velvet <i class="rh-a">night</i><br>
-          Every streetlight burning <i class="rh-a">bright</i><br>
-          Hold <i class="rh-c">me</i> where the water&rsquo;s <i class="rh-b">deep</i><br>
-          Secrets that the <span class="chord">Am</span>sycamores <i class="rh-b">keep</i>
-        </blockquote>
+        <div class="rhyme-demo">
+          <label class="micro" for="rhymeInput">As you type it &mdash; try your own line</label>
+          <div class="rhyme-editor">
+            <div class="rhyme-mirror" id="rhymeMirror" aria-hidden="true"></div>
+            <textarea id="rhymeInput" class="rhyme-input" rows="4" maxlength="420" spellcheck="false" autocapitalize="off" autocomplete="off">Falling through the velvet night
+Every streetlight burning bright
+Hold me where the water's deep
+Secrets that the sycamores keep</textarea>
+          </div>
+          <p class="demo-note">This box is live &mdash; add a line, watch the rhymes find each other.</p>
+        </div>
       </div>
       <figure class="device floaty">
         <div class="screen shot-stack">
@@ -215,6 +219,21 @@
             <div class="screen"><img src="assets/12-calibration-honest-failure.webp?v=1" alt="When a reading isn't clean, Hook says so and tries again" width="664" height="1440" loading="lazy"></div>
             <figcaption>It never guesses.</figcaption>
           </figure>
+        </div>
+      </div>
+
+      <!-- the calibration story, made felt: press the button, the overdub snaps home -->
+      <div class="drift" id="drift">
+        <p class="micro">Feel the fix</p>
+        <div class="drift-stage" aria-hidden="true">
+          <p class="drift-label">Your first layer</p>
+          <svg class="drift-svg" viewBox="0 0 720 84" preserveAspectRatio="none" id="driftLane1"></svg>
+          <p class="drift-label">Your overdub</p>
+          <svg class="drift-svg" viewBox="0 0 720 84" preserveAspectRatio="none" id="driftLane2"></svg>
+        </div>
+        <div class="drift-row">
+          <button class="pill" id="driftBtn" aria-describedby="driftStatus"><span class="dot" aria-hidden="true"></span>Measure my headphones</button>
+          <p class="drift-status" id="driftStatus" aria-live="polite">Bluetooth holds the sound back &mdash; your overdub records <b>late</b>, behind the beat.</p>
         </div>
       </div>
     </div>
@@ -338,6 +357,6 @@
   </div>
 </footer>
 
-<script type="module" src="app.js?v=4"></script>
+<script type="module" src="app.js?v=6"></script>
 </body>
 </html>

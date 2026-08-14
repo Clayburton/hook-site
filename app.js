@@ -244,6 +244,153 @@ async function initPaper() {
 
 initPaper();
 
+/* ---------- live rhyme demo ----------
+   A transparent textarea over a colored mirror. A small final-sound matcher —
+   not the app's engine, just convincing: last vowel sound + what follows,
+   silent-e marked long, a short table for English's worst spellings. */
+
+(() => {
+  const input = document.getElementById("rhymeInput");
+  const mirror = document.getElementById("rhymeMirror");
+  if (!input || !mirror) return;
+
+  const STOP = new Set(["the", "a", "an", "and", "of", "in", "on", "at", "to", "or", "but", "as", "with", "for", "from", "by", "is", "was", "its", "it's"]);
+  const EXC = {
+    night: "ite", bright: "ite", light: "ite", right: "ite", sight: "ite", might: "ite",
+    tight: "ite", flight: "ite", tonight: "ite",
+    high: "i", sigh: "i", eye: "i", goodbye: "i", bye: "i", i: "i",
+    through: "oo", blue: "oo", true: "oo", you: "oo", new: "oo", knew: "oo", do: "oo",
+    too: "oo", two: "oo", who: "oo", few: "oo", grew: "oo",
+    love: "uv", of: "uv", above: "uv", dove: "uv",
+    though: "o", go: "o", know: "o", so: "o", oh: "o", slow: "o", snow: "o", low: "o",
+    show: "o", grow: "o", no: "o", flow: "o",
+    said: "ed", head: "ed", dead: "ed", bread: "ed", instead: "ed",
+    heart: "art", are: "ar", star: "ar", far: "ar", guitar: "ar",
+    one: "un", done: "un", sun: "un", run: "un", none: "un", son: "un", young: "ung",
+    gone: "on", on: "on", song: "ong", long: "ong", wrong: "ong", along: "ong",
+    me: "ee", be: "ee", we: "ee", she: "ee", he: "ee",
+    they: "ay", hey: "ay", grey: "ay", gray: "ay", weigh: "ay", away: "ay",
+    there: "air", where: "air", air: "air", hair: "air", care: "air", share: "air",
+    stare: "air", prayer: "air", wear: "air", bear: "air",
+    again: "en", friend: "end",
+    come: "um", some: "um", from: "um",
+    word: "urd", bird: "urd", heard: "urd", hurt: "urt",
+    were: "ur", her: "ur", stir: "ur",
+  };
+
+  function rime(raw) {
+    const w = raw.toLowerCase().replace(/[^a-z]/g, "");
+    if (!w || STOP.has(w)) return null;
+    if (EXC[w] !== undefined) return EXC[w];
+    /* unstressed suffixes read as noise, not rhyme: fall-ing/burn-ing, eve-ry */
+    if (/[aeiouy].+ing$/.test(w)) return null;
+    if (/[^aeiouy]y$/.test(w) && (w.match(/[aeiouy]+/g) || []).length > 1) return null;
+    let s = w, longMark = "";
+    if (s.length > 2 && /[^aeiou]e$/.test(s)) { s = s.slice(0, -1); longMark = "e"; }
+    const m = s.match(/[aeiouy]+[^aeiouy]*$/);
+    let r = (m ? m[0] : s).replace(/y/g, "i") + longMark;
+    if (r === "e") r = "ee";
+    if (r.length < 2 && !"aeiou".includes(r)) return null;
+    return r;
+  }
+
+  function paint() {
+    const text = input.value;
+    const tokens = text.split(/([A-Za-z']+)/);
+    /* families: rime -> word indices; color the first five with >= 2 members */
+    const fam = new Map();
+    tokens.forEach((t, i) => {
+      if (i % 2 === 0) return;
+      const r = rime(t);
+      if (r) (fam.get(r) || fam.set(r, []).get(r)).push(i);
+    });
+    const colored = new Map();
+    let next = 0;
+    for (const [r, idxs] of fam) {
+      if (idxs.length >= 2 && next < 5) colored.set(r, "rf" + next++);
+    }
+    const frag = document.createDocumentFragment();
+    tokens.forEach((t, i) => {
+      if (!t) return;
+      const cls = i % 2 === 1 ? colored.get(rime(t)) : null;
+      if (cls) {
+        const el = document.createElement("i");
+        el.className = cls;
+        el.textContent = t;
+        frag.appendChild(el);
+      } else {
+        frag.appendChild(document.createTextNode(t));
+      }
+    });
+    /* keep a trailing newline's height so the caret never outruns the mirror */
+    if (text.endsWith("\n") || text === "") frag.appendChild(document.createTextNode("​"));
+    mirror.replaceChildren(frag);
+  }
+
+  input.addEventListener("input", paint);
+  paint();
+})();
+
+/* ---------- drift demo: the overdub sits late; one press snaps it home ---------- */
+
+(() => {
+  const root = document.getElementById("drift");
+  if (!root) return;
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const BEATS = [30, 162, 294, 426, 558, 690];
+  const HEIGHTS = [16, 34, 52, 34, 16];
+
+  function buildLane(id, withOffsetGroup) {
+    const svg = document.getElementById(id);
+    BEATS.forEach((x, bi) => {
+      const line = document.createElementNS(SVGNS, "line");
+      line.setAttribute("x1", x); line.setAttribute("x2", x);
+      line.setAttribute("y1", 4); line.setAttribute("y2", 80);
+      line.setAttribute("class", "beat" + (bi % 4 === 0 ? " one" : ""));
+      svg.appendChild(line);
+    });
+    const group = document.createElementNS(SVGNS, "g");
+    group.setAttribute("class", "pulses");
+    BEATS.forEach(x => {
+      const pulse = document.createElementNS(SVGNS, "g");
+      pulse.setAttribute("class", "pulse");
+      HEIGHTS.forEach((h, i) => {
+        const r = document.createElementNS(SVGNS, "rect");
+        const bx = x + (i - 2) * 9;
+        r.setAttribute("x", bx - 3); r.setAttribute("width", 6);
+        r.setAttribute("y", 42 - h / 2); r.setAttribute("height", h);
+        r.setAttribute("rx", 3);
+        pulse.appendChild(r);
+      });
+      group.appendChild(pulse);
+    });
+    svg.appendChild(group);
+  }
+  buildLane("driftLane1");
+  buildLane("driftLane2");
+
+  const btn = document.getElementById("driftBtn");
+  const status = document.getElementById("driftStatus");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  btn.addEventListener("click", () => {
+    if (root.classList.contains("snapped")) {
+      root.classList.remove("snapped");
+      btn.lastChild.textContent = "Measure my headphones";
+      status.innerHTML = "Bluetooth holds the sound back &mdash; your overdub records <b>late</b>, behind the beat.";
+      return;
+    }
+    root.classList.add("listening");
+    status.textContent = "Listening… three seconds, once.";
+    setTimeout(() => {
+      root.classList.remove("listening");
+      root.classList.add("snapped");
+      btn.lastChild.textContent = "Hear the drift again";
+      status.innerHTML = "Measured. Now every layer lands <b>where you played it</b> — your headphones, your number, remembered.";
+    }, reduced ? 60 : 750);
+  });
+})();
+
 /* ---------- assets that light up only when Clay drops the real files in ----------
    (probe, never assume — the page must not offer sound it doesn't have) */
 
