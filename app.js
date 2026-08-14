@@ -270,6 +270,7 @@ initPaper();
     gone: "on", on: "on", song: "ong", long: "ong", wrong: "ong", along: "ong",
     me: "ee", be: "ee", we: "ee", she: "ee", he: "ee",
     sea: "ee", tea: "ee", plea: "ee", flea: "ee",
+    great: "ate", break: "ate", steak: "ate",
     their: "air", theirs: "air",
     they: "ay", hey: "ay", grey: "ay", gray: "ay", weigh: "ay", away: "ay",
     there: "air", where: "air", air: "air", hair: "air", care: "air", share: "air",
@@ -291,7 +292,8 @@ initPaper();
     if (s.length > 2 && /[^aeiou]e$/.test(s)) { s = s.slice(0, -1); longMark = "e"; }
     const m = s.match(/[aeiouy]+[^aeiouy]*$/);
     let r = (m ? m[0] : s).replace(/y/g, "i") + longMark;
-    if (r === "e" || r === "ea") r = "ee";   /* me/sea sound like see */
+    if (r === "e") r = "ee";
+    r = r.replace(/^ea/, "ee");              /* sea/beat/dream spell 'ee' as 'ea' */
     if (r === "ei") r = "ai";                /* obey sounds like day */
     if (r.length < 2 && !"aeiou".includes(r)) return null;
     return r;
