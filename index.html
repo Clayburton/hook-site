@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hook — Catch the big one. A songwriter's looper for iPhone.</title>
+<meta name="description" content="Hook is a songwriter's quick-capture looper for iPhone. Feel a tempo, put an idea down, stack layers on any headphones, write the words — one sitting, before it's gone. By Clay and Kelsy Instruments.">
+<meta name="theme-color" content="#F6EFE4">
+<link rel="canonical" href="https://clayandkelsy.com/hook/">
+<meta property="og:title" content="Hook — Catch the big one.">
+<meta property="og:description" content="A songwriter's looper for iPhone. Quick as a voice memo, and it becomes a song.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/hook-logo-384.png">
+<link rel="apple-touch-icon" href="assets/hook-logo-384.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=10">
+<!-- importmap must come before any module script (cache/back-nav resolution order) -->
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
+</head>
+<body>
+
+<div class="heroZone">
+<canvas id="paper" aria-hidden="true"></canvas>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Hook">
+      <span class="mark-pair"><img class="m-light" src="assets/hook-logo-384.png" alt="" width="34" height="34"><img class="m-dark" src="assets/hook-logo-dark-384.png" alt="" width="34" height="34"></span>
+      <b>HOOK</b>
+      <span class="tag">Catch the big one.</span>
+    </a>
+    <button class="toggle" id="themeToggle" aria-label="Switch between light and dark" title="Light / dark">
+      <i aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="micro">A songwriter&rsquo;s looper for iPhone</p>
+        <h1>Catch the<br>big one.</h1>
+        <p class="lede">Feel a tempo, put the idea down, and it&rsquo;s already looping.
+        Stack your layers. Write the words. One sitting, one app — before it&rsquo;s gone.</p>
+        <p class="cta-row">
+          <!-- PLACEHOLDER: swap APP_STORE_URL in app.js when the listing is live -->
+          <a class="cta js-appstore" href="#app-store-link"><span class="dot" aria-hidden="true"></span>Get Hook on the App&nbsp;Store</a>
+        </p>
+        <p class="promise">Any headphones. First take. No setup.</p>
+        <p class="cta-note">Free to start &middot; iPhone &middot; iOS 17 or later</p>
+        <!-- Appears only when real exports exist at assets/demo-take.mp3 + assets/demo-stack.mp3.
+             Drop in a real one-layer take and the full stack from the same Hook song. -->
+        <div class="hero-demo" id="heroDemo" hidden>
+          <p class="micro">Hear it</p>
+          <div class="demo-pills">
+            <button class="pill" data-src="assets/demo-take.mp3"><span class="dot" aria-hidden="true"></span>One take</button>
+            <button class="pill" data-src="assets/demo-stack.mp3"><span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span>The stack</button>
+          </div>
+          <p class="demo-note">The same song — first layer alone, then the stack. Recorded on Bluetooth earbuds, untouched.</p>
+        </div>
+      </div>
+      <figure class="device hero-device floaty">
+        <div class="screen shot-stack">
+          <img class="s-light" src="assets/06-song-detail.webp?v=1" alt="A song in Hook: tempo, sections, and lyrics with rhyming words colored by sound" width="664" height="1440" fetchpriority="high">
+          <img class="s-dark" src="assets/D2-lyrics-rhyme-dark.webp?v=1" alt="Hook in dark mode: lyrics in a warm serif with rhyming words colored by sound" width="664" height="1440" loading="lazy">
+        </div>
+      </figure>
+    </div>
+  </section>
+</div><!-- /heroZone -->
+
+<main>
+
+  <!-- ============ THE PROBLEM ============ -->
+  <section class="problem">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="micro">The 4am problem</p>
+        <h2>The idea doesn&rsquo;t wait.</h2>
+      </div>
+      <div class="sec-body">
+        <p>Nobody&rsquo;s best idea shows up with a hot mic and a room waiting on them.
+        It lands in the car, in line at the store, at 4am — already humming, already half gone.</p>
+        <p>Voice Memos will hold it, but you can&rsquo;t build on a memo.
+        A DAW will build it, but by the time the session&rsquo;s open, the spark has moved on.
+        Hook is the missing middle — quick as a memo, and it becomes a song.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE CORE LOOP ============ -->
+  <section class="loop">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="micro">The loop</p>
+        <h2>Play it once.<br>It&rsquo;s already looping.</h2>
+      </div>
+      <div class="sec-body">
+        <p>Slide to a tempo, tap one out, or listen until it feels right. Pick your time — 4/4, 3/4, 6/8, 5/8, 7/8.
+        Hook counts you in, you put the idea down, and the loop is going before your hands are off the strings.
+        Or the keys. Or the desk you were drumming on.</p>
+      </div>
+      <ol class="steps">
+        <li class="step">
+          <span class="num" aria-hidden="true">1</span>
+          <h3>Set the feel</h3>
+          <p>Tempo, time signature, bars — and a &ldquo;hear this tempo&rdquo; button so you can trust it before you commit.</p>
+          <figure class="device"><div class="screen"><img src="assets/02-new-song-setup.webp?v=1" alt="New song setup: tempo slider, tap tempo, and time signature" width="664" height="1440" loading="lazy"></div></figure>
+        </li>
+        <li class="step">
+          <span class="num" aria-hidden="true">2</span>
+          <h3>Get counted in</h3>
+          <p>Four beats, an accent on one, and you&rsquo;re rolling. The moment you finish, it loops.</p>
+          <figure class="device"><div class="screen"><img src="assets/04-recording-live.webp?v=1" alt="Recording live: count-in and beat display mid-take" width="664" height="1440" loading="lazy"></div></figure>
+        </li>
+        <li class="step">
+          <span class="num" aria-hidden="true">3</span>
+          <h3>Stack your layers</h3>
+          <p>Layer after layer on headphones, each with its own waveform, volume, mute, and name. Group them. Keep going.</p>
+          <figure class="device"><div class="screen"><img src="assets/05-record-with-layer.webp?v=1" alt="A recorded layer with its waveform and per-layer volume" width="664" height="1440" loading="lazy"></div></figure>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ WRITE THE WORDS ============ -->
+  <section class="words">
+    <div class="wrap">
+      <div>
+        <div class="sec-head">
+          <p class="micro">Lyrics &amp; chords</p>
+          <h2>Write the words while they&rsquo;re warm.</h2>
+        </div>
+        <div class="sec-body">
+          <p>A real writing surface in a warm serif, right under the loop.
+          As you type, rhymes find each other — matched by sound, not spelling,
+          so the slant rhymes count too. Each rhyme family takes a color, and you
+          can see the shape of a verse the way you&rsquo;d hear it.
+          Touch a word, hang a chord on it.</p>
+        </div>
+        <blockquote class="rhyme-demo">
+          <span class="micro">As you type it</span>
+          Falling through the velvet <i class="rh-a">night</i><br>
+          Every streetlight burning <i class="rh-a">bright</i><br>
+          Hold <i class="rh-c">me</i> where the water&rsquo;s <i class="rh-b">deep</i><br>
+          Secrets that the <span class="chord">Am</span>sycamores <i class="rh-b">keep</i>
+        </blockquote>
+      </div>
+      <figure class="device floaty">
+        <div class="screen shot-stack">
+          <img class="s-light" src="assets/07-lyrics-rhyme-highlighting.webp?v=1" alt="The lyric editor with rhyming words sharing colors" width="664" height="1440" loading="lazy">
+          <img class="s-dark" src="assets/D2-lyrics-rhyme-dark.webp?v=1" alt="The lyric editor in dark mode, rhyme colors on near-black" width="664" height="1440" loading="lazy">
+        </div>
+        <figcaption>Rhymes matched by sound, on the page where the song lives.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ CALIBRATION ============ -->
+  <section class="calib">
+    <div class="wrap">
+      <div>
+        <div class="sec-head">
+          <p class="micro">The part nobody else nails</p>
+          <h2>Your layers land where you put them. On any headphones.</h2>
+        </div>
+        <div class="sec-body">
+          <p>Here&rsquo;s the quiet problem with recording on a phone: wireless headphones
+          hold the sound back a little, and every pair is different. Most apps ignore it,
+          and your layers drift late. The rest bury a latency slider in settings
+          and hand the problem to you.</p>
+          <p>Hook listens instead. The first time you record with a new pair, it plays a
+          small sound and listens for it to come back — three seconds, once. After that,
+          every layer you stack lands exactly where you played it. It remembers each pair
+          forever. A new pair just asks once.</p>
+          <p>And when it can&rsquo;t get a clean read — a loud room, a bad moment — it says so
+          and tries again. It doesn&rsquo;t guess.</p>
+        </div>
+        <svg class="chirp" viewBox="0 0 400 80" aria-hidden="true">
+          <path class="base" d="M52 40 H348"></path>
+          <circle class="dot-rec" cx="40" cy="40" r="7"></circle>
+          <circle class="ring r1" cx="40" cy="40" r="26"></circle>
+          <circle class="ring r2" cx="40" cy="40" r="26"></circle>
+          <circle class="dot-mic" cx="360" cy="40" r="5"></circle>
+          <circle class="ring back b1" cx="360" cy="40" r="26"></circle>
+        </svg>
+      </div>
+      <div>
+        <!-- PLACEHOLDER: swap this panel for the real "You're set / 74 ms" success
+             screenshot once Clay captures it on a physical iPhone -->
+        <div class="bignum">
+          <div class="n">74<small>&thinsp;ms</small></div>
+          <div class="set">You&rsquo;re set.</div>
+          <p class="expl">Measured once. Remembered forever.</p>
+        </div>
+        <div class="calib-shots">
+          <figure class="device">
+            <div class="screen shot-stack">
+              <img class="s-light" src="assets/10-calibration-intro.webp?v=1" alt="Calibration: hold the phone near your headphones" width="664" height="1440" loading="lazy">
+              <img class="s-dark" src="assets/D4-calibration-intro-dark.webp?v=1" alt="" width="664" height="1440" loading="lazy">
+            </div>
+            <figcaption>It listens, once.</figcaption>
+          </figure>
+          <figure class="device">
+            <div class="screen shot-stack">
+              <img class="s-light" src="assets/09-settings-measured-headphones.webp?v=1" alt="Your headphones, measured and remembered" width="664" height="1440" loading="lazy">
+              <img class="s-dark" src="assets/D3-settings-measured-headphones-dark.webp?v=1" alt="" width="664" height="1440" loading="lazy">
+            </div>
+            <figcaption>It remembers your gear.</figcaption>
+          </figure>
+          <figure class="device">
+            <div class="screen"><img src="assets/12-calibration-honest-failure.webp?v=1" alt="When a reading isn't clean, Hook says so and tries again" width="664" height="1440" loading="lazy"></div>
+            <figcaption>It never guesses.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KEEP IT ============ -->
+  <section class="keep">
+    <div class="wrap">
+      <div>
+        <div class="sec-head">
+          <p class="micro">Keep it</p>
+          <h2>From loop to song to out the door.</h2>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Parts become songs</h3>
+            <p>Sketch a verse, a chorus, a bridge — then chain them and hear the whole thing back.</p>
+          </div>
+          <div class="card">
+            <h3>Export real files</h3>
+            <p>A mixed master, or stems and lyrics — off your phone and into the session.</p>
+          </div>
+          <div class="card">
+            <h3>Private backup</h3>
+            <p>Optional iCloud sync, off by default. Your songs live in your iCloud, and nobody else can see them.</p>
+          </div>
+          <div class="card">
+            <h3>A metronome you can watch</h3>
+            <p>A pulse on screen, or a flash from the torch — keep time with the sound down.</p>
+          </div>
+          <div class="card">
+            <h3>Widgets</h3>
+            <p>Start a song from the Lock Screen, before the idea cools.</p>
+          </div>
+          <div class="card">
+            <h3>Every kind of layer</h3>
+            <p>Voice, guitar, keys, a tapped rhythm on the table — if you can record it, it&rsquo;s a layer.</p>
+          </div>
+        </div>
+      </div>
+      <figure class="device floaty">
+        <div class="screen shot-stack">
+          <img class="s-light" src="assets/01-home-library.webp?v=1" alt="The Hook library, full of songs" width="664" height="1440" loading="lazy">
+          <img class="s-dark" src="assets/D1-home-library-dark.webp?v=1" alt="" width="664" height="1440" loading="lazy">
+        </div>
+        <figcaption>Your library — every idea, kept.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ THE MAKERS ============ -->
+  <section class="makers">
+    <div class="wrap">
+      <span class="mark-pair mark"><img class="m-light" src="assets/hook-logo-384.png" alt="" width="74" height="74"><img class="m-dark" src="assets/hook-logo-dark-384.png" alt="" width="74" height="74"></span>
+      <blockquote class="manifesto">
+        <p>&ldquo;We&rsquo;re songwriters, so we built the app we kept needing: one place to chase a
+        whole song in a single sitting — verse, chorus, bridge, the harmonies you can hear
+        but haven&rsquo;t caught yet — without ever leaving.&rdquo;</p>
+        <p>&ldquo;Nobody&rsquo;s best idea shows up with a hot mic and a room waiting on them.
+        Hook is that space for you, whenever the idea lands: before a session, on vacation,
+        or at 4am when you sit up and reach for your phone.&rdquo;</p>
+      </blockquote>
+      <p class="signature">— Clay &amp; Kelsy</p>
+      <p class="cki">Hook is made by <a href="https://clayandkelsy.com" target="_top">Clay and Kelsy Instruments</a> — our cute little software company.</p>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="pricing">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="micro">What it costs</p>
+        <h2>Free to start. Really start.</h2>
+      </div>
+      <div class="sec-body">
+        <p>Download Hook and write. The free version is the whole instrument — the loop,
+        the layers, the lyrics — not a demo with the good parts roped off.
+        No ads, no watermarks, no account to make.</p>
+      </div>
+      <div class="plans">
+        <!-- PLACEHOLDER: free-tier limit — Clay believes 3 songs, may change. One number, one place. -->
+        <div class="plan">
+          <p class="micro">Free</p>
+          <p class="price">$0<small>forever</small></p>
+          <ul>
+            <li>Everything Hook does</li>
+            <li>Up to three songs in your library</li>
+            <li>No ads, no watermarks</li>
+          </ul>
+        </div>
+        <!-- PLACEHOLDER: subscription name, price, and final feature split TBD.
+             Plans and prices stay in the app until Clay confirms numbers. -->
+        <div class="plan paid">
+          <p class="micro">Hook, wide open</p>
+          <p class="price">Subscription<small>plans &amp; prices in the app</small></p>
+          <ul>
+            <li>Unlimited songs</li>
+            <li>Everything we add next</li>
+            <li class="dim">Final plan details coming with launch</li>
+          </ul>
+        </div>
+      </div>
+      <p class="cta-row">
+        <a class="cta js-appstore" href="#app-store-link"><span class="dot" aria-hidden="true"></span>Get Hook on the App&nbsp;Store</a>
+      </p>
+      <p class="cta-note">The download is free. The next idea shows up at 4am — be ready for it.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="mark-pair"><img class="m-light" src="assets/hook-logo-384.png" alt="" width="30" height="30"><img class="m-dark" src="assets/hook-logo-dark-384.png" alt="" width="30" height="30"></span>
+    <p>Hook — Catch the big one.<br>Made by Clay and Kelsy Instruments.</p>
+    <nav>
+      <a href="https://clayandkelsy.com" target="_top">clayandkelsy.com</a>
+      <!-- PLACEHOLDER: privacy policy URL -->
+      <a href="#privacy">Privacy</a>
+    </nav>
+  </div>
+</footer>
+
+<script type="module" src="app.js?v=4"></script>
+</body>
+</html>

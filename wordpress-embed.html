@@ -1,0 +1,37 @@
+<!-- ============================================================
+     Hook — full-bleed embed for clayandkelsy.com/hook/
+     Paste this WHOLE file into ONE "Custom HTML" block on the page.
+     The page needs nothing else. The iframe grows to fit its content,
+     and the light/dark toggle inside also repaints the WordPress page
+     behind it so the frame is invisible.
+     ============================================================ -->
+<div id="hook-embed" style="margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);width:100vw;">
+  <iframe id="hook-frame"
+    src="https://clayburton.github.io/hook-site/"
+    title="Hook — a songwriter's looper for iPhone"
+    style="display:block;width:100%;border:0;height:9000px;background:#F6EFE4;"
+    scrolling="no"
+    allow="autoplay"
+    loading="eager"></iframe>
+</div>
+<script>
+(function () {
+  var ORIGIN = "https://clayburton.github.io";
+  var frame = document.getElementById("hook-frame");
+  var lastH = 0;
+  window.addEventListener("message", function (e) {
+    if (e.origin !== ORIGIN || !e.data) return;
+    /* auto-grow: the page posts its content height; 8px guard stops resize loops */
+    if (e.data.hook === "h" && typeof e.data.h === "number") {
+      var h = Math.round(e.data.h);
+      if (Math.abs(h - lastH) > 8) { lastH = h; frame.style.height = h + "px"; }
+    }
+    /* theme sync: paint the WP page the same paper color as the page inside */
+    if (e.data.hook === "bg" && /^#[0-9a-fA-F]{6}$/.test(e.data.color || "")) {
+      frame.style.background = e.data.color;
+      document.documentElement.style.setProperty("background-color", e.data.color, "important");
+      document.body.style.setProperty("background-color", e.data.color, "important");
+    }
+  });
+})();
+</script>
