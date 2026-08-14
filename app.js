@@ -254,7 +254,7 @@ initPaper();
   const mirror = document.getElementById("rhymeMirror");
   if (!input || !mirror) return;
 
-  const STOP = new Set(["the", "a", "an", "and", "of", "in", "on", "at", "to", "or", "but", "as", "with", "for", "from", "by", "is", "was", "its", "it's"]);
+  const STOP = new Set(["the", "a", "an", "and", "in", "on", "at", "to", "or", "but", "as", "with", "for", "from", "by", "is", "was", "its", "it's"]);
   const EXC = {
     night: "ite", bright: "ite", light: "ite", right: "ite", sight: "ite", might: "ite",
     tight: "ite", flight: "ite", tonight: "ite",
@@ -269,6 +269,8 @@ initPaper();
     one: "un", done: "un", sun: "un", run: "un", none: "un", son: "un", young: "ung",
     gone: "on", on: "on", song: "ong", long: "ong", wrong: "ong", along: "ong",
     me: "ee", be: "ee", we: "ee", she: "ee", he: "ee",
+    sea: "ee", tea: "ee", plea: "ee", flea: "ee",
+    their: "air", theirs: "air",
     they: "ay", hey: "ay", grey: "ay", gray: "ay", weigh: "ay", away: "ay",
     there: "air", where: "air", air: "air", hair: "air", care: "air", share: "air",
     stare: "air", prayer: "air", wear: "air", bear: "air",
@@ -289,9 +291,21 @@ initPaper();
     if (s.length > 2 && /[^aeiou]e$/.test(s)) { s = s.slice(0, -1); longMark = "e"; }
     const m = s.match(/[aeiouy]+[^aeiouy]*$/);
     let r = (m ? m[0] : s).replace(/y/g, "i") + longMark;
-    if (r === "e") r = "ee";
+    if (r === "e" || r === "ea") r = "ee";   /* me/sea sound like see */
+    if (r === "ei") r = "ai";                /* obey sounds like day */
     if (r.length < 2 && !"aeiou".includes(r)) return null;
     return r;
+  }
+
+  /* slant families: same vowel sound, coda in the same consonant class —
+     time/line, deep/beat, sun/come all read as rhymes to a songwriter */
+  const CODA_CLASS = { m: "N", n: "N", ng: "N", t: "T", d: "T", p: "T", b: "T", k: "T", g: "T", ck: "T",
+    s: "S", z: "S", f: "S", v: "S", th: "S", sh: "S", ch: "C", tch: "C", l: "L", r: "R", "": "" };
+  function familyKey(r) {
+    const m = r.match(/^([aeiouy]+)([^aeiouy]*?)(e?)$/);
+    if (!m) return r;
+    const cls = CODA_CLASS[m[2]] !== undefined ? CODA_CLASS[m[2]] : m[2];
+    return m[1] + m[3] + cls;
   }
 
   function paint() {
@@ -302,17 +316,20 @@ initPaper();
     tokens.forEach((t, i) => {
       if (i % 2 === 0) return;
       const r = rime(t);
-      if (r) (fam.get(r) || fam.set(r, []).get(r)).push(i);
+      if (!r) return;
+      const k = familyKey(r);
+      (fam.get(k) || fam.set(k, []).get(k)).push(i);
     });
     const colored = new Map();
     let next = 0;
-    for (const [r, idxs] of fam) {
-      if (idxs.length >= 2 && next < 5) colored.set(r, "rf" + next++);
+    for (const [k, idxs] of fam) {
+      if (idxs.length >= 2 && next < 5) colored.set(k, "rf" + next++);
     }
     const frag = document.createDocumentFragment();
     tokens.forEach((t, i) => {
       if (!t) return;
-      const cls = i % 2 === 1 ? colored.get(rime(t)) : null;
+      const r = i % 2 === 1 ? rime(t) : null;
+      const cls = r ? colored.get(familyKey(r)) : null;
       if (cls) {
         const el = document.createElement("i");
         el.className = cls;
@@ -385,27 +402,32 @@ initPaper();
     setTimeout(() => {
       root.classList.remove("listening");
       root.classList.add("snapped");
-      btn.lastChild.textContent = "Hear the drift again";
+      btn.lastChild.textContent = "Put the drift back";
       status.innerHTML = "Measured. Now every layer lands <b>where you played it</b> — your headphones, your number, remembered.";
     }, reduced ? 60 : 750);
   });
 })();
 
 /* ---------- assets that light up only when Clay drops the real files in ----------
-   (probe, never assume — the page must not offer sound it doesn't have) */
+   One manifest that always exists (no 404 noise): set a filename in
+   assets/media-manifest.json and the matching feature appears. */
 
-async function exists(url) {
-  try { const r = await fetch(url, { method: "HEAD" }); return r.ok; }
-  catch (e) { return false; }
-}
+const MEDIA = (async () => {
+  try {
+    const r = await fetch("assets/media-manifest.json", { cache: "no-cache" });
+    return r.ok ? await r.json() : {};
+  } catch (e) { return {}; }
+})();
 
 /* hear-it A/B: one real take vs the full stack, exported from Hook */
 (async () => {
   const demo = document.getElementById("heroDemo");
   if (!demo) return;
+  const media = await MEDIA;
+  if (!media.take || !media.stack) return;
   const pills = [...demo.querySelectorAll(".pill")];
-  const oks = await Promise.all(pills.map(p => exists(p.dataset.src)));
-  if (!oks.every(Boolean)) return;
+  pills[0].dataset.src = "assets/" + media.take;
+  pills[1].dataset.src = "assets/" + media.stack;
   demo.hidden = false;
   const audio = new Audio();
   audio.preload = "none";
@@ -426,16 +448,17 @@ async function exists(url) {
   });
 })();
 
-/* hero screen recording: swaps in over the still when assets/hero-demo.mp4 exists */
+/* hero screen recording: swaps in over the still when the manifest names one */
 (async () => {
-  if (!(await exists("assets/hero-demo.mp4"))) return;
+  const media = await MEDIA;
+  if (!media.video) return;
   const stack = document.querySelector(".hero-device .shot-stack");
   if (!stack) return;
   const v = document.createElement("video");
   v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
   v.setAttribute("playsinline", "");
   v.poster = "assets/05-record-with-layer.webp?v=1";
-  v.src = "assets/hero-demo.mp4";
+  v.src = "assets/" + media.video;
   stack.replaceChildren(v);
   const tryPlay = () => v.play().catch(() => {});
   addEventListener("pointerdown", tryPlay, { once: true });

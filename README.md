@@ -34,8 +34,10 @@ Kelsy's voice; every screenshot is the real app.
 
 ## Media slots that light up automatically
 
-The page probes for these files and shows the feature **only when the file exists** —
-nothing is faked in the meantime:
+Drop the file into `assets/`, then put its filename into
+[`assets/media-manifest.json`](assets/media-manifest.json) (e.g.
+`"video": "hero-demo.mp4"`). The matching feature appears on the next load —
+nothing is faked in the meantime, and nothing 404s while the slots are empty:
 
 - **`assets/hero-demo.mp4`** — a real screen recording playing inside the hero phone
   (muted, looping). Record on iPhone (Settings → Control Center → add Screen Recording),
