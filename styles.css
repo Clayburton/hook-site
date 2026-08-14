@@ -179,6 +179,27 @@ html[data-theme="dark"] .mark-pair .m-light { opacity: 0; }
 html[data-theme="dark"] .toggle .ic-sun { opacity: 1; transform: none; }
 html[data-theme="dark"] .toggle .ic-moon { opacity: 0; transform: rotate(40deg) scale(.7); }
 
+/* the moon follows you: fixed when standalone, parent-scroll-driven in the iframe */
+.toggle-float {
+  position: absolute;
+  top: 0; right: 16px;
+  z-index: 60;
+  margin-left: 0;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 12px 26px -12px var(--shadow);
+  transition: transform .3s cubic-bezier(.2, .8, .3, 1), opacity .35s ease,
+              background-color .35s ease, border-color .35s ease;
+}
+.toggle-float.on { opacity: 1; pointer-events: auto; }
+html.standalone .toggle-float { position: fixed; top: 16px; right: 16px; }
+
+/* nightfall: the one slow, cinematic first flip */
+html.theme-cinema, html.theme-cinema body, html.theme-cinema *,
+html.theme-cinema *::before, html.theme-cinema *::after {
+  transition-duration: 1.25s !important;
+}
+
 /* ---------- hero ---------- */
 
 .hero { padding-top: clamp(1.6rem, 4vw, 3.4rem); overflow: hidden; }
@@ -396,6 +417,23 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
   color: var(--ink-faint);
   letter-spacing: -.02em;
 }
+
+/* the count-in, alive: 1-2-3-4 with the accent on one, like the app */
+.countin { display: flex; gap: .6rem; align-items: center; margin: 1rem 0 .1rem; }
+.countin i {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--ink-faint);
+  animation: beat-pulse 2.4s infinite;
+}
+.countin i:first-child { width: 14px; height: 14px; }
+.countin i:nth-child(2) { animation-delay: .6s; }
+.countin i:nth-child(3) { animation-delay: 1.2s; }
+.countin i:nth-child(4) { animation-delay: 1.8s; }
+@keyframes beat-pulse {
+  0%, 20%, 100% { background: var(--ink-faint); transform: scale(1); }
+  7%            { background: var(--red); transform: scale(1.3); }
+}
+@media (prefers-reduced-motion: reduce) { .countin i { animation: none; } }
 .step h3 { margin: .5rem 0 .45rem; }
 .step p { font-size: .99rem; color: var(--ink-soft); }
 /* zoomed feature crops, tape.it-style: the relevant panel, big, no status bar */
@@ -639,6 +677,12 @@ html[data-theme="dark"] .screen > img:only-child { filter: brightness(.86) satur
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--red);
 }
+/* each card takes a layer color, like the app's colored layers */
+.cards .card:nth-child(1) h3::before { background: var(--rhyme-teal); }
+.cards .card:nth-child(2) h3::before { background: var(--rhyme-ochre); }
+.cards .card:nth-child(3) h3::before { background: var(--rhyme-denim); }
+.cards .card:nth-child(4) h3::before { background: var(--rhyme-green); }
+.cards .card:nth-child(5) h3::before { background: var(--rhyme-violet); }
 .card p { margin-top: .45rem; font-size: .96rem; color: var(--ink-soft); }
 
 .keep .device { width: min(78vw, 330px); }

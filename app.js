@@ -7,9 +7,11 @@ const APP_STORE_URL = "#app-store-link";
 
 const doc = document.documentElement;
 const IS_EMBEDDED = window.parent !== window;
+const NOFX = new URLSearchParams(location.search).has("nofx");
 
 /* declared up top — setTheme runs before the canvas exists */
 let paperThemeFn = null;
+let paperLerpMs = 450;
 function paperTheme(theme) { paperThemeFn && paperThemeFn(theme); }
 
 /* ---------- App Store links (one constant, every button) ---------- */
@@ -36,10 +38,78 @@ function setTheme(theme, persist) {
 /* always open on light paper; the moon is the invitation to go dark */
 setTheme("light", false);
 
-document.getElementById("themeToggle")?.addEventListener("click", () => {
+let userTouchedTheme = false;
+function toggleTheme() {
   const next = doc.getAttribute("data-theme") === "light" ? "dark" : "light";
   setTheme(next, false);
+}
+document.getElementById("themeToggle")?.addEventListener("click", () => {
+  userTouchedTheme = true;
+  toggleTheme();
 });
+
+/* ---------- the moon follows you + one-time nightfall on first scroll ---------- */
+
+(() => {
+  const headerBtn = document.getElementById("themeToggle");
+  if (!headerBtn) return;
+
+  /* a second toggle that escapes the hero's overflow clip; same behavior */
+  const float = headerBtn.cloneNode(true);
+  float.id = "themeToggleFloat";
+  float.classList.add("toggle-float");
+  float.addEventListener("click", () => { userTouchedTheme = true; toggleTheme(); });
+  document.body.appendChild(float);
+
+  if (!IS_EMBEDDED) doc.classList.add("standalone");
+
+  let active = false;
+  const setActive = v => { if (v !== active) { active = v; float.classList.toggle("on", v); } };
+
+  /* nightfall: the page dips to dark the first time you scroll — once,
+     slowly, then the sun is yours. Skipped for reduced-motion visitors
+     and for anyone who already touched the toggle. Triggered by whichever
+     signal arrives first (IO, scroll, or the embed's viewport messages) —
+     browsers throttle each of these differently inside iframes. */
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let nightDone = false;
+  function nightfall() {
+    if (nightDone || NOFX || reducedMotion) return;
+    nightDone = true;
+    if (userTouchedTheme || doc.getAttribute("data-theme") === "dark") return;
+    doc.classList.add("theme-cinema");
+    paperLerpMs = 1250;
+    setTheme("dark", false);
+    setTimeout(() => { doc.classList.remove("theme-cinema"); paperLerpMs = 450; }, 1500);
+  }
+
+  if (!IS_EMBEDDED) {
+    addEventListener("scroll", () => {
+      setActive(scrollY > 160);
+      if (scrollY > 300) nightfall();
+    }, { passive: true });
+  } else {
+    /* the newer WP embed posts the frame's viewport position on scroll;
+       with an older embed the button simply stays in the header — fail open */
+    addEventListener("message", e => {
+      const d = e.data;
+      if (!d || d.hookHost !== "vp" || typeof d.top !== "number") return;
+      const past = -d.top;                    /* px scrolled beyond the frame's top */
+      setActive(past > 160);
+      if (past > 300) nightfall();
+      const maxY = doc.scrollHeight - 120;
+      float.style.transform = "translateY(" + Math.min(Math.max(0, past + 16), maxY) + "px)";
+    });
+  }
+
+  const sentinel = document.querySelector(".problem");
+  if (sentinel && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver(entries => {
+      if (entries.some(en => en.isIntersecting)) { io.disconnect(); nightfall(); }
+    }, { rootMargin: "0px 0px -25% 0px" });
+    io.observe(sentinel);
+  }
+})();
 
 /* ---------- iframe: post content height to the WP embed ---------- */
 
@@ -66,7 +136,6 @@ if (IS_EMBEDDED) {
    only to elements measurably below the viewport, and removing it is the
    animation. ?nofx skips everything (also used for screenshot QA). */
 
-const NOFX = new URLSearchParams(location.search).has("nofx");
 if ("IntersectionObserver" in window && !NOFX && !IS_EMBEDDED
     && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
   const io = new IntersectionObserver(entries => {
@@ -199,15 +268,16 @@ async function initPaper() {
   new ResizeObserver(size).observe(hero);
   size();
 
-  /* theme fade for the shader */
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* theme fade for the shader; under reduced motion, jump and repaint once */
   let inkFrom = uniforms.uInk.value, inkTo = inkFrom, inkT0 = 0;
   paperThemeFn = theme => {
     inkFrom = uniforms.uInk.value;
     inkTo = theme === "dark" ? 1 : 0;
     inkT0 = performance.now();
+    if (reduced) { uniforms.uInk.value = inkTo; renderer.render(scene, cam); }
   };
-
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let running = true, rafId = 0;
   const t0 = performance.now();
 
@@ -215,7 +285,7 @@ async function initPaper() {
     const t = (now - t0) / 1000;
     uniforms.uTime.value = t;
     if (inkTo !== uniforms.uInk.value) {
-      const k = Math.min((now - inkT0) / 450, 1);
+      const k = Math.min((now - inkT0) / paperLerpMs, 1);
       uniforms.uInk.value = inkFrom + (inkTo - inkFrom) * k;
     }
     renderer.render(scene, cam);

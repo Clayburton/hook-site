@@ -33,5 +33,19 @@
       document.body.style.setProperty("background-color", e.data.color, "important");
     }
   });
+  /* tell the page where the viewport is, so its theme button can follow the scroll */
+  var queued = false;
+  function postViewport() {
+    queued = false;
+    if (!frame.contentWindow) return;
+    var r = frame.getBoundingClientRect();
+    frame.contentWindow.postMessage({ hookHost: "vp", top: r.top, vh: window.innerHeight }, ORIGIN);
+  }
+  window.addEventListener("scroll", function () {
+    if (!queued) { queued = true; requestAnimationFrame(postViewport); }
+  }, { passive: true });
+  window.addEventListener("resize", postViewport);
+  frame.addEventListener("load", postViewport);
+  postViewport();
 })();
 </script>
