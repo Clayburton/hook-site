@@ -956,6 +956,66 @@ html[data-theme="dark"] .sheet-stack img { box-shadow: 0 1px 2px rgba(0,0,0,.5),
 .makers .cki a { color: var(--ink); text-decoration-color: var(--line); text-underline-offset: 3px; }
 .makers .cki a:hover { text-decoration-color: var(--red); }
 
+/* ---------- voices (testimonials) — editorial pull-quote + restrained grid ---------- */
+
+.voices { border-top: 1.5px solid var(--line); }
+.voices .wrap { max-width: 1080px; }
+.voices .micro { display: inline-flex; align-items: center; gap: .55rem; color: var(--red); }
+.voices .micro::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+
+.voices-lead {
+  margin: 1.1rem 0 clamp(2.6rem, 5vw, 3.8rem);
+  max-width: 20em;
+  font-family: "Source Serif 4", Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+  line-height: 1.28;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  position: relative;
+}
+.voices-lead .q {
+  color: var(--red);
+  font-size: 1.3em;
+  line-height: 0;
+  margin-right: .04em;
+}
+
+.voices-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem 2.4rem;
+}
+@media (min-width: 620px) { .voices-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 940px) { .voices-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.voice { margin: 0; }
+.voice blockquote {
+  margin: 0 0 1.1rem;
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 1.12rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.voice figcaption { display: flex; align-items: center; gap: .7rem; }
+.voice .mono {
+  flex: 0 0 auto;
+  width: 42px; height: 42px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: "Nunito", ui-rounded, sans-serif;
+  font-weight: 800; font-size: .84rem; letter-spacing: .02em;
+  color: #FDF8EF;
+}
+/* muted, warm avatar fills — low-saturation so none competes with the red accent */
+.voice .mono[data-c="clay"]  { background: #B08968; }
+.voice .mono[data-c="sage"]  { background: #869072; }
+.voice .mono[data-c="denim"] { background: #7B94A6; }
+.voice .mono[data-c="plum"]  { background: #977E92; }
+.voice .mono[data-c="ochre"] { background: #C0993F; }
+.voice .who { display: flex; flex-direction: column; line-height: 1.3; font-family: "Nunito", ui-rounded, sans-serif; font-size: .92rem; }
+.voice .who b { font-weight: 800; color: var(--ink); }
+.voice .who { color: var(--ink-soft); }
+
 /* ---------- pricing ---------- */
 
 .pricing .plans {
