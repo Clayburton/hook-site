@@ -30,7 +30,11 @@ function broadcastTheme(theme) {
 function setTheme(theme, persist) {
   doc.setAttribute("data-theme", theme);
   const btn = document.getElementById("themeToggle");
-  if (btn) btn.setAttribute("aria-label", theme === "light" ? "Switch to dark" : "Switch to light");
+  if (btn) {
+    btn.setAttribute("aria-label", theme === "light" ? "Switch to dark" : "Switch to light");
+    const lab = btn.querySelector(".nf-label");
+    if (lab) lab.textContent = theme === "light" ? "Turn the lights down" : "Back to paper";
+  }
   broadcastTheme(theme);
   paperTheme(theme);
 }
@@ -48,29 +52,14 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   toggleTheme();
 });
 
-/* ---------- the moon follows you + one-time nightfall on first scroll ---------- */
+/* ---------- one-time nightfall: the page dips to dark as you read ----------
+   No visible control up top — the toggle lives in the "Made for 4am, too"
+   band lower down (discovery). Nightfall fires once, slowly, then the choice
+   is the visitor's. Skipped for reduced-motion and anyone who already toggled.
+   Triggered by whichever signal arrives first (scroll, IO, or the embed's
+   viewport messages) — iframes throttle each differently. */
 
 (() => {
-  const headerBtn = document.getElementById("themeToggle");
-  if (!headerBtn) return;
-
-  /* a second toggle that escapes the hero's overflow clip; same behavior */
-  const float = headerBtn.cloneNode(true);
-  float.id = "themeToggleFloat";
-  float.classList.add("toggle-float");
-  float.addEventListener("click", () => { userTouchedTheme = true; toggleTheme(); });
-  document.body.appendChild(float);
-
-  if (!IS_EMBEDDED) doc.classList.add("standalone");
-
-  let active = false;
-  const setActive = v => { if (v !== active) { active = v; float.classList.toggle("on", v); } };
-
-  /* nightfall: the page dips to dark the first time you scroll — once,
-     slowly, then the sun is yours. Skipped for reduced-motion visitors
-     and for anyone who already touched the toggle. Triggered by whichever
-     signal arrives first (IO, scroll, or the embed's viewport messages) —
-     browsers throttle each of these differently inside iframes. */
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let nightDone = false;
   function nightfall() {
@@ -84,21 +73,12 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   }
 
   if (!IS_EMBEDDED) {
-    addEventListener("scroll", () => {
-      setActive(scrollY > 160);
-      if (scrollY > 300) nightfall();
-    }, { passive: true });
+    addEventListener("scroll", () => { if (scrollY > 300) nightfall(); }, { passive: true });
   } else {
-    /* the newer WP embed posts the frame's viewport position on scroll;
-       with an older embed the button simply stays in the header — fail open */
     addEventListener("message", e => {
       const d = e.data;
       if (!d || d.hookHost !== "vp" || typeof d.top !== "number") return;
-      const past = -d.top;                    /* px scrolled beyond the frame's top */
-      setActive(past > 160);
-      if (past > 300) nightfall();
-      const maxY = doc.scrollHeight - 120;
-      float.style.transform = "translateY(" + Math.min(Math.max(0, past + 16), maxY) + "px)";
+      if (-d.top > 300) nightfall();   /* px scrolled beyond the frame's top */
     });
   }
 

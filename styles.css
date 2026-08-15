@@ -794,6 +794,31 @@ html[data-theme="dark"] .screen > img:only-child { filter: brightness(.86) satur
   .floaty { animation: none; }
 }
 
+/* ---------- dark-mode discovery band (compact) ---------- */
+
+.nightband { padding: clamp(2.2rem, 4.5vw, 3.2rem) 0; }
+.nightband .wrap { max-width: 40em; text-align: center; }
+.nightband .micro { display: inline-flex; align-items: center; gap: .55rem; }
+.nightband .micro::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+.nf-h { font-size: clamp(1.6rem, 3.6vw, 2.2rem); margin: .35em 0 .35em; }
+.nf-p { color: var(--ink-soft); max-width: 32em; margin: 0 auto 1.4rem; font-size: 1.02rem; }
+
+.nf-toggle {
+  display: inline-flex; align-items: center; gap: .65rem;
+  font-family: "Nunito", ui-rounded, sans-serif; font-weight: 800; font-size: 1rem;
+  color: var(--ink); background: var(--panel); border: 1.5px solid var(--line);
+  border-radius: 999px; padding: .7rem 1.5rem; cursor: pointer;
+  box-shadow: 0 1px 0 var(--highlight) inset, 0 12px 26px -16px var(--shadow);
+  transition: transform .15s ease, border-color .2s ease, background-color .35s ease;
+}
+.nf-toggle:hover { transform: translateY(-2px); border-color: var(--red); }
+.nf-toggle:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+.nf-ics { display: inline-grid; width: 20px; height: 20px; }
+.nf-ics svg { grid-area: 1 / 1; width: 20px; height: 20px; color: var(--ink); transition: opacity .3s ease, transform .35s ease; }
+.nf-ics .ic-sun { opacity: 0; transform: rotate(-40deg) scale(.7); }
+html[data-theme="dark"] .nf-ics .ic-sun { opacity: 1; transform: none; }
+html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(40deg) scale(.7); }
+
 /* ---------- keep-it cards ---------- */
 
 .keep .wrap { display: grid; gap: 3rem; }
