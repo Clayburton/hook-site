@@ -111,27 +111,54 @@ if (IS_EMBEDDED) {
   broadcastTheme(doc.getAttribute("data-theme"));
 }
 
-/* ---------- entrance animations ----------
-   Fail-open by construction: elements are visible by default; .pre is added
-   only to elements measurably below the viewport, and removing it is the
-   animation. ?nofx skips everything (also used for screenshot QA). */
+/* ---------- lux reveal: the hero boots in, the rest rise as they enter view ----------
+   Works standalone (IntersectionObserver) AND embedded (the WP wrapper posts the
+   frame's viewport position, since an auto-sized iframe never scrolls itself).
+   Fail-open by construction: base state is visible; JS adds .pre and removes it,
+   and every path has a timeout/guard that reveals everything if a signal is missed.
+   ?nofx and reduced-motion skip it. */
 
-if ("IntersectionObserver" in window && !NOFX && !IS_EMBEDDED
-    && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  const io = new IntersectionObserver(entries => {
-    for (const en of entries) {
-      if (en.isIntersecting) {
-        const el = en.target;
-        requestAnimationFrame(() => el.classList.remove("pre"));
-        io.unobserve(el);
+if (!NOFX && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const heroEls = [...document.querySelectorAll(".hero-copy, .hero-device")];
+  const restEls = [...document.querySelectorAll(
+    ".sec-head, .sec-body, .step, .card, .rhyme-demo, .bignum, .plan, .manifesto, .idea-fig, .drift, .nf-h, .nf-p, .nf-toggle, .calib-shots > *")];
+  [...heroEls, ...restEls].forEach(el => el.classList.add("rev", "pre"));
+
+  const reveal = el => el.classList.remove("pre");
+
+  /* hero: a quick, gentle staggered boot on load */
+  heroEls.forEach((el, i) => setTimeout(() => reveal(el), 60 + i * 110));
+
+  const pending = new Set(restEls);
+  if (!IS_EMBEDDED) {
+    /* standalone: reveal on real scroll (rAF-throttled) — reliable everywhere */
+    const revealInView = () => {
+      for (const el of [...pending]) {
+        if (el.getBoundingClientRect().top < innerHeight * 0.92) { reveal(el); pending.delete(el); }
       }
-    }
-  }, { rootMargin: "0px 0px -8% 0px" });
-  document.querySelectorAll(".sec-head, .sec-body, .step, .card, .rhyme-demo, .bignum, .plan, .manifesto").forEach(el => {
-    const below = el.getBoundingClientRect().top > innerHeight * 0.92;
-    el.classList.add("rev");
-    if (below) { el.classList.add("pre"); io.observe(el); }
-  });
+    };
+    let ticking = false;
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; revealInView(); }); } };
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", onScroll, { passive: true });
+    revealInView();                          // above-fold, now
+  } else {
+    /* embedded: an auto-sized iframe never scrolls itself, so the WP wrapper
+       posts the frame's viewport position; reveal against that. */
+    let gotMsg = false;
+    const check = (top, vh) => {
+      for (const el of [...pending]) {
+        if (top + el.getBoundingClientRect().top < vh * 0.9) { reveal(el); pending.delete(el); }
+      }
+    };
+    addEventListener("message", e => {
+      const d = e.data;
+      if (!d || d.hookHost !== "vp" || typeof d.top !== "number") return;
+      gotMsg = true; check(d.top, d.vh || 800);
+    });
+    /* fail-open: an older embed posts no viewport messages — reveal everything */
+    setTimeout(() => { if (!gotMsg) pending.forEach(reveal); }, 700);
+  }
 }
 
 /* ---------- three.js living paper (hero only; degrades to plain CSS) ---------- */

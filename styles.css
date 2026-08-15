@@ -337,7 +337,19 @@ html.theme-cinema *::before, html.theme-cinema *::after {
 html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 
 .hero-device { width: min(74vw, 330px); }
-@media (min-width: 860px) { .hero-device { margin-right: .6rem; } }
+/* desktop: size the phone to sit fully inside the first screen, like tape.it.
+   A full iPhone screenshot is very tall, so cap by height (dvh where supported)
+   and let width follow — never crops the phone, just fits it. */
+@media (min-width: 860px) {
+  .hero-device {
+    width: auto;
+    height: min(72vh, 620px);
+    max-width: 320px;
+    margin-right: .6rem;
+  }
+  .hero-device .screen { height: 100%; }
+  .hero-device .screen img { height: 100%; width: auto; }
+}
 
 /* tighter vertical rhythm on phones so real UI enters the first viewport */
 @media (max-width: 859px) {

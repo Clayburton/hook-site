@@ -12,10 +12,11 @@
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/hook-logo-384.png">
 <link rel="apple-touch-icon" href="assets/hook-logo-384.png">
+<link rel="preload" as="image" href="assets/06-song-detail.webp?v=1" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=19">
+<link rel="stylesheet" href="styles.css?v=20">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -59,8 +60,8 @@
       </div>
       <figure class="device hero-device floaty">
         <div class="screen shot-stack">
-          <img class="s-light" src="assets/06-song-detail.webp?v=1" alt="A song in Hook: tempo, sections, and lyrics with rhyming words colored by sound" width="664" height="1440" fetchpriority="high">
-          <img class="s-dark" src="assets/D2-lyrics-rhyme-dark.webp?v=1" alt="Hook in dark mode: lyrics in a warm serif with rhyming words colored by sound" width="664" height="1440" loading="lazy">
+          <img class="s-light" src="assets/06-song-detail.webp?v=1" alt="A song in Hook: tempo, sections, and lyrics with rhyming words colored by sound" width="664" height="1440" fetchpriority="high" decoding="async">
+          <img class="s-dark" src="assets/D2-lyrics-rhyme-dark.webp?v=1" alt="Hook in dark mode: lyrics in a warm serif with rhyming words colored by sound" width="664" height="1440" decoding="async" loading="lazy">
         </div>
       </figure>
     </div>
@@ -109,20 +110,20 @@
           <span class="num" aria-hidden="true">1</span>
           <h3>Set the feel</h3>
           <p>Tempo, time signature, bars — and a &ldquo;hear this tempo&rdquo; button so you can trust it before you commit.</p>
-          <figure class="device"><div class="screen"><img src="assets/02-new-song-setup.webp?v=1" alt="New song setup: tempo slider, tap tempo, and time signature" width="664" height="1440" loading="lazy" style="--focus: 96%"></div></figure>
+          <figure class="device"><div class="screen"><img src="assets/02-new-song-setup.webp?v=1" alt="New song setup: tempo slider, tap tempo, and time signature" width="664" height="1440" decoding="async" loading="lazy" style="--focus: 96%"></div></figure>
         </li>
         <li class="step">
           <span class="num" aria-hidden="true">2</span>
           <h3>Get counted in</h3>
           <p>Four beats, an accent on one, and you&rsquo;re rolling. The moment you finish, it loops.</p>
           <span class="countin" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          <figure class="device"><div class="screen"><img src="assets/04-recording-live.webp?v=1" alt="Recording live: count-in and beat display mid-take" width="664" height="1440" loading="lazy" style="--focus: 22%"></div></figure>
+          <figure class="device"><div class="screen"><img src="assets/04-recording-live.webp?v=1" alt="Recording live: count-in and beat display mid-take" width="664" height="1440" decoding="async" loading="lazy" style="--focus: 22%"></div></figure>
         </li>
         <li class="step">
           <span class="num" aria-hidden="true">3</span>
           <h3>Stack your layers</h3>
           <p>Layer after layer on headphones, each with its own waveform, volume, mute, and name. Group them. Keep going.</p>
-          <figure class="device"><div class="screen"><img src="assets/05-record-with-layer.webp?v=1" alt="A recorded layer with its waveform and per-layer volume" width="664" height="1440" loading="lazy" style="--focus: 45%"></div></figure>
+          <figure class="device"><div class="screen"><img src="assets/05-record-with-layer.webp?v=1" alt="A recorded layer with its waveform and per-layer volume" width="664" height="1440" decoding="async" loading="lazy" style="--focus: 45%"></div></figure>
         </li>
       </ol>
     </div>
@@ -158,8 +159,8 @@ Secrets that the sycamores keep</textarea>
       </div>
       <figure class="device floaty">
         <div class="screen shot-stack">
-          <img class="s-light" src="assets/07-lyrics-rhyme-highlighting.webp?v=1" alt="The lyric editor with rhyming words sharing colors" width="664" height="1440" loading="lazy">
-          <img class="s-dark" src="assets/D2-lyrics-rhyme-dark.webp?v=1" alt="The lyric editor in dark mode, rhyme colors on near-black" width="664" height="1440" loading="lazy">
+          <img class="s-light" src="assets/07-lyrics-rhyme-highlighting.webp?v=1" alt="The lyric editor with rhyming words sharing colors" width="664" height="1440" decoding="async" loading="lazy">
+          <img class="s-dark" src="assets/D2-lyrics-rhyme-dark.webp?v=1" alt="The lyric editor in dark mode, rhyme colors on near-black" width="664" height="1440" decoding="async" loading="lazy">
         </div>
         <figcaption>Rhymes matched by sound, on the page where the song lives.</figcaption>
       </figure>
@@ -206,20 +207,20 @@ Secrets that the sycamores keep</textarea>
         <div class="calib-shots">
           <figure class="device">
             <div class="screen shot-stack">
-              <img class="s-light" src="assets/10-calibration-intro.webp?v=1" alt="Calibration: hold the phone near your headphones" width="664" height="1440" loading="lazy">
-              <img class="s-dark" src="assets/D4-calibration-intro-dark.webp?v=1" alt="" width="664" height="1440" loading="lazy">
+              <img class="s-light" src="assets/10-calibration-intro.webp?v=1" alt="Calibration: hold the phone near your headphones" width="664" height="1440" decoding="async" loading="lazy">
+              <img class="s-dark" src="assets/D4-calibration-intro-dark.webp?v=1" alt="" width="664" height="1440" decoding="async" loading="lazy">
             </div>
             <figcaption>It listens, once.</figcaption>
           </figure>
           <figure class="device">
             <div class="screen shot-stack">
-              <img class="s-light" src="assets/09-settings-measured-headphones.webp?v=1" alt="Your headphones, measured and remembered" width="664" height="1440" loading="lazy">
-              <img class="s-dark" src="assets/D3-settings-measured-headphones-dark.webp?v=1" alt="" width="664" height="1440" loading="lazy">
+              <img class="s-light" src="assets/09-settings-measured-headphones.webp?v=1" alt="Your headphones, measured and remembered" width="664" height="1440" decoding="async" loading="lazy">
+              <img class="s-dark" src="assets/D3-settings-measured-headphones-dark.webp?v=1" alt="" width="664" height="1440" decoding="async" loading="lazy">
             </div>
             <figcaption>It remembers your gear.</figcaption>
           </figure>
           <figure class="device">
-            <div class="screen"><img src="assets/12-calibration-honest-failure.webp?v=1" alt="When a reading isn't clean, Hook says so and tries again" width="664" height="1440" loading="lazy"></div>
+            <div class="screen"><img src="assets/12-calibration-honest-failure.webp?v=1" alt="When a reading isn't clean, Hook says so and tries again" width="664" height="1440" decoding="async" loading="lazy"></div>
             <figcaption>It never guesses.</figcaption>
           </figure>
         </div>
@@ -295,8 +296,8 @@ Secrets that the sycamores keep</textarea>
       </div>
       <figure class="device floaty">
         <div class="screen shot-stack">
-          <img class="s-light" src="assets/01-home-library.webp?v=1" alt="The Hook library, full of songs" width="664" height="1440" loading="lazy">
-          <img class="s-dark" src="assets/D1-home-library-dark.webp?v=1" alt="" width="664" height="1440" loading="lazy">
+          <img class="s-light" src="assets/01-home-library.webp?v=1" alt="The Hook library, full of songs" width="664" height="1440" decoding="async" loading="lazy">
+          <img class="s-dark" src="assets/D1-home-library-dark.webp?v=1" alt="" width="664" height="1440" decoding="async" loading="lazy">
         </div>
         <figcaption>Your library — every idea, kept.</figcaption>
       </figure>
@@ -357,7 +358,7 @@ Secrets that the sycamores keep</textarea>
           </ul>
         </div>
       </div>
-      <p class="badge-row centered"><a class="js-appstore" href="#app-store-link" aria-label="Download on the App Store"><img src="assets/app-store-badge.svg?v=1" alt="Download on the App Store" width="120" height="40" loading="lazy"></a></p>
+      <p class="badge-row centered"><a class="js-appstore" href="#app-store-link" aria-label="Download on the App Store"><img src="assets/app-store-badge.svg?v=1" alt="Download on the App Store" width="120" height="40" decoding="async" loading="lazy"></a></p>
       <p class="cta-note">The download is free. Whatever you&rsquo;re chasing, we hope you catch it.</p>
     </div>
   </section>
@@ -376,6 +377,6 @@ Secrets that the sycamores keep</textarea>
   </div>
 </footer>
 
-<script type="module" src="app.js?v=19"></script>
+<script type="module" src="app.js?v=21"></script>
 </body>
 </html>
