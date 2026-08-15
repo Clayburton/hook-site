@@ -521,7 +521,7 @@ initPaper();
   btn.addEventListener("click", () => {
     if (root.classList.contains("snapped")) {
       root.classList.remove("snapped");
-      btn.lastChild.textContent = "Measure my headphones";
+      btn.lastChild.textContent = "Show me the fix";
       label2.innerHTML = "What Bluetooth recorded &mdash; late";
       status.innerHTML = "Bluetooth holds the sound back &mdash; your overdub records <b>late</b>, behind the beat.";
       return;
@@ -531,7 +531,7 @@ initPaper();
     setTimeout(() => {
       root.classList.remove("listening");
       root.classList.add("snapped");
-      btn.lastChild.textContent = "Put the drift back";
+      btn.lastChild.textContent = "Run it again";
       label2.innerHTML = "What Hook keeps &mdash; in time";
       status.innerHTML = "Measured. Now every layer lands <b>where you played it</b> — your headphones, your number, remembered.";
     }, reduced ? 60 : 750);
