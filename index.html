@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=14">
+<link rel="stylesheet" href="styles.css?v=16">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -165,33 +165,51 @@ Secrets that the sycamores keep</textarea>
       </figure>
     </div>
 
-    <!-- the chord calculator, live — tap a word, build a chord, hang it on -->
+    <!-- the chord picker, live — the real phone flow: tap a word, sheet slides up -->
     <div class="wrap chordwrap">
+      <div class="sec-head chord-head">
+        <p class="micro">And the chords &mdash; hang one on any word</p>
+      </div>
       <div class="chordlab" id="chordlab">
-        <p class="micro">And the chords &mdash; touch a word, hang one on it</p>
-        <p class="chordline" id="chordline" aria-label="Tap a word to place a chord over it"></p>
-        <div class="chordpicker" id="chordpicker">
-          <div class="cp-top">
-            <span class="cp-over">Chord over <b id="cpTarget">&mdash;</b></span>
-            <button type="button" class="cp-add" id="cpAdd">Add</button>
+        <figure class="device chord-device floaty">
+          <div class="screen cp-screen">
+            <!-- the song, behind the sheet -->
+            <div class="cp-song" id="cpSong">
+              <div class="cp-song-head">
+                <span class="cp-song-title">Coffee Gets Cold</span>
+                <span class="cp-song-meta">153 BPM &middot; 4/4</span>
+              </div>
+              <p class="cp-hint" id="cpHint">Tap a word to add a chord</p>
+              <p class="cp-lyric" id="chordline">Catch the melody before the coffee gets cold</p>
+            </div>
+            <div class="cp-scrim" id="cpScrim" hidden></div>
+            <!-- the picker sheet -->
+            <div class="cp-sheet" id="cpSheet" aria-hidden="true">
+              <span class="cp-grab"></span>
+              <div class="cp-bar">
+                <button type="button" class="cp-cancel" id="cpCancel">Cancel</button>
+                <span class="cp-over"><span class="cp-over-l">Chord over</span><b id="cpTarget">coffee</b></span>
+                <button type="button" class="cp-add" id="cpAdd">Add</button>
+              </div>
+              <div class="cp-display">
+                <span class="cp-chord" id="cpChord"></span>
+                <button type="button" class="cp-clear" id="cpClear">Clear</button>
+              </div>
+              <p class="cp-label" id="cpRecentLabel" hidden>Recent</p>
+              <div class="cp-recent" id="cpRecent"></div>
+              <div class="cp-groups" id="cpGroups"></div>
+              <div class="cp-foot">
+                <button type="button" class="cp-key cp-wide" data-act="space"><span class="k">space</span></button>
+                <button type="button" class="cp-key" data-act="delete"><span class="k">&#9003; delete</span></button>
+              </div>
+              <div class="cp-mode" role="tablist" aria-label="Chord notation">
+                <button type="button" class="cp-mode-btn is-on" data-mode="letter" role="tab" aria-selected="true">Letter</button>
+                <button type="button" class="cp-mode-btn" data-mode="roman" role="tab" aria-selected="false">Roman</button>
+              </div>
+            </div>
           </div>
-          <div class="cp-display">
-            <span class="cp-chord" id="cpChord"></span>
-            <button type="button" class="cp-clear" id="cpClear">Clear</button>
-          </div>
-          <p class="cp-label" id="cpRecentLabel" hidden>Recent</p>
-          <div class="cp-recent" id="cpRecent"></div>
-          <div class="cp-groups" id="cpGroups"></div>
-          <div class="cp-foot">
-            <button type="button" class="cp-key cp-wide" data-act="space"><span class="k">space</span></button>
-            <button type="button" class="cp-key" data-act="delete"><span class="k">&#9003; delete</span></button>
-          </div>
-          <div class="cp-mode" role="tablist" aria-label="Chord notation">
-            <button type="button" class="cp-mode-btn is-on" data-mode="letter" role="tab" aria-selected="true">Letter</button>
-            <button type="button" class="cp-mode-btn" data-mode="roman" role="tab" aria-selected="false">Roman</button>
-          </div>
-        </div>
-        <p class="demo-note">The real picker &mdash; Letter <em>or</em> Roman numerals, over any word. This one&rsquo;s live.</p>
+        </figure>
+        <p class="demo-note">The real picker &mdash; Letter <em>or</em> Roman numerals. Tap a word above and try it.</p>
       </div>
     </div>
   </section>
@@ -391,6 +409,6 @@ Secrets that the sycamores keep</textarea>
   </div>
 </footer>
 
-<script type="module" src="app.js?v=15"></script>
+<script type="module" src="app.js?v=16"></script>
 </body>
 </html>

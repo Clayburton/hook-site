@@ -550,7 +550,7 @@ initPaper();
 
     const LINE = ["Catch", "the", "melody", "before", "the", "coffee", "gets", "cold."];
     const chords = { 0: "C", 5: "Am" };   // pre-hung, so it reads as a chart at a glance
-    let target = 2;                        // "melody"
+    let target = null;                     // no word selected until you tap one
 
     const GROUPS = {
       letter: [
@@ -586,10 +586,27 @@ initPaper();
     const $ = id => document.getElementById(id);
     const lineEl = $("chordline"), chordEl = $("cpChord"), targetEl = $("cpTarget"),
           groupsEl = $("cpGroups"), recentEl = $("cpRecent"), recentLabel = $("cpRecentLabel"),
-          addBtn = $("cpAdd");
+          addBtn = $("cpAdd"), screenEl = document.querySelector("#chordlab .cp-screen"),
+          scrimEl = $("cpScrim"), sheetEl = $("cpSheet"), hintEl = $("cpHint");
 
     const renderTok = tk => (tk.kind === "root" && lower) ? tk.t.toLowerCase() : tk.t;
     const display = () => tokens.map(renderTok).join("");
+
+    function openSheet(i) {
+      target = i;
+      tokens = chords[i] ? [{ t: chords[i], kind: "root" }] : [];
+      if (hintEl) hintEl.style.visibility = "hidden";
+      screenEl.classList.add("open");
+      scrimEl.hidden = false;
+      sheetEl.setAttribute("aria-hidden", "false");
+      drawLine(); drawChord(); drawRecents();
+    }
+    function closeSheet() {
+      screenEl.classList.remove("open");
+      scrimEl.hidden = true;
+      sheetEl.setAttribute("aria-hidden", "true");
+      target = null; drawLine(); drawChord();
+    }
 
     function drawLine() {
       lineEl.replaceChildren();
@@ -601,16 +618,10 @@ initPaper();
           const c = document.createElement("span");
           c.className = "lw-chord";
           c.textContent = chords[i];
-          c.title = "Remove this chord";
-          c.addEventListener("click", ev => { ev.stopPropagation(); delete chords[i]; drawLine(); });
           span.appendChild(c);
         }
         span.appendChild(document.createTextNode(w));
-        span.addEventListener("click", () => {
-          target = i;
-          tokens = chords[i] ? [{ t: chords[i], kind: "root" }] : [];
-          drawAll();
-        });
+        span.addEventListener("click", () => openSheet(i));
         lineEl.appendChild(span);
         if (i < LINE.length - 1) lineEl.appendChild(document.createTextNode(" "));
       });
@@ -618,7 +629,7 @@ initPaper();
 
     function drawChord() {
       chordEl.textContent = display();
-      targetEl.textContent = LINE[target] ? LINE[target].replace(/\W+$/, "") : "—";
+      targetEl.textContent = (target != null && LINE[target]) ? LINE[target].replace(/\W+$/, "") : "—";
       addBtn.disabled = !display().trim() || target == null;
     }
 
@@ -682,6 +693,8 @@ initPaper();
       drawChord();
     }));
     $("cpClear").addEventListener("click", () => { tokens = []; drawChord(); });
+    $("cpCancel").addEventListener("click", closeSheet);
+    scrimEl.addEventListener("click", closeSheet);
     addBtn.addEventListener("click", () => {
       const c = display().trim();
       if (!c || target == null) return;
@@ -691,7 +704,7 @@ initPaper();
       recents.unshift(c);
       if (recents.length > 4) recents.length = 4;
       tokens = [];
-      drawAll();
+      closeSheet();
     });
     lab.querySelectorAll(".cp-mode-btn").forEach(b => b.addEventListener("click", () => {
       mode = b.dataset.mode;
