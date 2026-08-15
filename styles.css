@@ -141,7 +141,7 @@ html[data-theme="dark"] .mark-pair .m-light { opacity: 0; }
 .top {
   position: relative;
   z-index: 5;
-  padding: clamp(4.4rem, 7vw, 5.4rem) 0 0;   /* clears the WP site header that overlays page top */
+  padding: clamp(6rem, 9vw, 7.6rem) 0 0;   /* clears + breathes below the WP site header that overlays page top */
 }
 .top .wrap { display: flex; align-items: center; gap: .7rem; }
 
@@ -353,7 +353,7 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 
 /* tighter vertical rhythm on phones so real UI enters the first viewport */
 @media (max-width: 859px) {
-  .top { padding-top: 3.2rem; }
+  .top { padding-top: 5rem; }
   .hero { padding-top: 1rem; }
   h1 { font-size: clamp(2.6rem, 11vw, 3.3rem); }
   .lede { font-size: 1.08rem; }
@@ -467,7 +467,7 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 .step p { font-size: .99rem; color: var(--ink-soft); }
 /* zoomed feature crops, tape.it-style: the relevant panel, big, no status bar */
 .step .device { width: 100%; margin-top: 1.5rem; }
-.step .device .screen { border-radius: 20px; aspect-ratio: 332 / 400; }
+.step .device .screen { border-radius: 20px; aspect-ratio: 300 / 415; }
 .step .device .screen img {
   width: 100%; height: 100%;
   object-fit: cover;
