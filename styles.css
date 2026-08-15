@@ -280,7 +280,9 @@ html.theme-cinema *::before, html.theme-cinema *::after {
 .badge-row a { display: inline-block; border-radius: 8px; }
 .badge-row a:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 .badge-row img { height: 44px; width: auto; }
-.badge-row.centered { text-align: center; }
+.badge-row.centered { text-align: center; margin-top: 2rem; padding: .4rem 0; }
+.badge-row.centered img { height: 60px; }
+.badge-row.centered a { border-radius: 11px; }
 /* Apple's badge ships with its own black plate + white border — never alter it */
 
 /* ---------- hear-it demo (appears only when real exports exist) ---------- */
@@ -383,6 +385,21 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
   font-size: clamp(1.12rem, 1.9vw, 1.26rem);
 }
 .problem strong { font-weight: 600; }
+
+/* ---------- problem: the idea slipping away ---------- */
+
+@media (min-width: 860px) {
+  .problem .wrap { display: grid; grid-template-columns: 1.02fr .98fr; gap: 3rem; align-items: center; }
+}
+.idea-fig { margin: 0; }
+@media (max-width: 859px) { .idea-fig { margin-top: 2.4rem; } }
+.ideawave { width: 100%; height: auto; max-width: 460px; display: block; margin-inline: auto; overflow: visible; }
+.ideawave .iw-red { fill: var(--red); }
+.ideawave .iw-ink { fill: var(--ink); transition: fill .35s ease; }
+.idea-fig figcaption {
+  margin-top: 1rem; text-align: center; font-size: .9rem;
+  font-style: italic; color: var(--ink-soft);
+}
 
 /* ---------- the loop / steps ---------- */
 

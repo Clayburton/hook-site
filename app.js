@@ -33,7 +33,7 @@ function setTheme(theme, persist) {
   if (btn) {
     btn.setAttribute("aria-label", theme === "light" ? "Switch to dark" : "Switch to light");
     const lab = btn.querySelector(".nf-label");
-    if (lab) lab.textContent = theme === "light" ? "Turn the lights down" : "Back to paper";
+    if (lab) lab.textContent = theme === "light" ? "Turn on dark mode" : "Turn off dark mode";
   }
   broadcastTheme(theme);
   paperTheme(theme);
@@ -516,6 +516,29 @@ initPaper();
       status.innerHTML = "Measured. Now every layer lands <b>where you played it</b> — your headphones, your number, remembered.";
     }, reduced ? 60 : 750);
   });
+})();
+
+/* ---------- the idea slipping away: a waveform that dissolves and drifts off ---------- */
+
+(() => {
+  const svg = document.getElementById("ideaWave");
+  if (!svg) return;
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const N = 30, cy0 = 150, W = 5;
+  let out = "";
+  for (let i = 0; i < N; i++) {
+    const t = i / (N - 1);
+    const x = 18 + Math.pow(t, 1.22) * 424;          // sparser toward the right
+    const h = 10 + Math.pow(1 - t, 1.5) * 122;        // tall on the left, tiny at the right
+    const op = Math.max(0.05, Math.pow(1 - t, 1.28)); // fading out
+    const cy = cy0 - Math.pow(t, 1.85) * 74;          // the loose ones float up and away
+    const cls = t < 0.14 ? "iw-red" : "iw-ink";       // the live spark, then ink
+    out += `<rect class="${cls}" x="${(x - W / 2).toFixed(1)}" y="${(cy - h / 2).toFixed(1)}"`
+        + ` width="${W}" height="${h.toFixed(1)}" rx="${W / 2}" opacity="${op.toFixed(3)}"/>`;
+  }
+  svg.insertAdjacentHTML("beforeend", out);
+  // guard the namespace: rects written via innerHTML on an SVG parse into the SVG ns fine
+  void SVGNS;
 })();
 
 /* ---------- live chord calculator: tap a word, build a chord, hang it on ----------
