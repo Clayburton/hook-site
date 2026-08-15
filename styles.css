@@ -11,7 +11,7 @@
   --panel-soft: #F1E7D6;    /* lighter card */
   --line: #D9C5A6;          /* hairline */
   --ink: #2A2724;
-  --ink-soft: rgba(42, 39, 36, .58);
+  --ink-soft: rgba(42, 39, 36, .72);
   --ink-faint: rgba(42, 39, 36, .30);
   --red: #E8213D;           /* pink-red, never orange */
   --red-deep: #C1152E;
@@ -105,7 +105,9 @@ h1, h2, h3 {
   line-height: 1.04;
   letter-spacing: -.015em;
   color: var(--ink);
+  text-wrap: balance;   /* no orphaned words in headings */
 }
+.micro, .drift-label, .nf-p { text-wrap: balance; }
 
 h1 { font-size: clamp(2.9rem, 8.2vw, 5.4rem); }
 h2 { font-size: clamp(2rem, 5vw, 3.1rem); margin: .55em 0 .5em; }
@@ -574,7 +576,7 @@ html[data-theme="dark"] .cp-screen {
 }
 .cp-lyric {
   margin-top: 1rem;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Iowan Old Style", "Source Serif 4", Georgia, serif;
   font-size: 1.16rem; line-height: 2.3; color: var(--a-ink);
 }
 .lw { position: relative; cursor: pointer; padding: 0 .08em; border-radius: 5px; }
@@ -630,7 +632,7 @@ html[data-theme="dark"] .cp-screen {
   margin-bottom: .4rem; flex: 0 0 auto; min-height: 2.1rem;
 }
 .cp-chord {
-  font-family: "Source Serif 4", Georgia, serif; font-weight: 600;
+  font-family: "Iowan Old Style", "Source Serif 4", Georgia, serif; font-weight: 600;
   font-size: 1.85rem; color: var(--a-red); line-height: 1;
 }
 .cp-chord:empty::before { content: "—"; color: var(--a-mut); }
@@ -646,7 +648,7 @@ html[data-theme="dark"] .cp-screen {
 .cp-recent:empty { display: none; margin: 0; }
 .cp-label[hidden] + .cp-recent:empty { margin: 0; }
 .cp-chip {
-  font-family: "Source Serif 4", Georgia, serif; font-weight: 600; font-size: .92rem;
+  font-family: "Iowan Old Style", "Source Serif 4", Georgia, serif; font-weight: 600; font-size: .92rem;
   color: var(--a-ink); background: var(--a-key); border: 1px solid var(--a-line);
   border-radius: 8px; padding: .25rem .6rem; cursor: pointer;
 }
@@ -860,7 +862,7 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(40deg) 
   gap: 1rem;
   margin-top: 2.2rem;
 }
-@media (min-width: 560px) { .cards { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 560px) { .cards { grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; } }
 
 .card {
   background: var(--panel);
@@ -877,12 +879,7 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(40deg) 
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--red);
 }
-/* each card takes a layer color, like the app's colored layers */
-.cards .card:nth-child(1) h3::before { background: var(--rhyme-teal); }
-.cards .card:nth-child(2) h3::before { background: var(--rhyme-ochre); }
-.cards .card:nth-child(3) h3::before { background: var(--rhyme-denim); }
-.cards .card:nth-child(4) h3::before { background: var(--rhyme-green); }
-.cards .card:nth-child(5) h3::before { background: var(--rhyme-violet); }
+/* dots stay the single red accent — one accent, held with discipline */
 .card p { margin-top: .45rem; font-size: .96rem; color: var(--ink-soft); }
 
 .keep .device { width: min(78vw, 330px); }
@@ -959,14 +956,13 @@ html[data-theme="dark"] .sheet-stack img { box-shadow: 0 1px 2px rgba(0,0,0,.5),
 /* ---------- voices (testimonials) — editorial pull-quote + restrained grid ---------- */
 
 .voices { border-top: 1.5px solid var(--line); }
-.voices .wrap { max-width: 1080px; }
 .voices .micro { display: inline-flex; align-items: center; gap: .55rem; color: var(--red); }
 .voices .micro::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
 
 .voices-lead {
   margin: 1.1rem 0 clamp(2.6rem, 5vw, 3.8rem);
   max-width: 20em;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Iowan Old Style", "Source Serif 4", Georgia, serif;
   font-weight: 600;
   font-size: clamp(1.75rem, 4vw, 2.95rem);
   line-height: 1.26;
@@ -992,7 +988,7 @@ html[data-theme="dark"] .sheet-stack img { box-shadow: 0 1px 2px rgba(0,0,0,.5),
 .voice { margin: 0; display: flex; flex-direction: column; height: 100%; }
 .voice blockquote {
   margin: 0 0 1.3rem;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Iowan Old Style", "Source Serif 4", Georgia, serif;
   font-size: 1.12rem;
   line-height: 1.55;
   color: var(--ink);
