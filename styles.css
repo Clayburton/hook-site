@@ -828,7 +828,14 @@ html[data-theme="dark"] .screen > img:only-child { filter: brightness(.86) satur
 
 /* ---------- dark-mode discovery band (compact) ---------- */
 
-.nightband { padding: clamp(2.2rem, 4.5vw, 3.2rem) 0; }
+.nightband {
+  padding: clamp(3.2rem, 6vw, 4.8rem) 0;
+  background: var(--panel);                 /* raised paper band — a designed moment, not centered text */
+  border-block: 1.5px solid var(--line);    /* hairline top + bottom seats it */
+  box-shadow: inset 0 1px 0 var(--highlight), inset 0 -1px 0 var(--highlight);
+}
+/* the toggle shares --panel; on the panel band it needs the ground color to read as a raised chip */
+.nightband .nf-toggle { background: var(--bg); }
 .nightband .wrap { max-width: 40em; text-align: center; }
 .nightband .micro { display: inline-flex; align-items: center; gap: .55rem; }
 .nightband .micro::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }

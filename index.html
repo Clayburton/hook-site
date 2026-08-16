@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=34">
+<link rel="stylesheet" href="styles.css?v=35">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -331,16 +331,17 @@ Secrets that the sycamores keep</textarea>
               <path d="M0,1 L9,5 L0,9 z" class="rt-arrowfill"/>
             </marker>
           </defs>
-          <!-- the round trip: your DAW → work on the go in Hook → back in the studio -->
-          <path class="rt-arc" marker-end="url(#rtArrow)" d="M90,296 C90,150 140,110 196,126"/>
-          <path class="rt-arc" marker-end="url(#rtArrow)" d="M364,126 C420,110 470,150 470,296"/>
-          <path class="rt-studio" d="M64,293 H88 M64,300 H84 M64,307 H88"/>
-          <path class="rt-studio" d="M442,293 H466 M446,300 H466 M442,307 H466"/>
-          <circle class="rt-node" cx="90" cy="300" r="5"/>
-          <circle class="rt-node" cx="470" cy="300" r="5"/>
-          <text class="rt-label" x="80" y="330" text-anchor="middle">YOUR DAW</text>
+          <!-- the round trip: your DAW → work on the go in Hook → back in the studio.
+               Endpoints bottom-aligned with the phone so all three labels share one baseline. -->
+          <path class="rt-arc" marker-end="url(#rtArrow)" d="M90,380 C90,240 150,130 196,126"/>
+          <path class="rt-arc" marker-end="url(#rtArrow)" d="M364,126 C410,130 470,240 470,380"/>
+          <path class="rt-studio" d="M64,377 H88 M64,384 H84 M64,391 H88"/>
+          <path class="rt-studio" d="M442,377 H466 M446,384 H466 M442,391 H466"/>
+          <circle class="rt-node" cx="90" cy="384" r="5"/>
+          <circle class="rt-node" cx="470" cy="384" r="5"/>
+          <text class="rt-label" x="80" y="414" text-anchor="middle">YOUR DAW</text>
           <text class="rt-label" x="280" y="414" text-anchor="middle">ON THE GO</text>
-          <text class="rt-label" x="474" y="330" text-anchor="middle">THE STUDIO</text>
+          <text class="rt-label" x="474" y="414" text-anchor="middle">THE STUDIO</text>
           <!-- the phone (Hook) -->
           <rect class="rt-phone" x="200" y="64" width="160" height="328" rx="28"/>
           <rect class="rt-screen" x="213" y="86" width="134" height="284" rx="16"/>
