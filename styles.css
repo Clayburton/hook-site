@@ -13,9 +13,10 @@
   --ink: #2A2724;
   --ink-soft: rgba(42, 39, 36, .72);
   --ink-faint: rgba(42, 39, 36, .30);
-  --red: #E8213D;           /* pink-red, never orange */
-  --red-deep: #C1152E;
+  --red: #F04E3C;           /* coral accent — 2026-08-16 brand refresh (warm, red-leaning, not orange) */
+  --red-deep: #D83E2C;
   --on-red: #FDF8EF;
+  --record-dot: #EE1C1D;    /* exact logo-dot red (from app Theme.swift) */
   --shadow: rgba(58, 44, 24, .16);
   --highlight: rgba(255, 253, 247, .65);
   /* rhyme families (from the app's lyric editor) */
@@ -28,15 +29,15 @@
 }
 
 html[data-theme="dark"] {
-  --bg: #15120F;
-  --panel: #241F18;
-  --panel-soft: #1E1913;
-  --line: #3B3229;
+  --bg: #241B14;            /* warm chocolate, never charcoal (brand) */
+  --panel: #33251B;
+  --panel-soft: #2B2018;
+  --line: #483525;
   --ink: #F3ECDE;
   --ink-soft: rgba(243, 236, 222, .60);
   --ink-faint: rgba(243, 236, 222, .32);
-  --red: #F5324C;
-  --red-deep: #D21F38;
+  --red: #FA5E48;          /* coral (dark) */
+  --red-deep: #E85038;
   --on-red: #FDF8EF;
   --shadow: rgba(0, 0, 0, .5);
   --highlight: rgba(255, 248, 235, .06);

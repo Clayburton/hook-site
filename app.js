@@ -19,7 +19,7 @@ document.querySelectorAll(".js-appstore").forEach(a => { a.href = APP_STORE_URL;
 
 /* ---------- theme ---------- */
 
-const THEME_BG = { light: "#F6EFE4", dark: "#15120F" };
+const THEME_BG = { light: "#F6EFE4", dark: "#241B14" };
 const themeMeta = document.querySelector('meta[name="theme-color"]');
 
 function broadcastTheme(theme) {
@@ -214,9 +214,9 @@ async function initPaper() {
         vec2 px = gl_FragCoord.xy;
 
         vec3 paperL = vec3(0.965, 0.937, 0.894);  /* #F6EFE4 */
-        vec3 paperD = vec3(0.082, 0.071, 0.059);  /* #15120F */
-        vec3 redL   = vec3(0.910, 0.129, 0.239);  /* #E8213D */
-        vec3 redD   = vec3(0.961, 0.196, 0.298);  /* #F5324C */
+        vec3 paperD = vec3(0.141, 0.106, 0.078);  /* #241B14 warm chocolate */
+        vec3 redL   = vec3(0.941, 0.306, 0.235);  /* #F04E3C coral */
+        vec3 redD   = vec3(0.980, 0.369, 0.282);  /* #FA5E48 coral dark */
         vec3 paper  = mix(paperL, paperD, uInk);
         vec3 red    = mix(redL, redD, uInk);
 
