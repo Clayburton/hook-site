@@ -957,7 +957,7 @@ html[data-theme="dark"] .sheet-stack img { box-shadow: 0 1px 2px rgba(0,0,0,.5),
 /* ---------- voices (testimonials) — editorial pull-quote + restrained grid ---------- */
 
 .voices { border-top: 1.5px solid var(--line); }
-.voices .micro { display: inline-flex; align-items: center; gap: .55rem; color: var(--red); }
+.voices .micro { display: inline-flex; align-items: center; gap: .55rem; color: var(--ink-soft); }
 .voices .micro::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
 
 .voices-lead {
