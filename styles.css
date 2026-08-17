@@ -1084,6 +1084,15 @@ html[data-theme="dark"] .sheet-stack img { box-shadow: 0 1px 2px rgba(0,0,0,.5),
 .rt-wave-new { fill: none; stroke: var(--red); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
 .rt-fig figcaption { margin-top: 1rem; text-align: center; font-size: .9rem; font-style: italic; color: var(--ink-soft); }
 
+/* interim: the calibration "honest-failure" shot has no dark twin, so in dark mode it
+   renders as a bright cream screen. Dim it with a warm scrim so it doesn't glare in the
+   otherwise-dark trio. Superseded the moment Clay's dark phone shot lands. */
+html[data-theme="dark"] .calib-shots .screen:not(.shot-stack) { position: relative; }
+html[data-theme="dark"] .calib-shots .screen:not(.shot-stack)::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: rgba(20, 14, 9, .5); pointer-events: none;
+}
+
 /* ---------- pricing ---------- */
 
 .pricing .plans {
