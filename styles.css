@@ -29,7 +29,7 @@
 }
 
 html[data-theme="dark"] {
-  --bg: #241B14;            /* warm chocolate, never charcoal (brand) */
+  --bg: #15100A;            /* deep warm brown — matched toward the app's darkest ground (2026-08-17) */
   --panel: #33251B;
   --panel-soft: #2B2018;
   --line: #483525;
@@ -80,7 +80,7 @@ body::before {
   opacity: .04;
   mix-blend-mode: multiply;
 }
-html[data-theme="dark"] body::before { opacity: .06; mix-blend-mode: screen; }
+html[data-theme="dark"] body::before { opacity: .04; mix-blend-mode: screen; }
 
 ::selection { background: var(--red); color: var(--on-red); }
 
