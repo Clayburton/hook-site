@@ -1190,3 +1190,48 @@ footer nav a:hover { color: var(--ink); text-decoration-color: var(--red); }
 .rev { transition: opacity .7s cubic-bezier(.2, .7, .2, 1), transform .7s cubic-bezier(.2, .7, .2, 1); }
 .rev.pre { opacity: 0; transform: translateY(16px); }
 @media (prefers-reduced-motion: reduce) { .rev, .rev.pre { transition: none; opacity: 1; transform: none; } }
+
+/* ===== Testimonials: compact auto-scrolling marquee (replaced the 3x2 grid + pull-quote) ===== */
+.vmarquee {
+  overflow: hidden;
+  margin-top: clamp(1.1rem, 2.4vw, 1.5rem);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.vtrack {
+  display: flex; gap: 1rem; width: max-content; margin: 0; padding: .5rem 0; list-style: none;
+  animation: vmarq 64s linear infinite;
+}
+.vmarquee:hover .vtrack { animation-play-state: paused; }
+@keyframes vmarq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.vcard {
+  flex: 0 0 min(80vw, 330px);
+  display: flex; flex-direction: column;
+  background: var(--panel-soft); border: 1px solid var(--line); border-radius: 16px;
+  padding: 1.1rem 1.2rem 1rem;
+  box-shadow: 0 1px 0 var(--highlight) inset, 0 14px 28px -22px var(--shadow);
+}
+.vq {
+  margin: 0;
+  font-family: "Iowan Old Style", "Source Serif 4", Georgia, serif;
+  font-size: 1rem; line-height: 1.5; color: var(--ink);
+}
+.vwho {
+  display: flex; align-items: center; gap: .55rem; margin: .85rem 0 0;
+  font-family: "Nunito", ui-rounded, sans-serif; font-size: .82rem; color: var(--ink-soft);
+}
+.vwho b { color: var(--ink); font-weight: 800; }
+.vwho .mono { width: 30px; height: 30px; font-size: .72rem; flex: 0 0 auto; }
+@media (prefers-reduced-motion: reduce) {
+  .vmarquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .vtrack { animation: none; }
+}
+
+/* ===== Calibration: tightened spacing (denser, still its own section) ===== */
+.calib .wrap { gap: 2.1rem; }
+@media (min-width: 900px) { .calib .wrap { grid-template-columns: 1fr .9fr; gap: 2.5rem; } }
+.bignum { padding: 1.9rem 1.8rem 1.6rem; }
+.calib-shots { margin-top: .9rem; }
+@media (min-width: 640px) { .calib-shots { gap: .7rem; } }
+.calib .drift { margin-top: .3rem; }
+.drift { padding: 1.5rem 1.6rem 1.6rem; }
