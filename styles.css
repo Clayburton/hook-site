@@ -1093,6 +1093,15 @@ html[data-theme="dark"] .calib-shots .screen:not(.shot-stack)::after {
   background: rgba(20, 14, 9, .5); pointer-events: none;
 }
 
+/* interim: the old dark screenshots (pre-refresh) sit on a cooler/darker charcoal than the
+   warm-chocolate page. A mild warm-lift eases the clash in dark mode until Clay's new-palette
+   phone shots replace them. Cosmetic only — it can't fix the old accent/layer colors inside. */
+html[data-theme="dark"] img[src*="D6-stack-vocals-dark"],
+html[data-theme="dark"] img[src*="D4-calibration-intro-dark"],
+html[data-theme="dark"] img[src*="D3-settings-measured-headphones-dark"] {
+  filter: brightness(1.1) saturate(1.06) sepia(.06) hue-rotate(-8deg);
+}
+
 /* ---------- pricing ---------- */
 
 .pricing .plans {
