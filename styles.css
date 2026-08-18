@@ -1237,3 +1237,21 @@ footer nav a:hover { color: var(--ink); text-decoration-color: var(--red); }
 @media (min-width: 640px) { .calib-shots { gap: .7rem; } }
 .calib .drift { margin-top: .3rem; }
 .drift { padding: 1.5rem 1.6rem 1.6rem; }
+
+/* ===== mid-page CTA moments (a download always within reach) ===== */
+.cta-mid { text-align: center; padding: clamp(1.2rem, 3.5vw, 2.4rem) 0; }
+.cta-mid-line { font-family: "Nunito", ui-rounded, sans-serif; font-weight: 800; font-size: 1.14rem; color: var(--ink); margin-bottom: .9rem; }
+.cta-mid .badge-row { margin: 0; }
+
+/* ===== mobile hero: one-line lede, phone rides up, App Store badge under the phone =====
+   All desktop-neutral: the mobile variants are display:none until the media query. */
+.lede-mob, .hero-badge-mob { display: none; }
+.mob-only { display: none; }
+@media (max-width: 859px) {
+  .lede-full { display: none; }
+  .lede-mob { display: block; }
+  .hero-copy .badge-row { display: none; }
+  .hero-badge-mob { display: block; margin-top: 1.5rem; }
+  .mob-only { display: block; }
+  .hero { padding-top: clamp(1rem, 3vw, 2rem); }
+}

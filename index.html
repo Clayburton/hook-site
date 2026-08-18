@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=41">
+<link rel="stylesheet" href="styles.css?v=42">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -41,9 +41,11 @@
       <div class="hero-copy">
         <p class="micro">A songwriter&rsquo;s tool, made by songwriters</p>
         <h1>Catch the<br>big one.</h1>
-        <p class="lede">Feel a tempo, put the idea down, and it&rsquo;s already looping.
+        <p class="lede lede-full">Feel a tempo, put the idea down, and it&rsquo;s already looping.
         Stack your layers. Write the words, fill in the chords and hit export.
         One sitting, one app and you&rsquo;re writing your next Hook.</p>
+        <!-- mobile shows a one-line lede so the phone rides up high; desktop keeps the full one -->
+        <p class="lede lede-mob">Feel a tempo, put the idea down &mdash; it&rsquo;s already looping.</p>
         <p class="badge-row">
           <!-- PLACEHOLDER: swap APP_STORE_URL in app.js when the listing is live -->
           <a class="js-appstore" href="#app-store-link" aria-label="Download on the App Store"><img src="assets/app-store-badge.svg?v=1" alt="Download on the App Store" width="120" height="40"></a>
@@ -65,6 +67,10 @@
           <img class="s-dark" src="assets/D2-lyrics-rhyme-dark.webp?v=2" alt="Hook in dark mode: lyrics in a warm serif with rhyming words colored by sound" width="664" height="1440" decoding="async" loading="eager">
         </div>
       </figure>
+      <!-- mobile only: App Store badge under the phone (desktop keeps the badge up in the copy) -->
+      <p class="badge-row centered hero-badge-mob">
+        <a class="js-appstore" href="#app-store-link" aria-label="Download on the App Store"><img src="assets/app-store-badge.svg?v=1" alt="Download on the App Store" width="120" height="40" decoding="async"></a>
+      </p>
     </div>
   </section>
 </div><!-- /heroZone -->
@@ -132,6 +138,34 @@
           </div></figure>
         </li>
       </ol>
+    </div>
+  </section>
+
+  <!-- ============ VOICES (testimonials) — compact auto-scrolling marquee ============
+       MOVED UP here (right after the core loop) so social proof shows early. PLACEHOLDER
+       quotes, per Clay — MUST be replaced with real tester words before any public launch,
+       especially now that they sit high on the page. -->
+  <section class="voices voices-marq">
+    <div class="wrap">
+      <p class="micro">From early writers</p>
+    </div>
+    <div class="vmarquee" role="region" aria-label="What early writers are saying">
+      <ul class="vtrack">
+        <li class="vcard"><p class="vq">I caught a whole chorus at a red light. It was still there when I got home.</p><p class="vwho"><span class="mono" data-c="terra" aria-hidden="true">EL</span><b>Elise L.</b> · writes in the car</p></li>
+        <li class="vcard"><p class="vq">The harmonies land exactly where I sang them &mdash; on my AirPods, first try.</p><p class="vwho"><span class="mono" data-c="clay" aria-hidden="true">MR</span><b>Maya R.</b> · topline writer</p></li>
+        <li class="vcard"><p class="vq">The only thing between a voice memo and a real session that doesn&rsquo;t kill the mood.</p><p class="vwho"><span class="mono" data-c="sage" aria-hidden="true">DS</span><b>Dev S.</b> · bedroom producer</p></li>
+        <li class="vcard"><p class="vq">I don&rsquo;t read music. Hook never once made me feel like I had to.</p><p class="vwho"><span class="mono" data-c="denim" aria-hidden="true">RL</span><b>Renée L.</b> · singer-songwriter</p></li>
+        <li class="vcard"><p class="vq">Four layers deep before I noticed I was &ldquo;producing.&rdquo; Then it handed me a chord sheet.</p><p class="vwho"><span class="mono" data-c="plum" aria-hidden="true">JK</span><b>Jordan K.</b> · session singer</p></li>
+        <li class="vcard"><p class="vq">I write at 4am, half-asleep. The first app that keeps up instead of waking me all the way up.</p><p class="vwho"><span class="mono" data-c="ochre" aria-hidden="true">AT</span><b>Amara T.</b> · writes on her phone</p></li>
+        <li class="vcard"><p class="vq">Took it on tour. Caught three ideas in green rooms that would&rsquo;ve been gone by soundcheck.</p><p class="vwho"><span class="mono" data-c="terra" aria-hidden="true">MO</span><b>Marcus O.</b> · touring guitarist</p></li>
+        <li class="vcard" aria-hidden="true"><p class="vq">I caught a whole chorus at a red light. It was still there when I got home.</p><p class="vwho"><span class="mono" data-c="terra" aria-hidden="true">EL</span><b>Elise L.</b> · writes in the car</p></li>
+        <li class="vcard" aria-hidden="true"><p class="vq">The harmonies land exactly where I sang them &mdash; on my AirPods, first try.</p><p class="vwho"><span class="mono" data-c="clay" aria-hidden="true">MR</span><b>Maya R.</b> · topline writer</p></li>
+        <li class="vcard" aria-hidden="true"><p class="vq">The only thing between a voice memo and a real session that doesn&rsquo;t kill the mood.</p><p class="vwho"><span class="mono" data-c="sage" aria-hidden="true">DS</span><b>Dev S.</b> · bedroom producer</p></li>
+        <li class="vcard" aria-hidden="true"><p class="vq">I don&rsquo;t read music. Hook never once made me feel like I had to.</p><p class="vwho"><span class="mono" data-c="denim" aria-hidden="true">RL</span><b>Renée L.</b> · singer-songwriter</p></li>
+        <li class="vcard" aria-hidden="true"><p class="vq">Four layers deep before I noticed I was &ldquo;producing.&rdquo; Then it handed me a chord sheet.</p><p class="vwho"><span class="mono" data-c="plum" aria-hidden="true">JK</span><b>Jordan K.</b> · session singer</p></li>
+        <li class="vcard" aria-hidden="true"><p class="vq">I write at 4am, half-asleep. The first app that keeps up instead of waking me all the way up.</p><p class="vwho"><span class="mono" data-c="ochre" aria-hidden="true">AT</span><b>Amara T.</b> · writes on her phone</p></li>
+        <li class="vcard" aria-hidden="true"><p class="vq">Took it on tour. Caught three ideas in green rooms that would&rsquo;ve been gone by soundcheck.</p><p class="vwho"><span class="mono" data-c="terra" aria-hidden="true">MO</span><b>Marcus O.</b> · touring guitarist</p></li>
+      </ul>
     </div>
   </section>
 
@@ -244,6 +278,12 @@ Secrets that the sycamores keep</textarea>
       </div>
     </div>
   </section>
+
+  <!-- mid-page CTA (mobile only): a download is always within reach on the long phone scroll -->
+  <div class="cta-mid mob-only">
+    <p class="cta-mid-line">Nothing to tune. Just write.</p>
+    <p class="badge-row centered"><a class="js-appstore" href="#app-store-link" aria-label="Download on the App Store"><img src="assets/app-store-badge.svg?v=1" alt="Download on the App Store" width="120" height="40" decoding="async"></a></p>
+  </div>
 
   <!-- ============ DARK MODE (discovery) ============ -->
   <section class="nightband">
@@ -384,6 +424,12 @@ Secrets that the sycamores keep</textarea>
     </div>
   </section>
 
+  <!-- mid-page CTA (both viewports): the "I'm convinced" moment right after the export -->
+  <div class="cta-mid">
+    <p class="cta-mid-line">Go catch the big one.</p>
+    <p class="badge-row centered"><a class="js-appstore" href="#app-store-link" aria-label="Download on the App Store"><img src="assets/app-store-badge.svg?v=1" alt="Download on the App Store" width="120" height="40" decoding="async"></a></p>
+  </div>
+
   <!-- ============ THE MAKERS ============ -->
   <section class="makers">
     <div class="wrap">
@@ -407,32 +453,7 @@ Secrets that the sycamores keep</textarea>
     </div>
   </section>
 
-  <!-- ============ VOICES (testimonials) — compact auto-scrolling marquee ============
-       PLACEHOLDER quotes, per Clay — replace with real tester words before launch.
-       One scrolling row of compact quote cards (pauses on hover; respects reduced-motion). -->
-  <section class="voices voices-marq">
-    <div class="wrap">
-      <p class="micro">From early writers</p>
-    </div>
-    <div class="vmarquee" role="region" aria-label="What early writers are saying">
-      <ul class="vtrack">
-        <li class="vcard"><p class="vq">I caught a whole chorus at a red light. It was still there when I got home.</p><p class="vwho"><span class="mono" data-c="terra" aria-hidden="true">EL</span><b>Elise L.</b> · writes in the car</p></li>
-        <li class="vcard"><p class="vq">The harmonies land exactly where I sang them &mdash; on my AirPods, first try.</p><p class="vwho"><span class="mono" data-c="clay" aria-hidden="true">MR</span><b>Maya R.</b> · topline writer</p></li>
-        <li class="vcard"><p class="vq">The only thing between a voice memo and a real session that doesn&rsquo;t kill the mood.</p><p class="vwho"><span class="mono" data-c="sage" aria-hidden="true">DS</span><b>Dev S.</b> · bedroom producer</p></li>
-        <li class="vcard"><p class="vq">I don&rsquo;t read music. Hook never once made me feel like I had to.</p><p class="vwho"><span class="mono" data-c="denim" aria-hidden="true">RL</span><b>Renée L.</b> · singer-songwriter</p></li>
-        <li class="vcard"><p class="vq">Four layers deep before I noticed I was &ldquo;producing.&rdquo; Then it handed me a chord sheet.</p><p class="vwho"><span class="mono" data-c="plum" aria-hidden="true">JK</span><b>Jordan K.</b> · session singer</p></li>
-        <li class="vcard"><p class="vq">I write at 4am, half-asleep. The first app that keeps up instead of waking me all the way up.</p><p class="vwho"><span class="mono" data-c="ochre" aria-hidden="true">AT</span><b>Amara T.</b> · writes on her phone</p></li>
-        <li class="vcard"><p class="vq">Took it on tour. Caught three ideas in green rooms that would&rsquo;ve been gone by soundcheck.</p><p class="vwho"><span class="mono" data-c="terra" aria-hidden="true">MO</span><b>Marcus O.</b> · touring guitarist</p></li>
-        <li class="vcard" aria-hidden="true"><p class="vq">I caught a whole chorus at a red light. It was still there when I got home.</p><p class="vwho"><span class="mono" data-c="terra" aria-hidden="true">EL</span><b>Elise L.</b> · writes in the car</p></li>
-        <li class="vcard" aria-hidden="true"><p class="vq">The harmonies land exactly where I sang them &mdash; on my AirPods, first try.</p><p class="vwho"><span class="mono" data-c="clay" aria-hidden="true">MR</span><b>Maya R.</b> · topline writer</p></li>
-        <li class="vcard" aria-hidden="true"><p class="vq">The only thing between a voice memo and a real session that doesn&rsquo;t kill the mood.</p><p class="vwho"><span class="mono" data-c="sage" aria-hidden="true">DS</span><b>Dev S.</b> · bedroom producer</p></li>
-        <li class="vcard" aria-hidden="true"><p class="vq">I don&rsquo;t read music. Hook never once made me feel like I had to.</p><p class="vwho"><span class="mono" data-c="denim" aria-hidden="true">RL</span><b>Renée L.</b> · singer-songwriter</p></li>
-        <li class="vcard" aria-hidden="true"><p class="vq">Four layers deep before I noticed I was &ldquo;producing.&rdquo; Then it handed me a chord sheet.</p><p class="vwho"><span class="mono" data-c="plum" aria-hidden="true">JK</span><b>Jordan K.</b> · session singer</p></li>
-        <li class="vcard" aria-hidden="true"><p class="vq">I write at 4am, half-asleep. The first app that keeps up instead of waking me all the way up.</p><p class="vwho"><span class="mono" data-c="ochre" aria-hidden="true">AT</span><b>Amara T.</b> · writes on her phone</p></li>
-        <li class="vcard" aria-hidden="true"><p class="vq">Took it on tour. Caught three ideas in green rooms that would&rsquo;ve been gone by soundcheck.</p><p class="vwho"><span class="mono" data-c="terra" aria-hidden="true">MO</span><b>Marcus O.</b> · touring guitarist</p></li>
-      </ul>
-    </div>
-  </section>
+  <!-- (testimonials marquee moved up — now right after Loop & Layers) -->
 
   <!-- ============ FAQ ============ -->
   <section class="faq">
