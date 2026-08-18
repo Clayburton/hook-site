@@ -319,7 +319,13 @@ async function initPaper() {
   });
 }
 
-initPaper();
+/* Boot the hero shader AFTER the load event + when the browser's idle, so three.js
+   (252KB) never lands on the critical path. The hero shows instantly via its CSS/canvas
+   fallback; the "living paper" quietly fades in a beat later. */
+addEventListener("load", () => {
+  if ("requestIdleCallback" in window) requestIdleCallback(() => initPaper(), { timeout: 1500 });
+  else setTimeout(() => initPaper(), 150);
+});
 
 /* ---------- live rhyme demo ----------
    A transparent textarea over a colored mirror. A small final-sound matcher —
