@@ -408,7 +408,9 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 }
 .idea-fig { margin: 0; }
 @media (max-width: 859px) { .idea-fig { margin-top: 2.4rem; } }
-.ideawave { width: 100%; height: auto; max-width: 460px; display: block; margin-inline: auto; overflow: visible; }
+/* aspect-ratio + clip: pins the box so iOS/older Safari can't mis-size a viewBox-only SVG
+   and paint the bars outside it (no-op in Chrome — desktop unchanged). */
+.ideawave { width: 100%; height: auto; aspect-ratio: 460 / 240; max-width: 460px; display: block; margin-inline: auto; overflow: hidden; }
 .ideawave .iw-red { fill: var(--red); }
 .ideawave .iw-ink { fill: var(--ink); transition: fill .35s ease; }
 .idea-fig figcaption {
