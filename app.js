@@ -327,6 +327,26 @@ addEventListener("load", () => {
   else setTimeout(() => initPaper(), 150);
 });
 
+/* Kill the scroll pop-in without losing the speed win: warm each lazy screenshot into
+   cache ~2.5 screens before it enters view, so by the time it's visible it's already
+   loaded (instant, no blank). Runs post-load, so it never touches the load event. Fail-open. */
+addEventListener("load", () => {
+  try {
+    if (!("IntersectionObserver" in window)) return;
+    const warm = new IntersectionObserver((entries, obs) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        e.target.querySelectorAll('img[loading="lazy"]').forEach(img => {
+          const url = img.getAttribute("src");
+          if (url) { const pre = new Image(); pre.decoding = "async"; pre.src = url; }
+        });
+        obs.unobserve(e.target);
+      }
+    }, { rootMargin: "2500px 0px" });
+    document.querySelectorAll(".device, .sheet-stack").forEach(el => warm.observe(el));
+  } catch (e) {}
+});
+
 /* ---------- live rhyme demo ----------
    A transparent textarea over a colored mirror. A small final-sound matcher —
    not the app's engine, just convincing: last vowel sound + what follows,
