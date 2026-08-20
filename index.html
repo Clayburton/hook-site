@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=45">
+<link rel="stylesheet" href="styles.css?v=46">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -354,15 +354,57 @@ Secrets that the sycamores keep</textarea>
         </div>
       </div>
       <figure class="rt-fig">
-        <div class="rt-media shot-stack">
-          <video class="rt-vid s-light" muted loop playsinline preload="none" poster="assets/rt-poster-light.webp?v=1"
-            aria-label="Four parts — terracotta, ochre, sage and plum — are recorded one at a time and stack up in Hook on your phone, then merge into a single striped ball that travels to the studio.">
-            <source src="assets/roundtrip-light.mp4?v=2" type="video/mp4">
-          </video>
-          <video class="rt-vid s-dark" muted loop playsinline preload="none" poster="assets/rt-poster-dark.webp?v=1" aria-hidden="true">
-            <source src="assets/roundtrip-dark.mp4?v=2" type="video/mp4">
-          </video>
-        </div>
+        <svg class="rt-anim" viewBox="0 0 560 440" role="img" aria-label="Four parts — terracotta, ochre, sage and plum — record one at a time and stack up in Hook on your phone, then merge into a single striped ball that travels to the studio.">
+          <defs>
+            <clipPath id="rtSendClip"><circle cx="0" cy="0" r="8.5"/></clipPath>
+          </defs>
+          <text class="rt-label" x="80" y="414" text-anchor="middle">ON THE GO</text>
+          <text class="rt-label" x="474" y="414" text-anchor="middle">THE STUDIO</text>
+          <path class="rt-studio" d="M64,377 H88 M64,384 H84 M64,391 H88"/>
+          <path class="rt-studio" d="M442,377 H466 M446,384 H466 M442,391 H466"/>
+          <circle class="rt-node" cx="90" cy="384" r="5"/>
+          <circle id="rtStudioDot" class="rt-node" cx="470" cy="384" r="5"/>
+          <circle id="rtRing" class="rt-ring" cx="470" cy="384" r="7" stroke-width="2" opacity="0"/>
+          <path class="rt-arc-guide" d="M90,380 C90,240 150,130 196,126"/>
+          <path class="rt-arc-guide" d="M364,126 C410,130 470,240 470,380"/>
+          <!-- incoming parts (behind the phone) -->
+          <circle id="rtBall0" r="6.5" fill="#B86A4A" opacity="0"/>
+          <circle id="rtBall1" r="6.5" fill="#D9A24C" opacity="0"/>
+          <circle id="rtBall2" r="6.5" fill="#7E9B67" opacity="0"/>
+          <circle id="rtBall3" r="6.5" fill="#A9668E" opacity="0"/>
+          <!-- the phone (Hook) -->
+          <g id="rtPhone">
+            <rect class="rt-phone" x="200" y="64" width="160" height="328" rx="28"/>
+            <rect class="rt-screen" x="213" y="86" width="134" height="284" rx="16"/>
+            <rect class="rt-title" x="228" y="100" width="80" height="9" rx="4"/>
+            <g id="rtLaneG0" opacity="1">
+              <rect x="224" y="128" width="112" height="44" rx="10" fill="#B86A4A" fill-opacity="0.14" stroke="#B86A4A" stroke-opacity="0.5" stroke-width="1"/>
+              <path id="rtWave0" d="M232,145 L240,161 L248,135 L256,157 L264,133 L272,155 L280,137 L288,165 L296,143 L304,163 L312,144 L320,159 L328,146" fill="none" stroke="#B86A4A" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="430" stroke-dashoffset="0"/>
+            </g>
+            <g id="rtLaneG1" opacity="1">
+              <rect x="224" y="182" width="112" height="44" rx="10" fill="#D9A24C" fill-opacity="0.14" stroke="#D9A24C" stroke-opacity="0.5" stroke-width="1"/>
+              <path id="rtWave1" d="M232,199 L240,209 L248,196 L256,206 L264,195 L272,207 L280,197 L288,210 L296,200 L304,209 L312,199 L320,208 L328,200" fill="none" stroke="#D9A24C" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="430" stroke-dashoffset="0"/>
+            </g>
+            <g id="rtLaneG2" opacity="1">
+              <rect x="224" y="236" width="112" height="44" rx="10" fill="#7E9B67" fill-opacity="0.14" stroke="#7E9B67" stroke-opacity="0.5" stroke-width="1"/>
+              <path id="rtWave2" d="M232,254 L240,244 L248,255 L256,243 L264,256 L272,245 L280,257 L288,246 L296,256 L304,247 L312,255 L320,244 L328,255" fill="none" stroke="#7E9B67" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="430" stroke-dashoffset="0"/>
+            </g>
+            <g id="rtLaneG3" opacity="1">
+              <rect x="224" y="290" width="112" height="44" rx="10" fill="#A9668E" fill-opacity="0.14" stroke="#A9668E" stroke-opacity="0.5" stroke-width="1"/>
+              <path id="rtWave3" d="M232,312 L240,302 L248,313 L256,301 L264,314 L272,303 L280,315 L288,304 L296,313 L304,305 L312,314 L320,302 L328,313" fill="none" stroke="#A9668E" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="430" stroke-dashoffset="0"/>
+            </g>
+          </g>
+          <!-- the striped send-off ball (all four parts, together) -->
+          <g id="rtSend" opacity="0">
+            <g clip-path="url(#rtSendClip)">
+              <rect x="-9" y="-9" width="4.5" height="18" fill="#B86A4A"/>
+              <rect x="-4.5" y="-9" width="4.5" height="18" fill="#D9A24C"/>
+              <rect x="0" y="-9" width="4.5" height="18" fill="#7E9B67"/>
+              <rect x="4.5" y="-9" width="4.5" height="18" fill="#A9668E"/>
+            </g>
+            <circle class="rt-send-ring" cx="0" cy="0" r="8.5" stroke-width="1.5"/>
+          </g>
+        </svg>
         <figcaption>Import your demo, write your parts, work like a pro.</figcaption>
       </figure>
     </div>
@@ -491,6 +533,6 @@ Secrets that the sycamores keep</textarea>
   </div>
 </footer>
 
-<script type="module" src="app.js?v=27"></script>
+<script type="module" src="app.js?v=28"></script>
 </body>
 </html>

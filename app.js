@@ -835,22 +835,77 @@ const MEDIA = (async () => {
   tryPlay();
 })();
 
-/* round-trip loop: lazy — load + play only when scrolled near, and never
-   for reduced-motion (the poster frame stays as a clean still). */
+/* round-trip: live vector animation. Same motion as the design render, drawn as
+   SVG so it's razor-sharp at any size and only a few KB. Four parts record in and
+   stack, then merge into one striped ball that rolls out to the studio. Runs only
+   while on-screen; reduced-motion gets a static "four parts stacked" state. */
 (() => {
-  const vids = document.querySelectorAll(".rt-vid");
-  if (!vids.length) return;
-  const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (still) return; // leave the poster showing; never autoplay
-  if (!("IntersectionObserver" in window)) { vids.forEach(v => v.play().catch(() => {})); return; }
-  const io = new IntersectionObserver((entries, obs) => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const v = e.target;
-      v.preload = "auto";
-      v.play().catch(() => {});
-      obs.unobserve(v);
+  const svg = document.querySelector(".rt-anim");
+  if (!svg) return;
+  const id = s => document.getElementById(s);
+  const balls = [0,1,2,3].map(i => id("rtBall"+i));
+  const laneG = [0,1,2,3].map(i => id("rtLaneG"+i));
+  const waves = [0,1,2,3].map(i => id("rtWave"+i));
+  const phone = id("rtPhone"), send = id("rtSend"), dot = id("rtStudioDot"), ring = id("rtRing");
+  if (balls.some(b => !b) || !phone || !send || !dot || !ring) return;
+
+  const L = [[90,380],[90,240],[150,130],[196,126]];
+  const R = [[364,126],[410,130],[470,240],[470,380]];
+  const bez = (t,p) => { const u=1-t; return [
+    u*u*u*p[0][0]+3*u*u*t*p[1][0]+3*u*t*t*p[2][0]+t*t*t*p[3][0],
+    u*u*u*p[0][1]+3*u*u*t*p[1][1]+3*u*t*t*p[2][1]+t*t*t*p[3][1] ]; };
+  const clamp = (v,a,b) => v<a?a:v>b?b:v;
+  const seg = (f,a,b) => clamp((f-a)/(b-a),0,1);
+  const eInOut = t => t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;
+  const eOut = t => 1-(1-t)*(1-t);
+  const eBack = t => { const c1=1.70158, c3=c1+1; return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2); };
+  const pw = (f, xs, ys) => {
+    if (f<=xs[0]) return ys[0];
+    for (let i=1;i<xs.length;i++){ if (f<=xs[i]){ const t=(f-xs[i-1])/(xs[i]-xs[i-1]); return ys[i-1]+(ys[i]-ys[i-1])*t; } }
+    return ys[ys.length-1];
+  };
+
+  const PARTS = [
+    {inStart:8,  land:42,  drawStart:42,  drawEnd:66},
+    {inStart:44, land:78,  drawStart:78,  drawEnd:102},
+    {inStart:80, land:114, drawStart:114, drawEnd:138},
+    {inStart:116,land:150, drawStart:150, drawEnd:174},
+  ];
+  const WAVE_LEN = 430, FADE_START = 222, TOTAL = 235, FPS = 30, START = 174;
+
+  function frame(f){
+    phone.setAttribute("transform", "translate(0 "+(Math.sin((f/TOTAL)*Math.PI*2)*2.5).toFixed(2)+")");
+    PARTS.forEach((p,i) => {
+      const xy = bez(eInOut(seg(f,p.inStart,p.land)), L);
+      balls[i].setAttribute("cx", xy[0].toFixed(1));
+      balls[i].setAttribute("cy", xy[1].toFixed(1));
+      balls[i].setAttribute("opacity", pw(f,[p.inStart,p.inStart+5,p.land-4,p.land+1],[0,1,1,0]).toFixed(3));
+      laneG[i].setAttribute("opacity", pw(f,[p.drawStart,p.drawStart+8,FADE_START,234],[0,1,1,0]).toFixed(3));
+      waves[i].setAttribute("stroke-dashoffset", (WAVE_LEN*(1-eOut(seg(f,p.drawStart,p.drawEnd)))).toFixed(1));
     });
-  }, { rootMargin: "600px 0px" });
-  vids.forEach(v => io.observe(v));
+    const s = bez(eInOut(seg(f,192,224)), R);
+    send.setAttribute("transform", "translate("+s[0].toFixed(1)+" "+s[1].toFixed(1)+") scale("+clamp(eBack(seg(f,182,192)),0,1.3).toFixed(3)+")");
+    send.setAttribute("opacity", pw(f,[190,196,224,234],[0,1,1,0]).toFixed(3));
+    const nodeBump = pw(f,[221,226,234],[0,1,0]);
+    dot.setAttribute("r", (5+nodeBump*3).toFixed(2));
+    dot.setAttribute("opacity", (1-nodeBump*0.15).toFixed(3));
+    ring.setAttribute("r", (7+seg(f,222,234)*16).toFixed(1));
+    ring.setAttribute("opacity", pw(f,[222,225,234],[0,0.5,0]).toFixed(3));
+  }
+
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { frame(START); return; }
+
+  let raf = 0, startTs = null, running = false;
+  function tick(ts){
+    if (startTs === null) startTs = ts;
+    frame((START + Math.floor(((ts-startTs)/1000)*FPS)) % TOTAL);
+    raf = requestAnimationFrame(tick);
+  }
+  function play(){ if (running) return; running = true; startTs = null; raf = requestAnimationFrame(tick); }
+  function stop(){ running = false; cancelAnimationFrame(raf); }
+
+  frame(START);
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? play() : stop()), { rootMargin: "200px 0px" }).observe(svg);
+  } else { play(); }
 })();
