@@ -571,27 +571,20 @@ addEventListener("load", () => {
   });
 })();
 
-/* ---------- the idea slipping away: a waveform that dissolves and drifts off ---------- */
+/* ---------- the 4am idea: a stone drops into still water; the ripples spread and
+   fade, and one is held in the app's layer colours. The SVG shows the held rings
+   by default (a complete image even without JS); the loop plays only while the
+   section is on-screen, and reduced-motion leaves the still held state. ---------- */
 
 (() => {
-  const svg = document.getElementById("ideaWave");
-  if (!svg) return;
-  const SVGNS = "http://www.w3.org/2000/svg";
-  const N = 30, cy0 = 150, W = 5;
-  let out = "";
-  for (let i = 0; i < N; i++) {
-    const t = i / (N - 1);
-    const x = 18 + Math.pow(t, 1.22) * 424;          // sparser toward the right
-    const h = 10 + Math.pow(1 - t, 1.5) * 122;        // tall on the left, tiny at the right
-    const op = Math.max(0.05, Math.pow(1 - t, 1.28)); // fading out
-    const cy = cy0 - Math.pow(t, 1.85) * 74;          // the loose ones float up and away
-    const cls = t < 0.14 ? "iw-red" : "iw-ink";       // the live spark, then ink
-    out += `<rect class="${cls}" x="${(x - W / 2).toFixed(1)}" y="${(cy - h / 2).toFixed(1)}"`
-        + ` width="${W}" height="${h.toFixed(1)}" rx="${W / 2}" opacity="${op.toFixed(3)}"/>`;
-  }
-  svg.insertAdjacentHTML("beforeend", out);
-  // guard the namespace: rects written via innerHTML on an SVG parse into the SVG ns fine
-  void SVGNS;
+  const el = document.querySelector(".ripples");
+  if (!el) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return; // stay still
+  if (!("IntersectionObserver" in window)) { el.classList.add("run"); return; }
+  new IntersectionObserver(
+    (es) => es.forEach(e => e.target.classList.toggle("run", e.isIntersecting)),
+    { rootMargin: "200px 0px" }
+  ).observe(el);
 })();
 
 /* ---------- live chord calculator: tap a word, build a chord, hang it on ----------

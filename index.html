@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=46">
+<link rel="stylesheet" href="styles.css?v=47">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -92,7 +92,17 @@
         </div>
       </div>
       <figure class="idea-fig" aria-hidden="true">
-        <svg id="ideaWave" class="ideawave" viewBox="0 0 460 240" preserveAspectRatio="xMidYMid meet"></svg>
+        <svg class="ripples" viewBox="0 0 460 240" preserveAspectRatio="xMidYMid meet">
+          <circle class="w-rip wr1" cx="230" cy="120" r="16" opacity="0"/>
+          <circle class="w-rip wr2" cx="230" cy="120" r="16" opacity="0"/>
+          <circle class="w-rip wr3" cx="230" cy="120" r="16" opacity="0"/>
+          <circle class="h-ring hr4" style="--c:#A9668E" cx="230" cy="120" r="64"/>
+          <circle class="h-ring hr3" style="--c:#7E9B67" cx="230" cy="120" r="48"/>
+          <circle class="h-ring hr2" style="--c:#D9A24C" cx="230" cy="120" r="32"/>
+          <circle class="h-ring hr1" style="--c:#B86A4A" cx="230" cy="120" r="16"/>
+          <circle class="spindle" cx="230" cy="120" r="4"/>
+          <circle class="stone" cx="230" cy="120" r="5" opacity="0"/>
+        </svg>
         <figcaption>Catch it before it&rsquo;s gone.</figcaption>
       </figure>
     </div>
@@ -533,6 +543,6 @@ Secrets that the sycamores keep</textarea>
   </div>
 </footer>
 
-<script type="module" src="app.js?v=28"></script>
+<script type="module" src="app.js?v=29"></script>
 </body>
 </html>
