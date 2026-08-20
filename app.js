@@ -247,7 +247,7 @@ async function initPaper() {
         float tBack = smoothstep(4.2, 7.2, cyc);
         float rBack = span * (1.0 - tBack);
         float aBack = exp(-pow((rr - rBack) / (band * 1.6), 2.0)) * tBack * (1.0 - tBack) * 1.6 * step(4.0, cyc);
-        float ring = (aOut * 0.16 + aBack * 0.10) * mix(1.0, 1.6, uInk);
+        float ring = (aOut * 0.34 + aBack * 0.21) * mix(1.0, 1.6, uInk);
         paper = mix(paper, red, ring);
 
         gl_FragColor = vec4(paper, 1.0);
