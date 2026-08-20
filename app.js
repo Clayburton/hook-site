@@ -581,10 +581,10 @@ addEventListener("load", () => {
   if (!el) return;
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return; // stay still
   if (!("IntersectionObserver" in window)) { el.classList.add("run"); return; }
-  new IntersectionObserver(
-    (es) => es.forEach(e => e.target.classList.toggle("run", e.isIntersecting)),
-    { threshold: 0.2 }   // begin only once it's actually scrolled into view
-  ).observe(el);
+  const io = new IntersectionObserver((es, obs) => {
+    es.forEach(e => { if (e.isIntersecting) { el.classList.add("run"); obs.unobserve(el); } });
+  }, { threshold: 0.5 });   // start once it's properly in view, then just keep looping
+  io.observe(el);
 })();
 
 /* ---------- live chord calculator: tap a word, build a chord, hang it on ----------
@@ -899,9 +899,10 @@ const MEDIA = (async () => {
 
   frame(START);
   if ("IntersectionObserver" in window) {
-    // begin only once it's actually scrolled into view; reset to the stacked state when it leaves
-    new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) play(); else { stop(); frame(START); }
-    }), { threshold: 0.2 }).observe(svg);
+    // start once it's properly in view, then keep looping (don't reset on scroll-away)
+    const io = new IntersectionObserver((es, obs) => {
+      es.forEach(e => { if (e.isIntersecting) { play(); obs.unobserve(svg); } });
+    }, { threshold: 0.5 });
+    io.observe(svg);
   } else { play(); }
 })();
