@@ -1255,3 +1255,7 @@ footer nav a:hover { color: var(--ink); text-decoration-color: var(--red); }
   .mob-only { display: block; }
   .hero { padding-top: clamp(1rem, 3vw, 2rem); }
 }
+
+/* manifesto: epigraph attribution line + the emphasized "ideas" (per Kelsy) */
+.manifesto .mf-cite { font-style: normal; font-family: "Nunito", ui-rounded, sans-serif; font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); margin-top: .35rem; }
+.manifesto strong { font-weight: 800; }
