@@ -410,10 +410,10 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 @media (max-width: 859px) { .idea-fig { margin-top: 2.4rem; } }
 /* aspect-ratio + clip: pins the box so iOS/older Safari can't mis-size a viewBox-only SVG
    and paint the bars outside it (no-op in Chrome — desktop unchanged). */
-.ripples { width: 100%; height: auto; aspect-ratio: 460 / 240; max-width: 500px; display: block; margin-inline: auto; overflow: hidden; }
+.ripples { width: 100%; height: auto; aspect-ratio: 1 / 1; max-width: 520px; display: block; margin-inline: auto; overflow: hidden; }
 .ripples circle { transform-box: fill-box; transform-origin: center; }
-.ripples .h-ring { fill: none; stroke: var(--c); stroke-width: 3.5; }
-.ripples .w-rip  { fill: none; stroke: var(--ink-soft); stroke-width: 1.8; }
+.ripples .h-ring { fill: none; stroke: var(--c); stroke-width: 4; }
+.ripples .w-rip  { fill: none; stroke: var(--ink-soft); stroke-width: 2.4; }
 .ripples .stone, .ripples .spindle { fill: var(--red); }
 /* animate only when on-screen (the .run class is toggled by an observer) */
 .ripples.run .h-ring { animation: hRing 7s cubic-bezier(.22,.7,.3,1) infinite; }
@@ -435,17 +435,17 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
 @keyframes hWater {
-  0%,30% { transform: scale(.15); opacity: 0; }
+  0%,30% { transform: scale(.12); opacity: 0; }
   37%    { opacity: .5; }
-  58%    { transform: scale(5.2); opacity: 0; }
-  100%   { transform: scale(5.2); opacity: 0; }
+  58%    { transform: scale(7); opacity: 0; }
+  100%   { transform: scale(7); opacity: 0; }
 }
 @keyframes hStone {
-  0%,20% { transform: translateY(-88px) scale(.85); opacity: 0; }
+  0%,20% { transform: translateY(-196px) scale(.85); opacity: 0; }
   25%    { opacity: 1; }
   34%    { transform: translateY(0) scale(1); opacity: 1; }
   40%    { transform: translateY(0) scale(.35); opacity: 0; }
-  100%   { transform: translateY(-88px) scale(.85); opacity: 0; }
+  100%   { transform: translateY(-196px) scale(.85); opacity: 0; }
 }
 @keyframes hSpin {
   0%,14% { opacity: 1; transform: scale(1); }
