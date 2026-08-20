@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=44">
+<link rel="stylesheet" href="styles.css?v=45">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -354,39 +354,15 @@ Secrets that the sycamores keep</textarea>
         </div>
       </div>
       <figure class="rt-fig">
-        <svg class="rt-svg" viewBox="0 0 560 440" role="img" aria-label="A session travels from your studio into Hook on your phone — where a new part, shown in red, is layered on top of the imported demo — and back to the studio.">
-          <defs>
-            <marker id="rtArrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
-              <path d="M0,1 L9,5 L0,9 z" class="rt-arrowfill"/>
-            </marker>
-          </defs>
-          <!-- the round trip: your DAW → work on the go in Hook → back in the studio.
-               Endpoints bottom-aligned with the phone so all three labels share one baseline. -->
-          <path class="rt-arc" marker-end="url(#rtArrow)" d="M90,380 C90,240 150,130 196,126"/>
-          <path class="rt-arc" marker-end="url(#rtArrow)" d="M364,126 C410,130 470,240 470,380"/>
-          <path class="rt-studio" d="M64,377 H88 M64,384 H84 M64,391 H88"/>
-          <path class="rt-studio" d="M442,377 H466 M446,384 H466 M442,391 H466"/>
-          <circle class="rt-node" cx="90" cy="384" r="5"/>
-          <circle class="rt-node" cx="470" cy="384" r="5"/>
-          <text class="rt-label" x="80" y="414" text-anchor="middle">YOUR DAW</text>
-          <text class="rt-label" x="280" y="414" text-anchor="middle">ON THE GO</text>
-          <text class="rt-label" x="474" y="414" text-anchor="middle">THE STUDIO</text>
-          <!-- the phone (Hook) -->
-          <rect class="rt-phone" x="200" y="64" width="160" height="328" rx="28"/>
-          <rect class="rt-screen" x="213" y="86" width="134" height="284" rx="16"/>
-          <rect class="rt-title" x="228" y="100" width="80" height="9" rx="4"/>
-          <!-- your new part, added on the go (red, on top) -->
-          <rect class="rt-lane-new" x="224" y="128" width="112" height="44" rx="10"/>
-          <path class="rt-wave-new" d="M232,145 L240,161 L248,135 L256,157 L264,133 L272,155 L280,137 L288,165 L296,143 L304,163 L312,144 L320,159 L328,146"/>
-          <!-- layers you already had -->
-          <rect class="rt-lane" x="224" y="182" width="112" height="44" rx="10"/>
-          <path class="rt-wave" d="M232,200 L240,210 L248,197 L256,207 L264,196 L272,208 L280,198 L288,211 L296,201 L304,210 L312,200 L320,209 L328,201"/>
-          <rect class="rt-lane" x="224" y="236" width="112" height="44" rx="10"/>
-          <path class="rt-wave" d="M232,263 L240,252 L248,262 L256,251 L264,261 L272,253 L280,265 L288,254 L296,264 L304,255 L312,263 L320,252 L328,262"/>
-          <!-- the demo you imported (dashed = brought in from your DAW) -->
-          <rect class="rt-lane-demo" x="224" y="290" width="112" height="44" rx="10"/>
-          <path class="rt-wave" d="M232,309 L240,316 L248,308 L256,314 L264,307 L272,315 L280,308 L288,316 L296,310 L304,316 L312,309 L320,315 L328,310"/>
-        </svg>
+        <div class="rt-media shot-stack">
+          <video class="rt-vid s-light" muted loop playsinline preload="none" poster="assets/rt-poster-light.webp?v=1"
+            aria-label="Four parts — terracotta, ochre, sage and plum — are recorded one at a time and stack up in Hook on your phone, then merge into a single striped ball that travels to the studio.">
+            <source src="assets/roundtrip-light.mp4?v=1" type="video/mp4">
+          </video>
+          <video class="rt-vid s-dark" muted loop playsinline preload="none" poster="assets/rt-poster-dark.webp?v=1" aria-hidden="true">
+            <source src="assets/roundtrip-dark.mp4?v=1" type="video/mp4">
+          </video>
+        </div>
         <figcaption>Import your demo, write your parts, work like a pro.</figcaption>
       </figure>
     </div>
@@ -515,6 +491,6 @@ Secrets that the sycamores keep</textarea>
   </div>
 </footer>
 
-<script type="module" src="app.js?v=26"></script>
+<script type="module" src="app.js?v=27"></script>
 </body>
 </html>

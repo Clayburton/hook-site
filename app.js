@@ -834,3 +834,23 @@ const MEDIA = (async () => {
   document.addEventListener("visibilitychange", tryPlay);
   tryPlay();
 })();
+
+/* round-trip loop: lazy — load + play only when scrolled near, and never
+   for reduced-motion (the poster frame stays as a clean still). */
+(() => {
+  const vids = document.querySelectorAll(".rt-vid");
+  if (!vids.length) return;
+  const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (still) return; // leave the poster showing; never autoplay
+  if (!("IntersectionObserver" in window)) { vids.forEach(v => v.play().catch(() => {})); return; }
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const v = e.target;
+      v.preload = "auto";
+      v.play().catch(() => {});
+      obs.unobserve(v);
+    });
+  }, { rootMargin: "600px 0px" });
+  vids.forEach(v => io.observe(v));
+})();
