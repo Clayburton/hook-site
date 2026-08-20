@@ -583,7 +583,7 @@ addEventListener("load", () => {
   if (!("IntersectionObserver" in window)) { el.classList.add("run"); return; }
   new IntersectionObserver(
     (es) => es.forEach(e => e.target.classList.toggle("run", e.isIntersecting)),
-    { rootMargin: "200px 0px" }
+    { threshold: 0.2 }   // begin only once it's actually scrolled into view
   ).observe(el);
 })();
 
@@ -899,6 +899,9 @@ const MEDIA = (async () => {
 
   frame(START);
   if ("IntersectionObserver" in window) {
-    new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? play() : stop()), { rootMargin: "200px 0px" }).observe(svg);
+    // begin only once it's actually scrolled into view; reset to the stacked state when it leaves
+    new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) play(); else { stop(); frame(START); }
+    }), { threshold: 0.2 }).observe(svg);
   } else { play(); }
 })();
