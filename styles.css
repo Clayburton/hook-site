@@ -1221,6 +1221,10 @@ html[data-theme="dark"] img[src*="D3-settings-measured-headphones-dark"] {
 .save-note { margin-top: .65rem; font-size: .9rem; line-height: 1.5; color: var(--ink-soft); }
 .save-note s { opacity: .7; }
 .save-note b { color: var(--ink); font-weight: 800; }
+/* the meter fills to 69% when the pricing scrolls into view (falls back to a full 69% without JS) */
+@keyframes fillMeter { from { width: 0; } to { width: 69%; } }
+.pricing.animate-meter .save-fill { animation: fillMeter 1.15s cubic-bezier(.2,.85,.25,1); }
+.pricing .reassure { margin: 1.5rem auto 0; text-align: center; font-size: .86rem; color: var(--ink-soft); letter-spacing: .01em; }
 
 .pricing .cta-row { justify-content: center; margin-top: 3rem; }
 .pricing .cta-note { text-align: center; }

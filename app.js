@@ -906,3 +906,14 @@ const MEDIA = (async () => {
     io.observe(svg);
   } else { play(); }
 })();
+
+/* pricing: fill the savings meter once the section is on-screen (static 69% otherwise) */
+(() => {
+  const p = document.querySelector(".pricing");
+  if (!p || !p.querySelector(".save-fill")) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!("IntersectionObserver" in window)) return;
+  new IntersectionObserver((es, obs) => {
+    es.forEach(e => { if (e.isIntersecting) { p.classList.add("animate-meter"); obs.unobserve(p); } });
+  }, { threshold: 0.4 }).observe(p);
+})();
