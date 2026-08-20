@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=49">
+<link rel="stylesheet" href="styles.css?v=50">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -500,7 +500,7 @@ Secrets that the sycamores keep</textarea>
       </div>
       <div class="sec-body">
         <p>Start free and make three songs with everything Hook can do. Want more room?
-        $4.99 a month, or $29.99 for a year.</p>
+        $7.99 a month, or $29.99 for a year.</p>
       </div>
       <div class="plans">
         <!-- PLACEHOLDER: free-tier limit — Clay believes 3 songs, may change. One number, one place. -->
@@ -513,12 +513,16 @@ Secrets that the sycamores keep</textarea>
             <li>No ads, no watermarks</li>
           </ul>
         </div>
-        <!-- prices per Kelsy's copy (2026-08); still PENDING her final confirm — internal review, easily reverted -->
-        <div class="plan paid">
+        <!-- Price DISPLAY leads with the annual (Clay, 2026-08): $7.99/mo · $29.99/yr.
+             Kelsy's label + feature lines kept verbatim; the figures + savings treatment are Clay's pricing call. -->
+        <div class="plan paid featured">
+          <span class="save-badge">Best value</span>
           <p class="micro">Hook, wide open</p>
-          <p class="price">$4.99<small>a month</small></p>
+          <p class="price">$29.99<small>a year</small></p>
+          <p class="price-permo">just <b>$2.50</b> / month, billed annually</p>
+          <div class="save-meter" aria-hidden="true"><span class="save-fill"></span></div>
+          <p class="save-note"><b>69% off</b> vs monthly — <s>$95.88/yr</s> at $7.99/mo. About <b>8 months free</b>.</p>
           <ul>
-            <li>or $29.99 a year</li>
             <li>Unlimited songs</li>
             <li>Everything we add next</li>
           </ul>

@@ -1204,6 +1204,24 @@ html[data-theme="dark"] img[src*="D3-settings-measured-headphones-dark"] {
 .plan li.dim { color: var(--ink-soft); }
 .plan li.dim::before { background: var(--line); }
 
+/* featured (annual) plan — the value hero */
+.plan.featured { position: relative; border-width: 2px; box-shadow: 0 1px 0 var(--highlight) inset, 0 28px 50px -28px var(--shadow); }
+.save-badge {
+  position: absolute; top: -.8rem; right: 1.3rem;
+  background: var(--red); color: #fff;
+  font-family: "Nunito", ui-rounded, sans-serif; font-weight: 900;
+  font-size: .74rem; letter-spacing: .05em; text-transform: uppercase;
+  padding: .32rem .74rem; border-radius: 999px;
+  box-shadow: 0 10px 20px -10px var(--red);
+}
+.plan .price-permo { margin: .5rem 0 0; font-size: 1.02rem; color: var(--ink-soft); }
+.plan .price-permo b { color: var(--red); font-weight: 900; }
+.save-meter { margin-top: 1.15rem; height: 7px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.save-fill { display: block; height: 100%; width: 69%; border-radius: 999px; background: var(--red); }
+.save-note { margin-top: .65rem; font-size: .9rem; line-height: 1.5; color: var(--ink-soft); }
+.save-note s { opacity: .7; }
+.save-note b { color: var(--ink); font-weight: 800; }
+
 .pricing .cta-row { justify-content: center; margin-top: 3rem; }
 .pricing .cta-note { text-align: center; }
 
