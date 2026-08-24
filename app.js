@@ -347,165 +347,91 @@ addEventListener("load", () => {
   } catch (e) {}
 });
 
-/* ---------- live rhyme demo ----------
-   A transparent textarea over a colored mirror. A small final-sound matcher —
-   not the app's engine, just convincing: last vowel sound + what follows,
-   silent-e marked long, a short table for English's worst spellings. */
+/* ---------- live rhyme demo — the app's REAL rhyme engine ----------
+   English + Spanish/Spanglish using the app's actual dictionaries and the exact
+   RhymeAnalyzer algorithm (assets/rhyme-engine.js). The engine module + dictionaries
+   load only when the demo nears the viewport, so the initial page load is untouched;
+   Spanish idle-preloads (or loads on the Español tap) so the toggle stays instant. */
 
 (() => {
+  const demo = document.querySelector(".rhyme-demo");
   const input = document.getElementById("rhymeInput");
   const mirror = document.getElementById("rhymeMirror");
-  if (!input || !mirror) return;
+  if (!demo || !input || !mirror) return;
 
-  /* the app's exact skip list (RhymeAnalyzer.skip) — grammatical glue only.
-     "to" stays out on purpose: it carries a full vowel and singers land on it. */
-  const STOP = new Set(["a", "an", "the", "of", "i", "oh", "and", "but", "or", "nor", "as", "at", "in", "on", "it", "if"]);
-  const EXC = {
-    night: "ite", bright: "ite", light: "ite", right: "ite", sight: "ite", might: "ite",
-    tight: "ite", flight: "ite", tonight: "ite",
-    high: "i", sigh: "i", eye: "i", goodbye: "i", bye: "i", i: "i",
-    through: "oo", blue: "oo", true: "oo", you: "oo", new: "oo", knew: "oo", do: "oo",
-    too: "oo", two: "oo", who: "oo", few: "oo", grew: "oo",
-    love: "uv", of: "uv", above: "uv", dove: "uv",
-    though: "o", go: "o", know: "o", so: "o", oh: "o", slow: "o", snow: "o", low: "o",
-    show: "o", grow: "o", no: "o", flow: "o",
-    said: "ed", head: "ed", dead: "ed", bread: "ed", instead: "ed",
-    heart: "art", are: "ar", star: "ar", far: "ar", guitar: "ar",
-    one: "un", done: "un", sun: "un", run: "un", none: "un", son: "un", young: "ung",
-    gone: "on", on: "on", song: "ong", long: "ong", wrong: "ong", along: "ong",
-    me: "ee", be: "ee", we: "ee", she: "ee", he: "ee",
-    sea: "ee", tea: "ee", plea: "ee", flea: "ee",
-    great: "ate", break: "ate", steak: "ate",
-    their: "air", theirs: "air",
-    they: "ay", hey: "ay", grey: "ay", gray: "ay", weigh: "ay", away: "ay",
-    there: "air", where: "air", air: "air", hair: "air", care: "air", share: "air",
-    stare: "air", prayer: "air", wear: "air", bear: "air",
-    again: "en", friend: "end",
-    come: "um", some: "um", from: "um",
-    word: "urd", bird: "urd", heard: "urd", hurt: "urt",
-    were: "ur", her: "ur", stir: "ur",
-  };
+  const DEFAULTS = { en: input.value, es: (demo.getAttribute("data-es") || "").replace(/\\n/g, "\n") };
+  let engine = null, lang = "en";
+  const loaded = {};
+  const ready = () => engine && engine.englishReady() && (lang === "en" || engine.spanishReady());
 
-  function rime(raw) {
-    const w = raw.toLowerCase().replace(/[^a-z]/g, "");
-    if (!w || STOP.has(w)) return null;
-    if (EXC[w] !== undefined) return EXC[w];
-    /* unstressed suffixes read as noise, not rhyme: fall-ing/burn-ing, eve-ry */
-    if (/[aeiouy].+ing$/.test(w)) return null;
-    if (/[^aeiouy]y$/.test(w) && (w.match(/[aeiouy]+/g) || []).length > 1) return null;
-    let s = w, longMark = "";
-    if (s.length > 2 && /[^aeiou]e$/.test(s)) { s = s.slice(0, -1); longMark = "e"; }
-    const m = s.match(/[aeiouy]+[^aeiouy]*$/);
-    let r = (m ? m[0] : s).replace(/y/g, "i") + longMark;
-    if (r === "e") r = "ee";
-    r = r.replace(/^ea/, "ee");              /* sea/beat/dream spell 'ee' as 'ea' */
-    if (r === "ei") r = "ai";                /* obey sounds like day */
-    if (r.length < 2 && !"aeiou".includes(r)) return null;
-    return r;
-  }
-
-  /* slant families: same vowel sound, coda in the same consonant class —
-     time/line, deep/beat, sun/come all read as rhymes to a songwriter */
-  const CODA_CLASS = { m: "N", n: "N", ng: "N", t: "T", d: "T", p: "T", b: "T", k: "T", g: "T", ck: "T",
-    s: "S", z: "S", f: "S", v: "S", th: "S", sh: "S", ch: "C", tch: "C", l: "L", r: "R", "": "" };
-  function familyKey(r) {
-    const m = r.match(/^([aeiouy]+)([^aeiouy]*?)(e?)$/);
-    if (!m) return r;
-    const cls = CODA_CLASS[m[2]] !== undefined ? CODA_CLASS[m[2]] : m[2];
-    return m[1] + m[3] + cls;
-  }
-
-  /* the vowel alone (plus r/l coloring, like the app's vowelColorant) — the
-     key for assonance joins: "me" rides with deep/keep because they share the vowel */
-  function vowelKeyOf(r) {
-    const m = r.match(/^([aeiouy]+)([^aeiouy]*?)(e?)$/);
-    if (!m) return r;
-    const col = m[2].startsWith("r") ? "r" : m[2].startsWith("l") ? "l" : "";
-    return m[1] + m[3] + col;
-  }
-
-  /* mirrors the app's RhymeAnalyzer shape:
-     • per paragraph — a blank line starts a new set of rhymes
-     • full/slant families need 2+ members and always paint
-     • a leftover word JOINS a painted family that shares its vowel
-     • leftover-only vowel bands paint at 3+ members, max 3 per paragraph
-     • the color counter runs across paragraphs */
-  function paint() {
+  function render() {
     const text = input.value;
-    const frag = document.createDocumentFragment();
-    let colorIdx = 0;
-
-    for (const para of text.split(/(\n[ \t]*\n)/)) {
-      if (/^\n[ \t]*\n$/.test(para)) { frag.appendChild(document.createTextNode(para)); continue; }
-      const tokens = para.split(/([A-Za-z][A-Za-z'’]*)/);
-
-      const words = [];
-      tokens.forEach((t, i) => {
-        if (i % 2 === 0) return;
-        const r = rime(t);
-        if (!r) return;
-        /* a long word's bare final vowel is a schwa, not the stressed vowel the app
-           keys assonance on — velvet/secrets must not band or join by their tails */
-        const poly = ((t.toLowerCase().replace(/[^a-z]/g, "").match(/[aeiouy]+/g)) || []).length > 1;
-        words.push({ i, key: familyKey(r), vowel: vowelKeyOf(r), weak: poly && /^[aeiou]$/.test(vowelKeyOf(r)) });
-      });
-
-      const fam = new Map(), vowelOfKey = new Map(), order = [];
-      for (const w of words) {
-        if (!fam.has(w.key)) { fam.set(w.key, []); vowelOfKey.set(w.key, w.vowel); order.push(w.key); }
-        fam.get(w.key).push(w.i);
-      }
-      const connected = order.filter(k => fam.get(k).length >= 2);
-
-      const vowelHost = new Map();
-      for (const k of connected) {
-        const v = vowelOfKey.get(k);
-        if (!vowelHost.has(v)) vowelHost.set(v, k);
-      }
-      const loose = new Map();
-      for (const w of words) {
-        if (fam.get(w.key).length >= 2) continue;
-        if (w.weak) continue;
-        const host = vowelHost.get(w.vowel);
-        if (host) fam.get(host).push(w.i);
-        else {
-          if (!loose.has(w.vowel)) loose.set(w.vowel, []);
-          loose.get(w.vowel).push(w.i);
-        }
-      }
-
-      const classOf = new Map();
-      for (const k of connected) {
-        const cls = "rf" + (colorIdx++ % 5);
-        for (const i of fam.get(k)) classOf.set(i, cls);
-      }
-      const bands = [...loose.values()].filter(idxs => idxs.length >= 3)
-        .sort((a, b) => b.length - a.length).slice(0, 3);
-      for (const idxs of bands) {
-        const cls = "rf" + (colorIdx++ % 5);
-        for (const i of idxs) classOf.set(i, cls);
-      }
-
-      tokens.forEach((t, i) => {
-        if (!t) return;
-        const cls = classOf.get(i);
-        if (cls) {
-          const el = document.createElement("i");
-          el.className = cls;
-          el.textContent = t;
-          frag.appendChild(el);
-        } else {
-          frag.appendChild(document.createTextNode(t));
-        }
-      });
+    if (!ready()) {
+      mirror.textContent = text;
+      if (text.endsWith("\n") || text === "") mirror.appendChild(document.createTextNode("​"));
+      return;
     }
-    /* keep a trailing newline's height so the caret never outruns the mirror */
+    const spans = engine.analyze(text);
+    const frag = document.createDocumentFragment();
+    let pos = 0;
+    for (const s of spans) {
+      if (s.start > pos) frag.appendChild(document.createTextNode(text.slice(pos, s.start)));
+      const el = document.createElement("i");
+      el.className = "rg" + (s.group % 12);
+      el.textContent = text.slice(s.start, s.end);
+      frag.appendChild(el);
+      pos = s.end;
+    }
+    if (pos < text.length) frag.appendChild(document.createTextNode(text.slice(pos)));
     if (text.endsWith("\n") || text === "") frag.appendChild(document.createTextNode("​"));
     mirror.replaceChildren(frag);
   }
+  input.addEventListener("input", render);
 
-  input.addEventListener("input", paint);
-  paint();
+  function loadDict(which) {
+    if (loaded[which]) return loaded[which];
+    const url = (which === "es" ? "assets/rhyme-dict-es.txt" : "assets/rhyme-dict.txt") + "?v=1";
+    loaded[which] = fetch(url).then(r => r.text()).then(txt => {
+      const table = engine.parseDict(txt, which);
+      if (which === "es") engine.setSpanish(table); else engine.setEnglish(table);
+      render();
+    }).catch(() => { loaded[which] = null; });
+    return loaded[which];
+  }
+
+  let booted = false;
+  function boot() {
+    if (booted) return; booted = true;
+    demo.classList.add("rhyme-warming");
+    import("./assets/rhyme-engine.js?v=1")
+      .then(mod => { engine = mod; return loadDict("en"); })
+      .then(() => {
+        demo.classList.remove("rhyme-warming");
+        const idle = window.requestIdleCallback || (f => setTimeout(f, 1500));
+        idle(() => { if (engine) loadDict("es"); });
+      });
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((es, obs) => es.forEach(e => { if (e.isIntersecting) { boot(); obs.unobserve(demo); } }),
+      { rootMargin: "900px 0px" }).observe(demo);
+  } else { boot(); }
+
+  const btns = [...demo.querySelectorAll(".rhyme-lang button")];
+  btns.forEach(b => b.addEventListener("click", () => {
+    const next = b.getAttribute("data-lang");
+    if (next === lang) return;
+    lang = next;
+    btns.forEach(x => x.setAttribute("aria-pressed", x.getAttribute("data-lang") === lang ? "true" : "false"));
+    input.value = DEFAULTS[lang] || input.value;
+    input.setAttribute("lang", lang);
+    if (lang === "es" && engine && !engine.spanishReady()) {
+      demo.classList.add("rhyme-warming");
+      loadDict("es").then(() => demo.classList.remove("rhyme-warming"));
+    } else { render(); }
+    input.focus();
+  }));
+
+  render();
 })();
 
 /* ---------- drift demo: the overdub sits late; one press snaps it home ---------- */

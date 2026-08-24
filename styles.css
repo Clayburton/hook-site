@@ -579,6 +579,18 @@ html[data-theme="dark"] .shot-stack .s-dark { opacity: 1; }
 .rf4 { color: var(--rhyme-violet); }
 .rhyme-demo .demo-note { margin-top: .9rem; }
 
+/* the app's exact 12-hue rhyme palette (RhymePalette.swift) — used by the real engine */
+.rhyme-mirror .rg0{color:#35857A}.rhyme-mirror .rg1{color:#BC8C34}.rhyme-mirror .rg2{color:#53749E}.rhyme-mirror .rg3{color:#69914A}.rhyme-mirror .rg4{color:#8C5896}.rhyme-mirror .rg5{color:#3C8794}.rhyme-mirror .rg6{color:#9E5E80}.rhyme-mirror .rg7{color:#6664A0}.rhyme-mirror .rg8{color:#847E3C}.rhyme-mirror .rg9{color:#7C5CA0}.rhyme-mirror .rg10{color:#37895E}.rhyme-mirror .rg11{color:#7C7EBE}
+html[data-theme="dark"] .rhyme-mirror .rg0{color:#50A094}html[data-theme="dark"] .rhyme-mirror .rg1{color:#D8A850}html[data-theme="dark"] .rhyme-mirror .rg2{color:#7290BE}html[data-theme="dark"] .rhyme-mirror .rg3{color:#84AE68}html[data-theme="dark"] .rhyme-mirror .rg4{color:#AC78B6}html[data-theme="dark"] .rhyme-mirror .rg5{color:#58A4B2}html[data-theme="dark"] .rhyme-mirror .rg6{color:#BE7EA0}html[data-theme="dark"] .rhyme-mirror .rg7{color:#8886C0}html[data-theme="dark"] .rhyme-mirror .rg8{color:#A49E5A}html[data-theme="dark"] .rhyme-mirror .rg9{color:#9C7CC0}html[data-theme="dark"] .rhyme-mirror .rg10{color:#54A67E}html[data-theme="dark"] .rhyme-mirror .rg11{color:#9C9EDE}
+
+/* language toggle — sleek segmented control */
+.rhyme-lang { display: inline-flex; gap: .2rem; margin-bottom: 1.15rem; padding: .2rem; border: 1px solid var(--line); border-radius: 999px; }
+.rhyme-lang button { appearance: none; -webkit-appearance: none; border: 0; background: transparent; cursor: pointer; font-family: "Nunito", ui-rounded, sans-serif; font-weight: 800; font-size: .82rem; letter-spacing: .01em; color: var(--ink-soft); padding: .34rem .95rem; border-radius: 999px; transition: color .2s ease, background-color .2s ease; }
+.rhyme-lang button[aria-pressed="true"] { background: var(--red); color: #fff; }
+.rhyme-lang button[aria-pressed="false"]:hover { color: var(--ink); }
+/* warming: while the engine + dictionary load, the plain text dims a touch, then the colors bloom in */
+.rhyme-demo.rhyme-warming .rhyme-mirror { opacity: .5; transition: opacity .3s ease; }
+
 .words .device { width: min(80vw, 340px); }
 
 /* ---------- live chord picker — the real phone flow, in a phone frame ---------- */
