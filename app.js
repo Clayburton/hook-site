@@ -482,7 +482,7 @@ addEventListener("load", () => {
       root.classList.remove("snapped");
       btn.lastChild.textContent = "show me the fix";
       label2.innerHTML = "What Bluetooth recorded &mdash; late";
-      status.innerHTML = "Bluetooth holds the sound back: your overdub records <b>late</b>, behind the beat.";
+      status.innerHTML = "Bluetooth holds the sound back: your overdub records <b>late</b>, behind the beat";
       return;
     }
     root.classList.add("listening");
