@@ -280,6 +280,15 @@ html.theme-cinema *::before, html.theme-cinema *::after {
 }
 
 .badge-row { margin-top: 1.1rem; }
+/* pre-launch: the app isn't on the App Store yet — a "coming soon" pill in place of the badge */
+.soon-pill {
+  display: inline-flex; align-items: center; gap: .55rem;
+  font-family: "Nunito", ui-rounded, sans-serif; font-weight: 800;
+  font-size: .86rem; letter-spacing: .01em; color: var(--ink);
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 999px; padding: .55rem 1rem;
+}
+.soon-pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex: none; }
 .badge-row a { display: inline-block; border-radius: 8px; }
 .badge-row a:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 .badge-row img { height: 44px; width: auto; }
