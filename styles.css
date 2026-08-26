@@ -1130,6 +1130,14 @@ html[data-theme="dark"] .sheet-stack img { box-shadow: 0 1px 2px rgba(0,0,0,.5),
   max-width: 37em;   /* ~62ch — ideal reading measure, not the full column */
 }
 
+/* ---------- perform mode: play it back, hands-free ---------- */
+.perform .wrap { display: grid; gap: 3rem; align-items: center; }
+@media (min-width: 860px) {
+  .perform .wrap { grid-template-columns: auto 1fr; gap: 3.6rem; }
+}
+.perform .device { width: min(78vw, 320px); margin-inline: auto; }
+@media (max-width: 859px) { .perform .device { margin-bottom: .2rem; } }
+
 /* ---------- round trip: leave with a demo, come back with your part ---------- */
 
 .roundtrip .wrap { display: grid; gap: 3rem; align-items: center; }

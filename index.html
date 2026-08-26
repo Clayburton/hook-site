@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=53">
+<link rel="stylesheet" href="styles.css?v=54">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -63,8 +63,8 @@
       </div>
       <figure class="device hero-device floaty">
         <div class="screen shot-stack">
-          <img class="s-light" src="assets/06-song-detail.webp?v=2" alt="A song in Hook: tempo, sections, and lyrics with rhyming words colored by sound" width="664" height="1440" fetchpriority="high" decoding="async">
-          <img class="s-dark" src="assets/D2-lyrics-rhyme-dark.webp?v=2" alt="Hook in dark mode: lyrics in a warm serif with rhyming words colored by sound" width="664" height="1440" decoding="async" loading="lazy">
+          <img class="s-light" src="assets/recording-lyrics-light.webp?v=1" alt="A recording in Hook: tempo, sections, and lyrics with rhyming words colored by sound, chords set over the words" width="664" height="1440" fetchpriority="high" decoding="async">
+          <img class="s-dark" src="assets/recording-lyrics-dark.webp?v=1" alt="Hook in dark mode: lyrics in a warm serif with rhyming words colored by sound, chords set over the words" width="664" height="1440" decoding="async" loading="lazy">
         </div>
       </figure>
       <!-- mobile only: App Store badge under the phone (desktop keeps the badge up in the copy) -->
@@ -117,13 +117,14 @@
       </div>
       <div class="sec-body">
         <p>Put on your headphones and pick out your tempo and time signature: 4/4, 3/4, 6/8, 5/8, 7/8.
-        Hook counts you in, you put the idea down, and the loop is going right when you sing or play your part.</p>
+        Hook counts you in, you put the idea down, and the loop is going right when you play, sing, or say your part.</p>
+        <p>Not one for counting bars? Go Endless &mdash; just record until you&rsquo;re done. Trade the bar counter for a plain clock if you like. The musical stuff is all still there; it just steps out of the way.</p>
       </div>
       <ol class="steps">
         <li class="step">
           <span class="num" aria-hidden="true">1</span>
           <h3>Set the feel</h3>
-          <p>Tempo, time signature, bars, and a &ldquo;hear this tempo&rdquo; button so you can trust it before you commit.</p>
+          <p>Tempo, time signature, bars &mdash; or Endless, when you&rsquo;d rather just hit record and go &mdash; and a &ldquo;hear this tempo&rdquo; button so you can trust it before you commit.</p>
           <figure class="device"><div class="screen"><img src="assets/02-new-song-setup.webp?v=2" alt="New song setup: loop length, tempo, and time signature" width="664" height="1440" decoding="async" loading="lazy" style="--focus: 70%"></div></figure>
         </li>
         <li class="step">
@@ -207,8 +208,8 @@ Secrets that the sycamores keep</textarea>
       </div>
       <figure class="device floaty">
         <div class="screen shot-stack">
-          <img class="s-light" src="assets/15-lyrics-chords.webp?v=2" alt="The lyric editor with real chords set over the words and rhymes colored by sound" width="664" height="1440" decoding="async" loading="lazy">
-          <img class="s-dark" src="assets/D2-lyrics-rhyme-dark.webp?v=2" alt="The lyric editor in dark mode, rhyme colors on near-black" width="664" height="1440" decoding="async" loading="lazy">
+          <img class="s-light" src="assets/recording-lyrics-light.webp?v=1" alt="The lyric editor with real chords set over the words and rhymes colored by sound" width="664" height="1440" decoding="async" loading="lazy">
+          <img class="s-dark" src="assets/recording-lyrics-dark.webp?v=1" alt="The lyric editor in dark mode, rhyme colors on near-black" width="664" height="1440" decoding="async" loading="lazy">
         </div>
         <figcaption>Chords over the words, rhymes matched by sound. A professional PDF export of your song.</figcaption>
       </figure>
@@ -249,10 +250,7 @@ Secrets that the sycamores keep</textarea>
         </div>
         <div class="calib-shots">
           <figure class="device">
-            <div class="screen shot-stack">
-              <img class="s-light" src="assets/10-calibration-intro.webp?v=1" alt="Calibration: hold the phone near your headphones" width="664" height="1440" decoding="async" loading="lazy">
-              <img class="s-dark" src="assets/D4-calibration-intro-dark.webp?v=1" alt="" width="664" height="1440" decoding="async" loading="lazy">
-            </div>
+            <div class="screen"><img src="assets/calib-listen.webp?v=1" alt="Calibration: Hook plays a sound through the speaker and listens for it coming back to measure this phone — takes three seconds" width="664" height="1440" decoding="async" loading="lazy"></div>
             <figcaption>It listens</figcaption>
           </figure>
           <figure class="device">
@@ -263,7 +261,7 @@ Secrets that the sycamores keep</textarea>
             <figcaption>It remembers your gear</figcaption>
           </figure>
           <figure class="device">
-            <div class="screen"><img src="assets/12-calibration-honest-failure.webp?v=1" alt="When a reading isn't clean, Hook says so and tries again" width="664" height="1440" decoding="async" loading="lazy"></div>
+            <div class="screen"><img src="assets/calib-tryagain.webp?v=1" alt="When a reading isn't clean, Hook says so and offers Try Again instead of guessing" width="664" height="1440" decoding="async" loading="lazy"></div>
             <figcaption>It never guesses</figcaption>
           </figure>
         </div>
@@ -350,6 +348,27 @@ Secrets that the sycamores keep</textarea>
         </div>
         <figcaption>Your library — every idea, kept.</figcaption>
       </figure>
+    </div>
+  </section>
+
+  <!-- ============ PERFORM MODE (play it back, hands-free) ============ -->
+  <!-- NEW SECTION + COPY — Kelsy to approve. Drafted in her voice; a screen recording
+       of Perform mode can replace this still in the same slot when it's made. -->
+  <section class="perform">
+    <div class="wrap">
+      <figure class="device floaty">
+        <div class="screen"><img src="assets/perform-mode.webp?v=1" alt="Perform mode: the lyrics fill the screen and scroll at your pace, with a play button and a scrubber, so you can play along hands-free" width="664" height="1440" decoding="async" loading="lazy"></div>
+        <figcaption>Perform &mdash; your words, hands-free.</figcaption>
+      </figure>
+      <div class="perform-copy">
+        <div class="sec-head">
+          <p class="micro">When it&rsquo;s time to play it</p>
+          <h2>Big enough to sing from.</h2>
+        </div>
+        <div class="sec-body">
+          <p>Tap Perform and the screen clears down to just your words &mdash; sized to read from across the room, moving at your pace while the loop plays underneath. Line up a folder and it becomes a setlist: play the whole night straight through, nothing to fumble for between songs.</p>
+        </div>
+      </div>
     </div>
   </section>
 
