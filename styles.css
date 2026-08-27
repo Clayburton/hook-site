@@ -1138,6 +1138,19 @@ html[data-theme="dark"] .sheet-stack img { box-shadow: 0 1px 2px rgba(0,0,0,.5),
 .perform .device { width: min(78vw, 320px); margin-inline: auto; }
 @media (max-width: 859px) { .perform .device { margin-bottom: .2rem; } }
 
+/* ---------- catch-the-big-one: hand-drawn close on the pricing section ----------
+   The art sits on its own cream paper, so a soft shadow + rounded corners let it
+   read as a framed piece on the dark ground in dark mode (no transparency needed). */
+.catch-art {
+  margin: clamp(1.8rem, 4.2vw, 3.2rem) auto 0;
+  max-width: 620px;
+  border-radius: 16px;
+  overflow: hidden;
+  line-height: 0;
+  box-shadow: 0 10px 38px rgba(30, 20, 10, .14);
+}
+.catch-art img { display: block; width: 100%; height: auto; }
+
 /* ---------- round trip: leave with a demo, come back with your part ---------- */
 
 .roundtrip .wrap { display: grid; gap: 3rem; align-items: center; }
