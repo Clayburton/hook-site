@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=55">
+<link rel="stylesheet" href="styles.css?v=56">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -408,8 +408,11 @@ Secrets that the sycamores keep</textarea>
           </defs>
           <text class="rt-label" x="80" y="414" text-anchor="middle">ON THE GO</text>
           <text class="rt-label" x="474" y="414" text-anchor="middle">THE STUDIO</text>
-          <path class="rt-studio" d="M64,377 H88 M64,384 H84 M64,391 H88"/>
-          <path class="rt-studio" d="M442,377 H466 M446,384 H466 M442,391 H466"/>
+          <rect class="rt-studio" x="64" y="372" width="16" height="24" rx="3.5"/>
+          <path class="rt-studio" style="stroke-width:2" d="M68,381 V388 M72,377 V392 M76,382 V387"/>
+          <rect class="rt-studio" x="442" y="374" width="22" height="16" rx="2.5"/>
+          <path class="rt-studio" d="M453,390 V395 M447,395 H459"/>
+          <path class="rt-studio" style="stroke-width:2" d="M446,382 L450,377 L454,384 L458,378 L461,382"/>
           <circle class="rt-node" cx="90" cy="384" r="5"/>
           <circle id="rtStudioDot" class="rt-node" cx="470" cy="384" r="5"/>
           <circle id="rtRing" class="rt-ring" cx="470" cy="384" r="7" stroke-width="2" opacity="0"/>
@@ -569,11 +572,6 @@ Secrets that the sycamores keep</textarea>
       <p class="badge-row centered"><span class="soon-pill">Coming soon to the App Store</span></p>
       <p class="reassure">No card to start &middot; Cancel anytime &middot; Free forever &mdash; not a trial.</p>
       <p class="cta-note">The download is free. Whatever you&rsquo;re chasing, we hope you catch it.</p>
-      <!-- Hand-drawn subscription-page art by Kelsy — the "catch the big one" close.
-           Framed on its own paper so it reads as art in dark mode too. -->
-      <figure class="catch-art">
-        <img src="assets/catch-the-big-one.webp?v=1" alt="A watercolor of a person sitting cross-legged, casting a fishing line into a swirl of color &mdash; fishing for ideas" width="1408" height="768" decoding="async" loading="lazy">
-      </figure>
     </div>
   </section>
 
