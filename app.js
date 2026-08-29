@@ -82,8 +82,12 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     });
   }
 
+  /* Standalone only: inside the WP embed an auto-sized iframe briefly reports its full
+     fallback height, so this sentinel reads as "in view" on load and nightfall fires before
+     any scroll (the page slammed to dark at the top). Embedded mode already gets a reliable
+     scroll signal from the WP host's viewport messages above, so skip the observer there. */
   const sentinel = document.querySelector(".problem");
-  if (sentinel && "IntersectionObserver" in window) {
+  if (!IS_EMBEDDED && sentinel && "IntersectionObserver" in window) {
     const io = new IntersectionObserver(entries => {
       if (entries.some(en => en.isIntersecting)) { io.disconnect(); nightfall(); }
     }, { rootMargin: "0px 0px -25% 0px" });
