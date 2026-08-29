@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=62">
+<link rel="stylesheet" href="styles.css?v=63">
 <!-- importmap must come before any module script (cache/back-nav resolution order) -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js" } }</script>
 </head>
@@ -576,13 +576,16 @@ Secrets that the sycamores keep</textarea>
       </div>
       <p class="badge-row centered"><span class="soon-pill">Coming soon to the App Store</span></p>
 
-      <!-- Email capture: subscribes to the MailPoet "Hook Launch" list via MailPoet's iframe
-           form endpoint (form id 2). It submits on the clayandkelsy.com origin, so MailPoet's
-           token stays valid. Copy drafted in Kelsy's voice — Kelsy to approve. -->
+      <!-- Email capture: the MailPoet form lives on its OWN single-layer page (notify.html),
+           opened by this button, instead of embedded here. Embedding it put it inside the
+           WP -> Hook -> MailPoet triple-iframe nesting, where the browser intermittently failed
+           to composite the transparent form and painted a white box. This card is now plain HTML
+           (heading + button — nothing to glitch); the button opens notify.html, which embeds the
+           MailPoet "Hook Launch" form (id 2) cleanly at one layer. Copy in Kelsy's voice — Kelsy to approve. -->
       <div class="notify">
         <p class="notify-h">Be the first to play it.</p>
         <p class="notify-sub">Leave your email and we&rsquo;ll tell you the day Hook goes live &mdash; that&rsquo;s the only reason we&rsquo;ll write.</p>
-        <iframe class="notify-frame" data-frame-src="https://clayandkelsy.com/?mailpoet_form_iframe=2" title="Get notified when Hook launches" scrolling="no" loading="lazy"></iframe>
+        <a class="notify-btn" href="notify.html" target="_blank" rel="noopener"><span class="dot"></span>Notify me</a>
       </div>
 
       <p class="reassure">No card to start &middot; Cancel anytime &middot; Free forever &mdash; not a trial.</p>
@@ -604,6 +607,6 @@ Secrets that the sycamores keep</textarea>
   </div>
 </footer>
 
-<script type="module" src="app.js?v=36"></script>
+<script type="module" src="app.js?v=37"></script>
 </body>
 </html>

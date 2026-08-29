@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Get notified — Hook</title>
+<meta name="robots" content="noindex">
+<!-- Standalone signup page for Hook. Opened in a new tab by the "Notify me" button on the
+     Hook page. The MailPoet "Hook Launch" form (id 2) is embedded here at a SINGLE iframe
+     layer (this page -> MailPoet), which renders reliably — unlike embedding it on the Hook
+     page, which nested it three deep (WP -> Hook -> MailPoet) and intermittently painted a
+     white box. MailPoet's auto-resize posts to window.top, which is this page, so the form
+     sizes itself correctly here. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6EFE4; --panel:#EADCC6; --line:#D9C5A6;
+    --ink:#2A2724; --ink-soft:#6f6053; --coral:#F04E3C;
+    --serif:"Iowan Old Style","Source Serif 4",Georgia,serif;
+    --sans:"Nunito",ui-rounded,system-ui,sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--paper); color:var(--ink); }
+  body{
+    font-family:var(--sans);
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:32px 20px;
+  }
+  .wrap{ width:100%; max-width:440px; text-align:center; }
+  .mark{ display:inline-flex; align-items:center; gap:9px; margin-bottom:24px; }
+  .mark .rec{ width:15px; height:15px; border-radius:50%; background:var(--coral); box-shadow:0 0 0 4px rgba(240,78,60,.16); }
+  .mark .word{ font-weight:800; letter-spacing:.16em; font-size:.9rem; }
+  h1{ font-family:var(--serif); font-weight:600; font-size:clamp(1.55rem,6vw,2rem); line-height:1.1; margin:0 0 .6rem; }
+  .sub{ font-family:var(--serif); color:var(--ink-soft); font-size:1.02rem; line-height:1.5; margin:0 auto 1.5rem; max-width:30em; }
+  .formcard{ border-radius:12px; overflow:hidden; }
+  iframe{ width:100%; border:0; display:block; height:150px; background:var(--paper); }
+  .fine{ color:var(--ink-soft); font-size:.86rem; line-height:1.5; margin:1.2rem auto 0; max-width:30em; }
+  .back{ display:inline-block; margin-top:1.5rem; color:var(--ink-soft); font-size:.9rem; text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:1px; }
+  .back:hover{ color:var(--ink); border-color:var(--ink-soft); }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <span class="mark"><span class="rec"></span><span class="word">HOOK</span></span>
+    <h1>Be the first to play it.</h1>
+    <p class="sub">Leave your email and we&rsquo;ll tell you the day Hook goes live &mdash; that&rsquo;s the only reason we&rsquo;ll write.</p>
+    <div class="formcard">
+      <iframe id="mpf" title="Get notified when Hook launches" scrolling="no" loading="eager"></iframe>
+    </div>
+    <p class="fine">No card to start &middot; We&rsquo;ll only ever email you about Hook.</p>
+    <a class="back" href="https://clayandkelsy.com/hook/">&larr; Back to Hook</a>
+  </main>
+  <script>
+    (function(){
+      var ORIGIN = "https://clayandkelsy.com";
+      var f = document.getElementById("mpf");
+      /* fresh form + token every visit */
+      f.src = ORIGIN + "/?mailpoet_form_iframe=2&t=" + Date.now();
+      /* single layer here, so MailPoet's height message reaches us — size the form to fit */
+      window.addEventListener("message", function(e){
+        if (e.origin !== ORIGIN) return;
+        var d = e.data;
+        if (typeof d === "string") { try { d = JSON.parse(d); } catch (err) { return; } }
+        if (!d) return;
+        var h = d.MailPoetIframeHeight;
+        if (h && !isNaN(h)) { f.style.height = Math.round(Number(h)) + "px"; }
+      });
+    })();
+  </script>
+</body>
+</html>

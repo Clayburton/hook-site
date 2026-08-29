@@ -91,13 +91,6 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   }
 })();
 
-/* ---------- notify form: cache-bust the MailPoet iframe so a stale WP page cache can
-   never serve an old (white-box) render — always a fresh form and a fresh token ---------- */
-(() => {
-  const nf = document.querySelector(".notify-frame[data-frame-src]");
-  if (nf) nf.src = nf.dataset.frameSrc + "&t=" + Date.now();
-})();
-
 /* ---------- iframe: post content height to the WP embed ---------- */
 
 if (IS_EMBEDDED) {

@@ -1267,20 +1267,28 @@ html[data-theme="dark"] img[src*="D3-settings-measured-headphones-dark"] {
   background: var(--panel);       /* theme-aware, like the pricing cards above it */
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: clamp(1.5rem, 3.6vw, 1.95rem) clamp(1.35rem, 3.2vw, 1.75rem) .55rem;
+  padding: clamp(1.6rem, 3.8vw, 2.1rem) clamp(1.35rem, 3.2vw, 1.75rem) clamp(1.7rem, 3.8vw, 2.1rem);
   text-align: center;
   box-shadow: 0 12px 34px rgba(20, 14, 8, .18);
-  isolation: isolate;             /* clean stacking context for the transparent frame */
 }
 .notify-h { font-size: clamp(1.25rem, 3vw, 1.5rem); line-height: 1.15; margin: 0 0 .35rem; color: var(--ink); }
-.notify-sub { color: var(--ink-soft); font-size: .93rem; line-height: 1.5; margin: 0 auto .95rem; max-width: 30em; }
-/* The .notify card (a normal div, above) holds the theme background; the iframe itself
-   is TRANSPARENT and simply lets the card show through. Painting the background on the
-   iframe ELEMENT (as before) intermittently failed to composite through the
-   WP→Hook→MailPoet nesting and fell back to white — a normal div paints reliably, so the
-   card holds the color and the frame is a true transparent hole over it. Fixed 130px
-   height fits the form + confirmation; unused space blends because the card is behind. */
-.notify-frame { width: 100%; height: 130px; border: 0; display: block; overflow: hidden; background: transparent; }
+.notify-sub { color: var(--ink-soft); font-size: .93rem; line-height: 1.5; margin: 0 auto 1.25rem; max-width: 30em; }
+/* Signup button — opens notify.html (the single-layer form page) in a new tab. This is plain
+   HTML with no iframe, so it cannot white-box or fight the theme like the embedded form did.
+   Matches the site's coral pill button (.cta). */
+.notify-btn {
+  font-family: "Nunito", ui-rounded, sans-serif;
+  font-weight: 800; font-size: 1.02rem; letter-spacing: .01em; text-decoration: none;
+  color: var(--on-red); background: var(--red);
+  border-radius: 999px; padding: .95rem 1.9rem;
+  display: inline-flex; align-items: center; gap: .6rem;
+  box-shadow: 0 10px 26px -10px var(--red-deep), inset 0 1px 0 rgba(255,255,255,.28);
+  transition: transform .16s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.notify-btn:hover { transform: translateY(-2px); background: var(--red-deep); box-shadow: 0 16px 30px -12px var(--red-deep), inset 0 1px 0 rgba(255,255,255,.24); }
+.notify-btn:active { transform: translateY(0); }
+.notify-btn:focus-visible { outline: 2.5px solid var(--ink); outline-offset: 3px; }
+.notify-btn .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--on-red); box-shadow: 0 0 0 3px rgba(253,248,239,.35); }
 
 /* ---------- footer ---------- */
 
