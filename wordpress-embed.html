@@ -5,6 +5,14 @@
      and the light/dark toggle inside also repaints the WordPress page
      behind it so the frame is invisible.
 
+     The iframe has NO hardcoded src — the script sets it with a per-load
+     ?v=<timestamp> so the Hook site loads FRESH on every visit. Without
+     that, the browser cached the iframe's document and kept showing an old
+     copy of the Hook site after we deployed changes (this is what made the
+     signup form look broken — a stale cached render, not the live version).
+     Only the tiny index.html is re-fetched; the heavy assets (CSS/JS/images)
+     still cache via their own ?v= URLs, so the freshness costs ~nothing.
+
      The style below hides the WordPress THEME's own footer (#colophon)
      on this page only — it is 1,124 px of site-menu links that sat under
      the embed and, painted over by the background sync, read as a huge
@@ -15,7 +23,6 @@
 <style>#colophon{display:none !important}</style>
 <div id="hook-embed" style="margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);width:100vw;">
   <iframe id="hook-frame"
-    src="https://clayburton.github.io/hook-site/"
     title="Hook — a songwriter's looper for iPhone"
     style="display:block;width:100%;border:0;height:12000px;background:#F6EFE4;"
     scrolling="no"
@@ -26,6 +33,9 @@
 (function () {
   var ORIGIN = "https://clayburton.github.io";
   var frame = document.getElementById("hook-frame");
+  /* Load the Hook site fresh every visit — defeats the iframe-document cache that
+     was serving a stale copy of the site (see note at top of this block). */
+  frame.src = ORIGIN + "/hook-site/?v=" + Date.now();
   var lastH = 0;
   window.addEventListener("message", function (e) {
     if (e.origin !== ORIGIN || !e.data) return;
