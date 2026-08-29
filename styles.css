@@ -1264,18 +1264,22 @@ html[data-theme="dark"] img[src*="D3-settings-measured-headphones-dark"] {
 .notify {
   max-width: 424px;
   margin: clamp(2rem, 4.5vw, 2.9rem) auto .2rem;
-  background: #F6EFE4;             /* fixed paper both themes; the MailPoet form iframe is solid
-                                     paper too, since iframe transparency fails through nested
-                                     cross-origin frames — so the form blends into this card */
-  border: 1px solid #E4D7C0;
+  background: var(--panel);       /* theme-aware, like the pricing cards above it */
+  border: 1px solid var(--line);
   border-radius: 18px;
-  padding: clamp(1.5rem, 3.6vw, 1.95rem) clamp(1.35rem, 3.2vw, 1.75rem) .35rem;
+  padding: clamp(1.5rem, 3.6vw, 1.95rem) clamp(1.35rem, 3.2vw, 1.75rem) .55rem;
   text-align: center;
-  box-shadow: 0 12px 38px rgba(18, 12, 6, .30);
+  box-shadow: 0 12px 34px rgba(20, 14, 8, .18);
 }
-.notify-h { font-size: clamp(1.25rem, 3vw, 1.5rem); line-height: 1.15; margin: 0 0 .35rem; color: #2A2724; }
-.notify-sub { color: #6f6053; font-size: .93rem; line-height: 1.5; margin: 0 auto .95rem; max-width: 30em; }
-.notify-frame { width: 100%; height: 104px; border: 0; display: block; overflow: hidden; }
+.notify-h { font-size: clamp(1.25rem, 3vw, 1.5rem); line-height: 1.15; margin: 0 0 .35rem; color: var(--ink); }
+.notify-sub { color: var(--ink-soft); font-size: .93rem; line-height: 1.5; margin: 0 auto .95rem; max-width: 30em; }
+/* The MailPoet form inside is transparent, so it shows THIS element's background.
+   That's the fix for the "white box": an iframe with no background paints the
+   browser's white default behind transparent content — so we paint it --panel to
+   match the card on both themes. Height is fixed (MailPoet's auto-resize posts to
+   window.top, which the nested WP embed can't relay down); unused space blends into
+   the card because the colors match. 130px fits the form + confirmation cleanly. */
+.notify-frame { width: 100%; height: 130px; border: 0; display: block; overflow: hidden; background: var(--panel); }
 
 /* ---------- footer ---------- */
 
