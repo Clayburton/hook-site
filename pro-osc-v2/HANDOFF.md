@@ -22,7 +22,8 @@ other four synth pages and the collection page, then the WordPress embeds.
    settles as you read. No nightfall and no dark mode here — Clay: that was Hook's, not the
    collection's. The synth pages stay on paper.
 5. **The interface stays, the features scroll**: Hook's sticky-phone walkthrough, with a
-   highlight box that moves to the control each feature is about. Coordinates are `--x/--y/--w/--h`
+   highlight frame that moves to the control each feature is about (a frame only — Clay: never dim the
+   rest of the interface). Coordinates are `--x/--y/--w/--h`
    percentages on each `.hl` — adjust per synth's interface image.
 6. **Proof within a screen of the promise** (UX Peak rule): a real reviewer quote in the
    objection section, the three verified-buyer reviews kept verbatim, the makers line.
