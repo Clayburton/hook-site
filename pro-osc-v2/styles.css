@@ -85,8 +85,10 @@ h3 { font-size: 1.18rem; line-height: 1.25; }
 @keyframes rigRise { to { opacity: 1; transform: none; } }
 .rig { display: grid; }
 .rig > * { grid-area: 1 / 1; }   /* the frames stack in one cell, so a crossfade never moves the picture */
-.rig img { border-radius: 14px; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #f0fcff; opacity: 0; transition: opacity .55s ease .28s; }
-.rig img.on { opacity: 1; transition-delay: 0s; }
+/* crossfade without the dip: the new frame fades in ON TOP while the old one stays solid underneath,
+   then the old one drops out after the fade — two opaque frames never half-show the panel behind */
+.rig img { border-radius: 14px; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #f0fcff; opacity: 0; z-index: 0; will-change: opacity; transition: opacity 0s linear .5s; }
+.rig img.on { opacity: 1; z-index: 2; transition: opacity .45s ease; }
 .rig figcaption { grid-area: auto; }
 .rig .glow { position: absolute; left: 80%; top: 24%; width: 26%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(216,95,166,.55), rgba(216,95,166,0) 65%); transform: translate(-50%,-50%) scale(.9); opacity: .15; pointer-events: none; mix-blend-mode: multiply; }
 .rig .cut { position: absolute; top: 51%; left: 61%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 4px var(--acc-soft), 0 0 14px var(--acc); opacity: 0; transition: opacity .4s; pointer-events: none; }
@@ -133,8 +135,9 @@ h3 { font-size: 1.18rem; line-height: 1.25; }
 .walk-phone { border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #fbf8f2; }
 .walk-phone { display: grid; }
 .walk-phone > * { grid-area: 1 / 1; }
-.walk-phone img { display: block; background: #f0fcff; opacity: 0; transition: opacity .55s ease .28s; }
-.walk-phone img.on { opacity: 1; transition-delay: 0s; }
+.walk-phone img { display: block; background: #f0fcff; opacity: 0; z-index: 0; will-change: opacity; transition: opacity 0s linear .5s; }
+.walk-phone img.on { opacity: 1; z-index: 2; transition: opacity .45s ease; }
+.walk-phone .hl { z-index: 3; }
 .walk-phone .hl { position: absolute; grid-area: auto; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 1.5px solid var(--acc); border-radius: 10px; box-shadow: 0 0 0 4px var(--acc-soft), 0 6px 18px -8px var(--acc-deep); opacity: 0; transition: opacity .5s var(--ease), left .5s var(--ease), top .5s var(--ease), width .5s var(--ease), height .5s var(--ease); pointer-events: none; }   /* a frame on the control; the rest of the interface stays as drawn (Clay: no dimming) */
 .walk-phone .hl.on { opacity: 1; }
 .walk-steps { list-style: none; margin: 0; padding: 0; grid-column: 2; }

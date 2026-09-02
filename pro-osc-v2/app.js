@@ -139,6 +139,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
 (() => {
   const walk = document.querySelector(".walk"), phone = document.getElementById("walkPhone");
   const imgs = phone ? [...phone.querySelectorAll("[data-step]")] : [];   /* the page frames AND the highlight frames, matched by data-step */
+  imgs.forEach(im => im.decode && im.decode().catch(() => {}));   /* frames decoded before they are asked for */
   const steps = [...document.querySelectorAll(".walk-step")];
   if (!steps.length || !phone) return;
   const desktop = () => matchMedia("(min-width: 900px)").matches;
@@ -170,6 +171,8 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   const imgs = [...rig.querySelectorAll("img[data-cycle]")], tab = document.getElementById("rigTab");
   const TABS = ["Env/Cut", "Reverb/FX", "C-LFO/ModW", "Stepped Seq", "Vib/Misc"];
   if (imgs.length < 2 || reduced) return;
+  /* decode every frame up front so the first showing of each never paints late (that read as a glitch) */
+  imgs.forEach(im => im.decode && im.decode().catch(() => {}));
   let i = 0;
   const visible = () => relBottom(rig) > 0 && relTop(rig) < vpH();
   setInterval(() => {
@@ -177,7 +180,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     i = (i + 1) % imgs.length;
     imgs.forEach(im => im.classList.toggle("on", +im.dataset.cycle === i));
     if (tab) tab.textContent = TABS[i] || "";
-  }, 3600);
+  }, 2600);
 })();
 
 /* ---------- THE SIGNATURE: the interface in use ----------
