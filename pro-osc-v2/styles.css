@@ -60,6 +60,8 @@ h3 { font-size: 1.18rem; line-height: 1.25; }
 /* ---------- nav: follows the page ---------- */
 .nav { position: sticky; top: 0; z-index: 50; height: var(--nav-h); background: color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid transparent; transform: translateZ(0); transition: border-color .4s ease, background-color .9s ease, box-shadow .4s ease; }
 .nav.scrolled { border-bottom-color: var(--line); box-shadow: 0 8px 30px -22px var(--shadow); }
+.nav:not(.embedded) { transition: opacity .35s var(--ease), transform .35s var(--ease), border-color .4s ease, box-shadow .4s ease; }
+.nav:not(.embedded):not(.scrolled) { opacity: 0; transform: translateY(-8px) translateZ(0); pointer-events: none; }   /* at the top the C&K bar is the menu; ours arrives on scroll */
 .nav-in { height: 100%; display: flex; align-items: center; gap: 1.6rem; }
 .brand { display: inline-flex; align-items: baseline; gap: .7rem; text-decoration: none; }
 .brand b { font-family: var(--mono); font-weight: 700; font-size: 1.1rem; color: var(--acc); }
@@ -90,17 +92,21 @@ h3 { font-size: 1.18rem; line-height: 1.25; }
 /* ---------- hear it: the sound strip ---------- */
 .hear { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .sounds { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-.snd { --p: 0; position: relative; text-align: left; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 16px; cursor: pointer; display: grid; gap: 6px; overflow: hidden; transition: transform .2s var(--ease), border-color .2s, box-shadow .3s; }
+.snd { --p: 0; position: relative; text-align: left; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; cursor: pointer; display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 3px; align-items: center; overflow: hidden; transition: transform .2s var(--ease), border-color .2s, box-shadow .3s; }
 .snd:hover { transform: translateY(-2px); border-color: var(--acc); }
 .snd.on { border-color: var(--acc); box-shadow: 0 16px 34px -24px var(--acc-deep); }
-.snd b { font-family: var(--mono); font-size: 1.05rem; }
-.snd small { font-family: var(--mono); font-size: .74rem; color: var(--ink-soft); letter-spacing: .04em; }
-.snd.song { grid-column: 1 / -1; grid-template-columns: auto 1fr; align-items: center; column-gap: 18px; }
-.snd.song small { grid-column: 2; }
-.bars { display: flex; align-items: flex-end; gap: 3px; height: 30px; margin-bottom: 8px; }
-.snd.song .bars { grid-row: 1 / 3; margin: 0; height: 40px; }
-.bars i { width: 5px; height: 100%; border-radius: 3px; background: var(--acc); opacity: .35; transform: scaleY(.12); transform-origin: bottom; transition: transform .12s linear; }
-.snd.on .bars i { opacity: 1; }
+.snd.song { grid-column: 1 / -1; }
+.snd b { font-family: var(--mono); font-size: 1.05rem; grid-column: 2; }
+.snd small { font-family: var(--mono); font-size: .74rem; color: var(--ink-soft); letter-spacing: .04em; grid-column: 2; }
+/* the control: a play button at rest, the scope while playing */
+.snd .pb, .snd .bars { grid-column: 1; grid-row: 1 / 3; width: 46px; height: 46px; }
+.snd .pb { position: relative; border-radius: 50%; background: var(--acc); box-shadow: 0 10px 22px -12px var(--acc-deep), inset 0 1px 0 rgba(255,255,255,.28); transition: transform .2s var(--ease); }
+.snd .pb::after { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-38%, -50%); border-style: solid; border-width: 8px 0 8px 13px; border-color: transparent transparent transparent var(--on-acc); }
+.snd:hover .pb { transform: scale(1.06); }
+.snd.on .pb { display: none; }
+.bars { display: none; align-items: flex-end; justify-content: center; gap: 2px; padding: 10px 0; }
+.snd.on .bars { display: flex; }
+.bars i { width: 3px; height: 100%; border-radius: 2px; background: var(--acc); transform: scaleY(.12); transform-origin: bottom; transition: transform .12s linear; }
 .snd::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--acc); transform: scaleX(var(--p)); transform-origin: left; opacity: 0; transition: opacity .3s; }
 .snd.on::after { opacity: 1; }
 
@@ -120,8 +126,9 @@ h3 { font-size: 1.18rem; line-height: 1.25; }
 .walk { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 72px); align-items: start; position: relative; }
 .walk-phone { position: sticky; top: calc(var(--nav-h) + var(--vh) * .08); margin: 0; }
 .walk-phone.embedded { position: absolute; top: 0; left: 0; width: calc(50% - clamp(14px, 2.5vw, 36px)); will-change: transform; }
-.walk-phone img { border-radius: 14px; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #fbf8f2; }
-.walk-phone .hl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 2px solid var(--acc); border-radius: 8px; box-shadow: 0 0 0 4px var(--acc-soft); opacity: 0; transition: opacity .45s var(--ease); pointer-events: none; }
+.walk-phone { border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #fbf8f2; }
+.walk-phone img { display: block; }
+.walk-phone .hl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 1.5px solid var(--acc); border-radius: 10px; box-shadow: 0 0 0 9999px rgba(236,226,208,.6), 0 0 0 3px var(--acc-soft); opacity: 0; transition: opacity .5s var(--ease), left .5s var(--ease), top .5s var(--ease), width .5s var(--ease), height .5s var(--ease); pointer-events: none; }   /* a spotlight: everything but the control dims */
 .walk-phone .hl.on { opacity: 1; }
 .walk-steps { list-style: none; margin: 0; padding: 0; grid-column: 2; }
 .walk-step { min-height: calc(var(--vh) * .55); display: flex; flex-direction: column; justify-content: center; gap: .5rem; opacity: .32; transition: opacity .5s var(--ease); }
