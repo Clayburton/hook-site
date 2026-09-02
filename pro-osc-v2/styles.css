@@ -83,13 +83,14 @@ h3 { font-size: 1.18rem; line-height: 1.25; }
 @keyframes rise { to { opacity: 1; transform: none; } }
 .rig { position: relative; margin: 0; opacity: 0; transform: translateY(30px) scale(.985); animation: rigRise 1.2s var(--ease) .35s forwards; }
 @keyframes rigRise { to { opacity: 1; transform: none; } }
-.rig { display: grid; }
-.rig > * { grid-area: 1 / 1; }   /* the frames stack in one cell, so a crossfade never moves the picture */
+/* one shadow on the container, none on the frames — two frames fade over each other during the cycle
+   and stacked shadows would double up, then pop */
+.rig .frames { position: relative; display: grid; border-radius: 14px; overflow: hidden; background: #f0fcff; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); }
+.rig .frames > * { grid-area: 1 / 1; }   /* the frames stack in one cell, so a crossfade never moves the picture */
 /* crossfade without the dip: the new frame fades in ON TOP while the old one stays solid underneath,
    then the old one drops out after the fade — two opaque frames never half-show the panel behind */
-.rig img { border-radius: 14px; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #f0fcff; opacity: 0; z-index: 0; will-change: opacity; transition: opacity 0s linear .5s; }
+.rig img { display: block; opacity: 0; z-index: 0; will-change: opacity; transition: opacity 0s linear .5s; }
 .rig img.on { opacity: 1; z-index: 2; transition: opacity .45s ease; }
-.rig figcaption { grid-area: auto; }
 .rig .glow { position: absolute; left: 80%; top: 24%; width: 26%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(216,95,166,.55), rgba(216,95,166,0) 65%); transform: translate(-50%,-50%) scale(.9); opacity: .15; pointer-events: none; mix-blend-mode: multiply; }
 .rig .cut { position: absolute; top: 51%; left: 61%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 4px var(--acc-soft), 0 0 14px var(--acc); opacity: 0; transition: opacity .4s; pointer-events: none; }
 .rig.live .cut { opacity: 1; }
