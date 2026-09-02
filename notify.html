@@ -32,7 +32,11 @@
   .wrap{ width:100%; max-width:440px; text-align:center; }
   .mark{ display:inline-flex; align-items:center; gap:9px; margin-bottom:24px; }
   .mark .rec{ width:15px; height:15px; border-radius:50%; background:var(--coral); box-shadow:0 0 0 4px rgba(240,78,60,.16); }
-  .mark .word{ font-weight:800; letter-spacing:.16em; font-size:.9rem; }
+  .wordmark{ height:30px; width:auto; display:block; overflow:visible; color:#41333E; }
+  .wordmark .s{ fill:none; stroke:currentColor; stroke-width:26; stroke-linecap:round; stroke-linejoin:round; }
+  .wordmark .play{ fill:none; stroke:var(--coral); stroke-width:26; stroke-linecap:round; stroke-dasharray:82 918; animation:wmplay 4.8s linear infinite; }
+  @keyframes wmplay{ to{ stroke-dashoffset:-1000; } }
+  @media (prefers-reduced-motion: reduce){ .wordmark .play{ animation:none; } }
   h1{ font-family:var(--serif); font-weight:600; font-size:clamp(1.55rem,6vw,2rem); line-height:1.1; margin:0 0 .6rem; }
   .sub{ font-family:var(--serif); color:var(--ink-soft); font-size:1.02rem; line-height:1.5; margin:0 auto 1.5rem; max-width:30em; }
   .formcard{ border-radius:12px; overflow:hidden; }
@@ -44,7 +48,7 @@
 </head>
 <body>
   <main class="wrap">
-    <span class="mark"><span class="rec"></span><span class="word">HOOK</span></span>
+    <span class="mark"><svg class="wordmark" viewBox="0 0 575 240" role="img" aria-label="Hook"><path class="s" d="M42 214V26"/><path class="s" d="M42 140C42 104 64 86 98 86C132 86 152 106 152 142V214"/><path class="s" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="play" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="s" d="M480 214V26"/><path class="s" d="M480 150L550 84"/><path class="s" d="M502 130L558 214"/></svg></span>
     <h1>Be the first to play it.</h1>
     <p class="sub">Leave your email and we&rsquo;ll tell you the day Hook goes live &mdash; and, now and then, something else we&rsquo;ve made.</p>
     <div class="formcard">

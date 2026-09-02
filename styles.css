@@ -107,6 +107,13 @@ html[data-theme="dark"] .mark .m-light { opacity: 0; }
 html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 .brand b { font-family: var(--sans); font-weight: 900; letter-spacing: .16em; font-size: .92rem; }
 .brand .tag { font-style: italic; font-size: .92rem; color: var(--ink-soft); margin-left: .1rem; }
+/* the wordmark (chosen 2026-09-02): "hook" in one round monoline, the two o's one continuous loop,
+   a coral playhead running it — one bar per ring at 100 BPM. Inline SVG so it takes currentColor. */
+.wordmark { height: 26px; width: auto; display: block; overflow: visible; color: var(--hook); }
+.wordmark .s { fill: none; stroke: currentColor; stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; }
+.wordmark .play { fill: none; stroke: var(--red); stroke-width: 26; stroke-linecap: round; stroke-dasharray: 82 918; animation: wmplay 4.8s linear infinite; }
+@keyframes wmplay { to { stroke-dashoffset: -1000; } }
+.foot-wm { height: 22px; }
 .nav-links { margin-left: auto; display: flex; gap: 1.7rem; }
 .nav-links a { font-family: var(--sans); font-weight: 700; font-size: .92rem; color: var(--ink-soft); text-decoration: none; transition: color .2s; }
 .nav-links a:hover { color: var(--ink); }
@@ -440,3 +447,5 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(-40deg)
   .phone .screen img, .phone .screen video { transition: none; }
   html, body { scroll-behavior: auto; }
 }
+
+@media (prefers-reduced-motion: reduce) { .wordmark .play { animation: none !important; } }
