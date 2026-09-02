@@ -394,7 +394,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   function boot() {
     if (booted) return; booted = true;
     demo.classList.add("rhyme-warming");
-    import("assets/rhyme-engine.js?v=1")
+    import("./assets/rhyme-engine.js?v=1")
       .then(mod => { engine = mod; return loadDict("en"); })
       .then(() => {
         demo.classList.remove("rhyme-warming");
