@@ -34,6 +34,21 @@ other four synth pages and the collection page, then the WordPress embeds.
    (`../wordpress-embed.html`: change ORIGIN/path, the wordmark, and the link ids). The host
    draws the menu bar (zero-lag) and hides this page's own nav.
 
+## Interface frames (Clay's tab screenshots) — how to do this for the next synth
+1. Clay drops screenshots of each interface tab in a folder (any names: "env:cut.png",
+   "Stepped sequencer.png" …), all from the same window at the same zoom.
+2. Run `python3 tools/tabs.py "<that folder>" assets`. It aligns every frame to the first by matching
+   the oscillator block (identical on every tab), crops them to one rectangle, exports 1100-wide
+   webp as `assets/tab-<name>.webp`, and prints a landmark row per frame. Never crop by eye.
+3. Hero: one `<img data-cycle="n">` per frame inside `.rig` (stacked in one grid cell, so the
+   crossfade never moves the picture); app.js cycles them every 3.6 s while the hero is on screen
+   and writes the tab name into `#rigTab`. Update the TABS list in app.js to match.
+4. Walkthrough: one `<img data-step="n">` per feature inside `.walk-phone` showing that feature's
+   own page, plus one `<i class="hl" data-step="n">` frame on the control (percentages of the
+   frame, measured from the screenshot). app.js toggles both by `data-step`.
+5. The sound-reactive glow and cut-off light in the hero use percentages too (`.rig .glow`,
+   `.rig .cut` in styles.css); re-measure them if the crystal or the filter moves on another synth.
+
 ## Paper
 The page ground is #f0e8d7: one step lighter than demosc's #ece2d0 and warmer than Hook's #F6EFE4,
 so the synth pages and Hook read as siblings, not twins (Clay asked; my call). Cards #f7f1e4.

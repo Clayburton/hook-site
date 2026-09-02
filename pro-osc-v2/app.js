@@ -138,7 +138,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
 /* no nightfall on the synth pages — Clay: the dark dip was Hook's, not the collection's *//* ---------- walkthrough: the phone stays, the steps scroll, the screen follows ---------- */
 (() => {
   const walk = document.querySelector(".walk"), phone = document.getElementById("walkPhone");
-  const imgs = phone ? [...phone.querySelectorAll(".hl")] : [];
+  const imgs = phone ? [...phone.querySelectorAll("[data-step]")] : [];   /* the page frames AND the highlight frames, matched by data-step */
   const steps = [...document.querySelectorAll(".walk-step")];
   if (!steps.length || !phone) return;
   const desktop = () => matchMedia("(min-width: 900px)").matches;
@@ -160,6 +160,24 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
       phone.style.transform = `translate3d(0,${Math.round(y)}px,0)`;
     }
   });
+})();
+
+/* ---------- hero: the interface cycles through its pages (like Hook's phone) ----------
+   Frames are <img data-cycle="n"> stacked in one grid cell; .on shows one. Add a page: drop the
+   screenshot in the folder, run tools/tabs.py, add an <img data-cycle> and its name to TABS. ---------- */
+(() => {
+  const rig = document.getElementById("rig"); if (!rig) return;
+  const imgs = [...rig.querySelectorAll("img[data-cycle]")], tab = document.getElementById("rigTab");
+  const TABS = ["Env/Cut", "Reverb/FX", "C-LFO/ModW", "Stepped Seq", "Vib/Misc"];
+  if (imgs.length < 2 || reduced) return;
+  let i = 0;
+  const visible = () => relBottom(rig) > 0 && relTop(rig) < vpH();
+  setInterval(() => {
+    if (!visible()) return;
+    i = (i + 1) % imgs.length;
+    imgs.forEach(im => im.classList.toggle("on", +im.dataset.cycle === i));
+    if (tab) tab.textContent = TABS[i] || "";
+  }, 3600);
 })();
 
 /* ---------- THE SIGNATURE: the interface in use ----------

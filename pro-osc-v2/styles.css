@@ -83,9 +83,13 @@ h3 { font-size: 1.18rem; line-height: 1.25; }
 @keyframes rise { to { opacity: 1; transform: none; } }
 .rig { position: relative; margin: 0; opacity: 0; transform: translateY(30px) scale(.985); animation: rigRise 1.2s var(--ease) .35s forwards; }
 @keyframes rigRise { to { opacity: 1; transform: none; } }
-.rig img { border-radius: 14px; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #fbf8f2; }
+.rig { display: grid; }
+.rig > * { grid-area: 1 / 1; }   /* the frames stack in one cell, so a crossfade never moves the picture */
+.rig img { border-radius: 14px; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #f0fcff; opacity: 0; transition: opacity .55s ease .28s; }
+.rig img.on { opacity: 1; transition-delay: 0s; }
+.rig figcaption { grid-area: auto; }
 .rig .glow { position: absolute; left: 80%; top: 24%; width: 26%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(216,95,166,.55), rgba(216,95,166,0) 65%); transform: translate(-50%,-50%) scale(.9); opacity: .15; pointer-events: none; mix-blend-mode: multiply; }
-.rig .cut { position: absolute; top: 49%; left: 61%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 4px var(--acc-soft), 0 0 14px var(--acc); opacity: 0; transition: opacity .4s; pointer-events: none; }
+.rig .cut { position: absolute; top: 51%; left: 61%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 4px var(--acc-soft), 0 0 14px var(--acc); opacity: 0; transition: opacity .4s; pointer-events: none; }
 .rig.live .cut { opacity: 1; }
 .rig figcaption { font-family: var(--mono); font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); text-align: center; margin-top: 1rem; }
 
@@ -127,8 +131,11 @@ h3 { font-size: 1.18rem; line-height: 1.25; }
 .walk-phone { position: sticky; top: calc(var(--nav-h) + var(--vh) * .08); margin: 0; }
 .walk-phone.embedded { position: absolute; top: 0; left: 0; width: calc(50% - clamp(14px, 2.5vw, 36px)); will-change: transform; }
 .walk-phone { border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #fbf8f2; }
-.walk-phone img { display: block; }
-.walk-phone .hl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 1.5px solid var(--acc); border-radius: 10px; box-shadow: 0 0 0 4px var(--acc-soft), 0 6px 18px -8px var(--acc-deep); opacity: 0; transition: opacity .5s var(--ease), left .5s var(--ease), top .5s var(--ease), width .5s var(--ease), height .5s var(--ease); pointer-events: none; }   /* a frame on the control; the rest of the interface stays as drawn (Clay: no dimming) */
+.walk-phone { display: grid; }
+.walk-phone > * { grid-area: 1 / 1; }
+.walk-phone img { display: block; background: #f0fcff; opacity: 0; transition: opacity .55s ease .28s; }
+.walk-phone img.on { opacity: 1; transition-delay: 0s; }
+.walk-phone .hl { position: absolute; grid-area: auto; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 1.5px solid var(--acc); border-radius: 10px; box-shadow: 0 0 0 4px var(--acc-soft), 0 6px 18px -8px var(--acc-deep); opacity: 0; transition: opacity .5s var(--ease), left .5s var(--ease), top .5s var(--ease), width .5s var(--ease), height .5s var(--ease); pointer-events: none; }   /* a frame on the control; the rest of the interface stays as drawn (Clay: no dimming) */
 .walk-phone .hl.on { opacity: 1; }
 .walk-steps { list-style: none; margin: 0; padding: 0; grid-column: 2; }
 .walk-step { min-height: calc(var(--vh) * .55); display: flex; flex-direction: column; justify-content: center; gap: .5rem; opacity: .32; transition: opacity .5s var(--ease); }
