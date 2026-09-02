@@ -58,9 +58,12 @@ Everything is Kelsy's, verbatim from the live page and the demosc page, except t
 (Kelsy approves before anything ships): the three facts pills; "It looks playful. Then you hear
 it." and the sentence after it; the Folia Soundstudio quote (a real receipt from
 `C&K Marketing/instruments/proof/osc-2.0-page-kit.md`, review titled "JOKE or a REAL DEAL?");
-the makers line; "Tap a sound. It streams, nothing to download."; the buy heading "Get Pro-Osc." (was
+ "Tap a sound. It streams, nothing to download."; the buy heading "Get Pro-Osc." (was
 "Bring Pro-Osc home.", which Clay cut); the preset names
 "Preset 1–4" (the demosc page names them "Pro-Osc · live"; give them real names if they have them).
+
+The makers paragraph is Kelsy's own from the Hook page (only the product name changes) — use it as-is on
+every synth page; never write a new one.
 
 ## Verify before going live
 Links are the ones I could confirm: product page `/product/pro-osc/`, shop `/shop/`, Kontakt
