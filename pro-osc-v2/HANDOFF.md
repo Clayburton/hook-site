@@ -18,8 +18,9 @@ other four synth pages and the collection page, then the WordPress embeds.
 3. **Audio is the primary UI.** One `<audio>`, `preload="none"`, streams on tap (iOS needs the
    tap), one sound at a time, level meter through Web Audio. The demosc files send
    `Access-Control-Allow-Origin: *`; keep that, or drop the analyser (the sound still plays).
-4. **Reading light + nightfall** land on the objection flip ("It looks playful. Then you hear
-   it.") — the page dips to dark exactly where the copy turns serious. Same code as Hook.
+4. **Reading light** on the objection flip ("It looks playful. Then you hear it."): the ink
+   settles as you read. No nightfall and no dark mode here — Clay: that was Hook's, not the
+   collection's. The synth pages stay on paper.
 5. **The interface stays, the features scroll**: Hook's sticky-phone walkthrough, with a
    highlight box that moves to the control each feature is about. Coordinates are `--x/--y/--w/--h`
    percentages on each `.hl` — adjust per synth's interface image.
@@ -37,7 +38,8 @@ Everything is Kelsy's, verbatim from the live page and the demosc page, except t
 (Kelsy approves before anything ships): the three facts pills; "It looks playful. Then you hear
 it." and the sentence after it; the Folia Soundstudio quote (a real receipt from
 `C&K Marketing/instruments/proof/osc-2.0-page-kit.md`, review titled "JOKE or a REAL DEAL?");
-the makers line; "Tap a sound. It streams, nothing to download."; the preset names
+the makers line; "Tap a sound. It streams, nothing to download."; the buy heading "Get Pro-Osc." (was
+"Bring Pro-Osc home.", which Clay cut); the preset names
 "Preset 1–4" (the demosc page names them "Pro-Osc · live"; give them real names if they have them).
 
 ## Verify before going live

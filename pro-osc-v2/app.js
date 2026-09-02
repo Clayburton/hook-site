@@ -135,18 +135,7 @@ setTheme("light", false);
 document.getElementById("themeToggle")?.addEventListener("click", () => {
   cinema(doc.getAttribute("data-theme") === "dark" ? "light" : "dark", true, 1300);
 });
-/* the page dips to dark exactly where the copy says 4am */
-(() => {
-  const problem = document.getElementById("then"); if (!problem) return;
-  let done = false;
-  scrollHandlers.push(() => {
-    if (done || relTop(problem) >= vpH() * 0.55) return;
-    done = true;
-    if (userTouchedTheme || doc.getAttribute("data-theme") === "dark") return;
-    cinema("dark", false, reduced ? 0 : 1700);
-  });
-})();
-/* ---------- walkthrough: the phone stays, the steps scroll, the screen follows ---------- */
+/* no nightfall on the synth pages — Clay: the dark dip was Hook's, not the collection's *//* ---------- walkthrough: the phone stays, the steps scroll, the screen follows ---------- */
 (() => {
   const walk = document.querySelector(".walk"), phone = document.getElementById("walkPhone");
   const imgs = phone ? [...phone.querySelectorAll(".hl")] : [];
