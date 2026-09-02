@@ -122,7 +122,8 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 .wm-inline.h { height: .92em; vertical-align: -.1em; margin-right: .02em; color: var(--ink); }   /* inside a heading: h as tall as the capitals */
 /* the hero eyebrow: the mark and "A Writer's Looper" on one line, optically centred on each other;
    the mark's own playhead is the accent, so the label's usual dot is dropped */
-.eyebrow-wm { display: inline-flex; align-items: center; gap: .55em; }
+.eyebrow-wm { display: inline-flex; align-items: center; gap: .12em; }
+.eyebrow-wm span { text-transform: none; letter-spacing: .03em; font-size: 1.08em; }
 .eyebrow-wm::before { display: none; }
 .wm-inline.eb { height: 1.7em; vertical-align: middle; margin: 0; position: relative; top: -.12em; }   /* the letters sit low in their box; lift so the o's centre on the capitals */
 .nav-links { margin-left: auto; display: flex; gap: 1.7rem; }
@@ -288,8 +289,8 @@ html[data-theme="dark"]  .screen img.s-dark.on { opacity: 1; transition-delay: 0
 .rhyme-input { position: relative; display: block; width: 100%; background: transparent; border: 0; outline: 0; resize: none; color: transparent; -webkit-text-fill-color: transparent; caret-color: var(--ink); }
 .rhyme-warming .rhyme-mirror { opacity: .55; }
 .demo-note { margin: .6rem 0 0; font-style: italic; font-size: .88rem; color: var(--ink-soft); }
-.rhyme-mirror .rg0{color:#35857A}.rhyme-mirror .rg1{color:#BC8C34}.rhyme-mirror .rg2{color:#53749E}.rhyme-mirror .rg3{color:#69914A}.rhyme-mirror .rg4{color:#8C5896}.rhyme-mirror .rg5{color:#3C8794}.rhyme-mirror .rg6{color:#9E5E80}.rhyme-mirror .rg7{color:#6664A0}.rhyme-mirror .rg8{color:#847E3C}.rhyme-mirror .rg9{color:#7C5CA0}.rhyme-mirror .rg10{color:#37895E}.rhyme-mirror .rg11{color:#7C7EBE}
-html[data-theme="dark"] .rhyme-mirror .rg0{color:#50A094}html[data-theme="dark"] .rhyme-mirror .rg1{color:#D8A850}html[data-theme="dark"] .rhyme-mirror .rg2{color:#7290BE}html[data-theme="dark"] .rhyme-mirror .rg3{color:#84AE68}html[data-theme="dark"] .rhyme-mirror .rg4{color:#AC78B6}html[data-theme="dark"] .rhyme-mirror .rg5{color:#58A4B2}html[data-theme="dark"] .rhyme-mirror .rg6{color:#BE7EA0}html[data-theme="dark"] .rhyme-mirror .rg7{color:#8886C0}html[data-theme="dark"] .rhyme-mirror .rg8{color:#A49E5A}html[data-theme="dark"] .rhyme-mirror .rg9{color:#9C7CC0}html[data-theme="dark"] .rhyme-mirror .rg10{color:#54A67E}html[data-theme="dark"] .rhyme-mirror .rg11{color:#9C9EDE}
+.rhyme-mirror .rg0{color:#35857A}.rhyme-mirror .rg1{color:#53749E}.rhyme-mirror .rg2{color:#BC8C34}.rhyme-mirror .rg3{color:#69914A}.rhyme-mirror .rg4{color:#8C5896}.rhyme-mirror .rg5{color:#3C8794}.rhyme-mirror .rg6{color:#9E5E80}.rhyme-mirror .rg7{color:#6664A0}.rhyme-mirror .rg8{color:#847E3C}.rhyme-mirror .rg9{color:#7C5CA0}.rhyme-mirror .rg10{color:#37895E}.rhyme-mirror .rg11{color:#7C7EBE}
+html[data-theme="dark"] .rhyme-mirror .rg0{color:#50A094}html[data-theme="dark"] .rhyme-mirror .rg1{color:#7290BE}html[data-theme="dark"] .rhyme-mirror .rg2{color:#D8A850}html[data-theme="dark"] .rhyme-mirror .rg3{color:#84AE68}html[data-theme="dark"] .rhyme-mirror .rg4{color:#AC78B6}html[data-theme="dark"] .rhyme-mirror .rg5{color:#58A4B2}html[data-theme="dark"] .rhyme-mirror .rg6{color:#BE7EA0}html[data-theme="dark"] .rhyme-mirror .rg7{color:#8886C0}html[data-theme="dark"] .rhyme-mirror .rg8{color:#A49E5A}html[data-theme="dark"] .rhyme-mirror .rg9{color:#9C7CC0}html[data-theme="dark"] .rhyme-mirror .rg10{color:#54A67E}html[data-theme="dark"] .rhyme-mirror .rg11{color:#9C9EDE}
 
 /* ---------- calibration ---------- */
 .calib-grid { align-items: start; }
