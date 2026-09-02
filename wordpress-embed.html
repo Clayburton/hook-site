@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap">
 <style>
 #colophon{display:none !important}
-#hook-nav{position:fixed;top:var(--wp-admin--admin-bar--height,0px);left:0;right:0;z-index:9990;height:64px;display:flex;align-items:center;gap:1.1rem;padding:0 clamp(16px,4vw,40px);box-sizing:border-box;background:rgba(246,239,228,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid #D9C5A6;color:#2A2724;font-family:Nunito,-apple-system,"Helvetica Neue",Arial,sans-serif;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .3s ease,transform .3s ease,background-color .9s ease,color .9s ease,border-color .9s ease}
+#hook-nav{position:fixed;top:var(--wp-admin--admin-bar--height,0px);left:0;right:0;z-index:9990;height:64px;display:flex;align-items:center;gap:1.1rem;padding:0 clamp(16px,4vw,40px);box-sizing:border-box;background:rgba(246,239,228,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid #D9C5A6;color:#2A2724;font-family:Nunito,-apple-system,"Helvetica Neue",Arial,sans-serif;opacity:0;transform:translateY(-8px);will-change:transform,opacity;pointer-events:none;transition:opacity .3s ease,transform .3s ease,background-color .9s ease,color .9s ease,border-color .9s ease}
 #hook-nav.show{opacity:1;transform:none;pointer-events:auto}
 #hook-nav.dark{background:rgba(21,16,10,.82);border-color:#483525;color:#F3ECDE}
 #hook-nav a{color:inherit;text-decoration:none;box-shadow:none;border:0}

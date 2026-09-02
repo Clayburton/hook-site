@@ -410,11 +410,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     demo.classList.add("rhyme-warming");
     import("./assets/rhyme-engine.js?v=1")
       .then(mod => { engine = mod; return loadDict("en"); })
-      .then(() => {
-        demo.classList.remove("rhyme-warming");
-        const idle = window.requestIdleCallback || (f => setTimeout(f, 1500));
-        idle(() => { if (engine) loadDict("es"); });
-      })
+      .then(() => demo.classList.remove("rhyme-warming"))   /* Spanish loads on the Español tap (950 KB; most visitors never need it) */
       .catch(() => demo.classList.remove("rhyme-warming"));
   }
   /* boot when the box is within ~900px of the viewport, or the moment it's touched */

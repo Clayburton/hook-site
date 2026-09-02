@@ -94,6 +94,7 @@ h3 { font-family: var(--sans); font-weight: 800; font-size: 1.1rem; letter-spaci
 /* embedded in the WP page: out of flow, pinned to the host viewport by JS, hidden while the
    C&K menu bar is on screen and shown the moment it scrolls away */
 body.embedded { position: relative; }
+.nav { transform: translateZ(0); }   /* own compositor layer: the backdrop blur no longer repaints on every scroll frame */
 .nav.embedded { position: absolute; top: 0; left: 0; right: 0; opacity: 0; pointer-events: none; will-change: transform; transition: opacity .35s var(--ease), border-color .4s ease, background-color .9s ease, box-shadow .4s ease; border-bottom-color: var(--line); box-shadow: 0 8px 30px -22px var(--shadow); }
 .nav.embedded.pinned { opacity: 1; pointer-events: auto; }
 .nav.embedded .nav-in { transform: translateY(-6px); transition: transform .35s var(--ease); }
@@ -123,7 +124,7 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
    the mark's own playhead is the accent, so the label's usual dot is dropped */
 .eyebrow-wm { display: inline-flex; align-items: center; gap: .55em; }
 .eyebrow-wm::before { display: none; }
-.wm-inline.eb { height: 1.7em; vertical-align: middle; margin: 0; position: relative; top: .04em; }
+.wm-inline.eb { height: 1.7em; vertical-align: middle; margin: 0; position: relative; top: -.12em; }   /* the letters sit low in their box; lift so the o's centre on the capitals */
 .nav-links { margin-left: auto; display: flex; gap: 1.7rem; }
 .nav-links a { font-family: var(--sans); font-weight: 700; font-size: .92rem; color: var(--ink-soft); text-decoration: none; transition: color .2s; }
 .nav-links a:hover { color: var(--ink); }
@@ -200,8 +201,8 @@ html[data-theme="dark"]  .screen img.s-dark.on { opacity: 1; transition-delay: 0
 .hook-spin {
   position: absolute; left: -3%; top: -3%; width: 100%; height: 100%;   /* the mark's registration point lands dead center */
   background: var(--hook); opacity: .92;
-  -webkit-mask: url("assets/hook-spin.png") center / 100% 100% no-repeat;
-          mask: url("assets/hook-spin.png") center / 100% 100% no-repeat;
+  -webkit-mask: url("assets/hook-spin.png?v=2") center / 100% 100% no-repeat;
+          mask: url("assets/hook-spin.png?v=2") center / 100% 100% no-repeat;
   transform-origin: 53% 53%; will-change: transform;                   /* spins around the button, no wobble */
   transition: background-color .9s ease;
 }
