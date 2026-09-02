@@ -3,19 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hook — Catch the big one. A songwriter's looper for iPhone.</title>
+<title>Hook: A Writer's Looper — Catch the big one.</title>
 <meta name="description" content="Hook is a songwriter's quick-capture looper for iPhone. Feel a tempo, put an idea down, stack layers on any headphones, write the words — one sitting, before it's gone. By Clay and Kelsy Instruments.">
 <meta name="theme-color" content="#F6EFE4">
+<meta property="og:title" content="Hook — Catch the big one.">
+<meta property="og:description" content="A writer's looper for iPhone. Quick as a voice memo, and it becomes a song.">
+<meta property="og:type" content="website">
 <meta name="robots" content="noindex">
-<!-- PREVIEW BUILD (v2). The live page is ../index.html and is untouched. Standalone page:
-     sticky nav, smooth scroll and svh units are fine here because this document is the scroller. -->
+<!-- Runs two ways. STANDALONE (this document scrolls): sticky nav + smooth scroll.
+     EMBEDDED in clayandkelsy.com's auto-growing iframe (which never scrolls itself): the host
+     posts its viewport on every scroll and everything that follows the page is driven from
+     that — the Hook nav stays hidden while the C&K menu bar is on screen and pins to the top
+     the moment it scrolls away. See app.js. -->
 <link rel="icon" href="../assets/hook-logo-384.png">
 <link rel="apple-touch-icon" href="../assets/hook-logo-384.png">
 <link rel="preload" as="image" href="../assets/recording-lyrics-light.webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="v2.css?v=3">
+<link rel="stylesheet" href="v2.css?v=5">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -43,7 +49,7 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p class="micro rise">A songwriter&rsquo;s tool, made by songwriters</p>
+      <p class="micro rise">Hook: A Writer&rsquo;s Looper</p>
       <h1 class="rise">Catch the<br>big one.</h1>
       <p class="lede rise">Feel a tempo, put the idea down, and it&rsquo;s already looping.
         Stack your layers. Write the words, fill in the chords and hit export.
@@ -52,21 +58,16 @@
       <!-- THE SIGNATURE: hold to catch. Press and hold: it counts you in. Let go: it loops.
            Hold again: a new layer rings the button in the app's colors and adds a voice. -->
       <div class="catch rise" id="catch">
+        <!-- The app's record mark, exactly: the red dot sits still while the hook orbits it.
+             hook.png (from the app's animation assets) is a mask, so the hook takes the theme ink;
+             the dot is drawn at the mark's registration (center 51.6%/50.4%, radius 17.2%). -->
         <div class="catch-stage">
-          <svg class="catch-rings" viewBox="0 0 320 320" aria-hidden="true">
-            <g id="layerRings"></g>
-            <circle class="ring-track" cx="160" cy="160" r="72"/>
-            <circle class="ring-fill" id="ringFill" cx="160" cy="160" r="72"/>
-            <g class="beats" id="beats">
-              <circle cx="160" cy="70" r="4"/><circle cx="250" cy="160" r="4"/><circle cx="160" cy="250" r="4"/><circle cx="70" cy="160" r="4"/>
-            </g>
-          </svg>
-          <button class="rec" id="recBtn" aria-label="Hold to catch a loop. Let go and it loops. Hold again to stack a layer." aria-pressed="false">
-            <span class="rec-dot" aria-hidden="true"></span>
-          </button>
+          <svg class="catch-rings" viewBox="0 0 320 320" aria-hidden="true"><g id="layerRings"></g></svg>
+          <div class="hook-spin" id="hookSpin" aria-hidden="true"></div>
+          <button class="rec" id="recBtn" aria-label="Hold to catch a loop. Let go and it loops. Hold again to stack a layer." aria-pressed="false"></button>
         </div>
         <div class="catch-meta">
-          <p class="tape" aria-live="polite"><span class="tape-dot" id="tapeDot" aria-hidden="true">●</span><span id="tapeTime">00:00.0</span><span class="tape-sep">·</span>100 BPM<span class="tape-sep">·</span>4/4<span class="tape-sep">·</span><span id="tapeTake">no takes yet</span></p>
+          <p class="tape" aria-live="polite"><span class="tape-dot" id="tapeDot" aria-hidden="true">●</span><span id="tapeTime">00:00.0</span><span class="tape-beats" id="beats" aria-hidden="true"><i></i><i></i><i></i><i></i></span>100 BPM<span class="tape-sep">·</span>4/4<span class="tape-take" id="tapeTake">no takes yet</span></p>
           <p class="catch-hint" id="catchHint">Hold to catch. Let go and it loops. Hold again to stack a layer.</p>
           <div class="catch-tools">
             <button type="button" class="tiny" id="muteBtn" aria-pressed="true">Sound on</button>
@@ -198,7 +199,6 @@
             <button type="button" data-lang="es" aria-pressed="false">Espa&ntilde;ol</button>
           </div>
         </div>
-        <p class="chords" aria-hidden="true"><span>G</span><span>Em</span><span>C</span><span>D</span></p>
         <label class="sr-only" for="rhymeInput">Try your own line — rhymes light up as you type</label>
         <div class="rhyme-editor">
           <div class="rhyme-mirror" id="rhymeMirror" aria-hidden="true"></div>
@@ -482,12 +482,7 @@ Secrets that the sycamores keep</textarea>
   </div>
 </footer>
 
-<!-- mobile: the CTA rides along at the bottom once you've left the hero -->
-<div class="mob-cta" id="mobCta" aria-hidden="true">
-  <a class="pill-cta lg" href="../notify.html" target="_blank" rel="noopener" tabindex="-1"><span class="dot" aria-hidden="true"></span>Notify me when Hook lands</a>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js" defer></script>
-<script type="module" src="v2.js?v=6"></script>
+<script type="module" src="v2.js?v=7"></script>
 </body>
 </html>

@@ -1,3 +1,7 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>embed harness</title>
+<style>body{margin:0;font-family:-apple-system,sans-serif} .ckhead{height:84px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;justify-content:center;gap:2rem;font-family:monospace;font-size:15px;color:#222} .ckfoot{height:300px;background:#eee}</style>
+</head><body>
+<div class="ckhead">C&amp;K &nbsp; [Instruments] [C&amp;K Music] [Designs] [About] [Contact]</div>
 <!-- ============================================================
      Hook — full-bleed embed for clayandkelsy.com/hook/
      Paste this WHOLE file into ONE "Custom HTML" block on the page.
@@ -33,10 +37,10 @@
 <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
 <script>
 (function () {
-  var ORIGIN = "https://clayburton.github.io";
+  var ORIGIN = location.origin;
   var frame = document.getElementById("hook-frame");
   /* fresh every visit — defeats the iframe-document cache that used to serve stale copies */
-  frame.src = ORIGIN + "/hook-site/?v=" + Date.now();
+  frame.src = ORIGIN + (new URLSearchParams(location.search).get("src") || "/v2/") + "?v=" + Date.now();
   var lastH = 0;
   window.addEventListener("message", function (e) {
     if (e.origin !== ORIGIN || !e.data) return;
@@ -78,3 +82,5 @@
   } catch (err) {}
 })();
 </script>
+
+</body></html>

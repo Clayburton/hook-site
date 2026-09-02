@@ -1,94 +1,116 @@
-/* Hook — v2 preview. Standalone document (it is the scroller), so sticky, fixed and svh
-   all behave. Everything degrades: no JS → static page; reduced motion → no animation. */
+/* Hook — runs two ways.
+   STANDALONE (this document is the scroller): sticky nav, Lenis smooth scroll, native scroll events.
+   EMBEDDED (inside clayandkelsy.com's auto-growing iframe, which never scrolls itself): the host
+   posts its viewport ({hookHost:"vp", top, vh}) on every scroll; everything that follows the page
+   measures against that; the nav is pinned by JS and only shows once the C&K menu bar has
+   scrolled away; we post our height and theme color back up so the frame fits and the page
+   behind it matches. Everything degrades: no JS → static page; reduced motion → no animation. */
 
 const doc = document.documentElement;
+const IS_EMBEDDED = window.self !== window.top;
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const coarse  = matchMedia("(pointer: coarse)").matches;
+const NAV_H = 64;
 const THEME_BG = { light: "#F6EFE4", dark: "#15100A" };
 const themeMeta = document.querySelector('meta[name="theme-color"]');
 let userTouchedTheme = false;
+if (IS_EMBEDDED) document.body.classList.add("embedded");
 
-/* ---------- smooth scroll: inertial on desktop, native on touch ---------- */
+/* ---------- the viewport we measure against ----------
+   Embedded: host.top = the frame's top edge in the host viewport (positive while the C&K header
+   is above us, negative once we've scrolled past the top), host.vh = the host viewport height.
+   An element's position relative to the host viewport is its frame position + host.top. */
+const host = { top: 0, vh: 0, top0: null, ready: false };
+const vpH   = () => IS_EMBEDDED ? (host.vh || 800) : innerHeight;
+const vpTop = () => IS_EMBEDDED ? Math.max(0, -host.top) : (window.scrollY || 0);
+const off   = () => IS_EMBEDDED ? host.top : 0;
+const relTop    = el => el.getBoundingClientRect().top + off();
+const relBottom = el => el.getBoundingClientRect().bottom + off();
+function setVh() { doc.style.setProperty("--vh", vpH() + "px"); }
+setVh();
+
+/* ---------- smooth scroll: standalone desktop only (embedded, the host page does it) ---------- */
 let lenis = null;
-if (!reduced && !coarse && window.Lenis) {
+if (!IS_EMBEDDED && !reduced && !coarse && window.Lenis) {
   lenis = new Lenis({ lerp: 0.085, smoothWheel: true, wheelMultiplier: 1 });
   const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
   requestAnimationFrame(raf);
 }
 
-/* ---------- one scroll pipe for everything that follows the page ---------- */
-/* Lenis drives the native scroll position, so the native scroll event is the one source
-   of truth in both modes — and it keeps firing even when frames are throttled. */
+/* ---------- one pipe for everything that follows the page ---------- */
 const scrollHandlers = [];
-function tick() { const y = window.scrollY || 0; for (const h of scrollHandlers) h(y); }
-addEventListener("scroll", tick, { passive: true });
-addEventListener("resize", tick);
+function tick() { for (const h of scrollHandlers) h(); }
+if (IS_EMBEDDED) {
+  addEventListener("message", e => {
+    const d = e.data; if (!d || d.hookHost !== "vp" || typeof d.top !== "number") return;
+    host.top = d.top; if (typeof d.vh === "number" && d.vh > 0) host.vh = d.vh;
+    if (!host.ready) { host.ready = true; host.top0 = Math.max(0, d.top); fitHero(); }
+    setVh(); tick();
+  });
+} else {
+  addEventListener("scroll", tick, { passive: true });
+  addEventListener("resize", () => { setVh(); tick(); });
+}
+/* embedded: the hero fills what's visible under the C&K header when the page opens */
+function fitHero() {
+  const hero = document.querySelector(".hero");
+  if (hero && IS_EMBEDDED) hero.style.minHeight = Math.max(560, host.vh - (host.top0 || 0)) + "px";
+}
 
-/* in-page links glide */
+/* ---------- in-page links glide (scrollIntoView reaches the host page when embedded) ---------- */
 document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener("click", e => {
   const id = a.getAttribute("href"); if (!id || id.length < 2) return;
   const t = document.querySelector(id); if (!t) return;
   e.preventDefault();
   if (lenis) lenis.scrollTo(t, { offset: -76, duration: 1.15 });
-  else t.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
+  else t.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
 }));
 
-/* ---------- nav: the menubar rides along; gets a hairline once you've scrolled ---------- */
-const nav = document.getElementById("nav");
-scrollHandlers.push(y => nav && nav.classList.toggle("scrolled", y > 8));
-
-/* ---------- mobile: the CTA rides at the bottom once the hero is gone ---------- */
+/* ---------- nav: rides along. Standalone it's sticky; embedded it's pinned by hand and only
+   appears once the C&K menu bar has scrolled off the top ---------- */
 (() => {
-  const mob = document.getElementById("mobCta"), hero = document.querySelector(".hero");
-  if (!mob || !hero) return;
-  let shown = false;
-  scrollHandlers.push(() => {
-    const past = hero.getBoundingClientRect().bottom < 0;   /* the hero (and its own CTA) is behind you */
-    if (past === shown) return;
-    shown = past;
-    mob.classList.toggle("show", past);
-    mob.setAttribute("aria-hidden", String(!past));
-    const a = mob.querySelector("a"); if (a) a.tabIndex = past ? 0 : -1;
-  });
+  const nav = document.getElementById("nav"); if (!nav) return;
+  if (IS_EMBEDDED) {
+    nav.classList.add("embedded");
+    scrollHandlers.push(() => {
+      nav.style.transform = `translate3d(0,${vpTop()}px,0)`;
+      nav.classList.toggle("pinned", host.top < -10);
+    });
+  } else {
+    scrollHandlers.push(() => nav.classList.toggle("scrolled", vpTop() > 8));
+  }
 })();
 
 /* ---------- hero entrance: stagger order for the CSS rise ---------- */
 document.querySelectorAll(".rise").forEach((el, i) => el.style.setProperty("--i", i));
 
-/* ---------- reveal on approach — scroll-driven, so it never lags behind the page ---------- */
+/* ---------- reveal on approach — position-driven, so it never lags behind the page ---------- */
 (() => {
   const els = [...document.querySelectorAll(".reveal")];
   if (reduced) { els.forEach(el => el.classList.add("in")); return; }
   let pending = els;
-  function reveal() {
+  scrollHandlers.push(() => {
     if (!pending.length) return;
-    const limit = innerHeight * 0.93;
-    pending = pending.filter(el => {
-      if (el.getBoundingClientRect().top < limit) { el.classList.add("in"); return false; }
-      return true;
-    });
-  }
-  scrollHandlers.push(reveal);
-  reveal();
+    const limit = vpH() * 0.93;
+    pending = pending.filter(el => { if (relTop(el) < limit) { el.classList.add("in"); return false; } return true; });
+  });
 })();
 
 /* ---------- reading light: long-form paragraphs sit faint and the ink settles as they
-   enter the reading zone (a band ~18–70% down the viewport), tracking the scroll. ---------- */
+   enter the reading zone (a band ~16–68% down the viewport), tracking the scroll ---------- */
 (() => {
   const els = [...document.querySelectorAll(".rl")];
   if (!els.length) return;
-  function light() {
-    const vh = innerHeight, top = vh * 0.16, bot = vh * 0.68, ramp = vh * 0.24;
+  scrollHandlers.push(() => {
+    const vh = vpH(), top = vh * 0.16, bot = vh * 0.68, ramp = vh * 0.24;
     for (const el of els) {
-      const r = el.getBoundingClientRect(), c = r.top + r.height / 2;
+      const c = (relTop(el) + relBottom(el)) / 2;
       let o = 1;
       if (c < top) o = 1 - Math.min(1, (top - c) / ramp);
       else if (c > bot) o = 1 - Math.min(1, (c - bot) / ramp);
       el.style.opacity = (0.28 + 0.72 * o).toFixed(3);
     }
-  }
-  scrollHandlers.push(light);
-  light();
+  });
 })();
 
 /* ---------- theme + nightfall ---------- */
@@ -98,6 +120,7 @@ function setTheme(t, persist) {
   const lab = document.getElementById("nfLabel");
   if (lab) lab.textContent = t === "dark" ? "Turn off dark mode" : "Turn on dark mode";
   if (persist) userTouchedTheme = true;
+  if (IS_EMBEDDED) parent.postMessage({ hook: "bg", color: THEME_BG[t] }, "*");   /* the WP page matches */
 }
 function cinema(t, persist, ms) {
   doc.classList.add("theme-cinema"); setTheme(t, persist);
@@ -107,50 +130,56 @@ setTheme("light", false);
 document.getElementById("themeToggle")?.addEventListener("click", () => {
   cinema(doc.getAttribute("data-theme") === "dark" ? "light" : "dark", true, 1300);
 });
-/* the page dips to dark exactly where the copy says 4am — driven by scroll position, so it
-   lands on the line every time (observers can lag in throttled tabs) */
+/* the page dips to dark exactly where the copy says 4am */
 (() => {
-  const problem = document.getElementById("problem");
-  if (!problem) return;
+  const problem = document.getElementById("problem"); if (!problem) return;
   let done = false;
-  function check() {
-    if (done) return;
-    const r = problem.getBoundingClientRect();
-    if (r.top < innerHeight * 0.55) {
-      done = true;
-      if (userTouchedTheme || doc.getAttribute("data-theme") === "dark") return;
-      cinema("dark", false, reduced ? 0 : 1700);
-    }
-  }
-  scrollHandlers.push(check);
-  check();
+  scrollHandlers.push(() => {
+    if (done || relTop(problem) >= vpH() * 0.55) return;
+    done = true;
+    if (userTouchedTheme || doc.getAttribute("data-theme") === "dark") return;
+    cinema("dark", false, reduced ? 0 : 1700);
+  });
 })();
 
 /* ---------- walkthrough: the phone stays, the steps scroll, the screen follows ---------- */
 (() => {
-  const imgs = [...document.querySelectorAll("#walkPhone img")];
+  const walk = document.querySelector(".walk"), phone = document.getElementById("walkPhone");
+  const imgs = phone ? [...phone.querySelectorAll("img")] : [];
   const steps = [...document.querySelectorAll(".walk-step")];
-  if (!imgs.length || !steps.length || !("IntersectionObserver" in window)) return;
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (!e.isIntersecting) return;
-    const s = e.target.dataset.step;
-    imgs.forEach(im => im.classList.toggle("on", im.dataset.step === s));
-    steps.forEach(st => st.classList.toggle("active", st === e.target));
-  }), { threshold: 0.55 });
-  steps.forEach(s => io.observe(s));
+  if (!steps.length || !phone) return;
+  const desktop = () => matchMedia("(min-width: 900px)").matches;
+  if (IS_EMBEDDED) phone.classList.add("embedded");
+  let cur = -1;
+  scrollHandlers.push(() => {
+    if (!desktop()) return;
+    const h = vpH(); let idx = 0;
+    steps.forEach((s, i) => { if (relTop(s) < h * 0.55) idx = i; });
+    if (idx !== cur) {
+      cur = idx; const key = String(idx);
+      imgs.forEach(im => im.classList.toggle("on", im.dataset.step === key));
+      steps.forEach((s, i) => s.classList.toggle("active", i === idx));
+    }
+    /* embedded: sticky by hand — the frame never scrolls, so CSS sticky never engages */
+    if (IS_EMBEDDED && walk) {
+      const want = NAV_H + h * 0.05 - relTop(walk);
+      const y = Math.max(0, Math.min(want, walk.getBoundingClientRect().height - phone.getBoundingClientRect().height));
+      phone.style.transform = `translate3d(0,${Math.round(y)}px,0)`;
+    }
+  });
 })();
 
 /* ---------- hero phone: the app in use. Cycles real screens; a real recording at
-   ../assets/hook-demo.mp4 takes the slot over if it exists. ---------- */
+   ../assets/hook-demo.mp4 takes the slot over if it exists ---------- */
 (() => {
   const phone = document.getElementById("heroPhone"); if (!phone) return;
   const vid = document.getElementById("heroVideo");
   const imgs = [...phone.querySelectorAll("img[data-cycle]")];
   const cap = document.getElementById("heroCap");
   const CAPS = ["Words & chords", "Set the feel", "Counted in", "Stack your layers"];
-  let i = 0, timer = null, visible = true;
+  let i = 0, timer = null;
+  const visible = () => relBottom(phone) > 0 && relTop(phone) < vpH();
   const show = n => { i = n; imgs.forEach(im => im.classList.toggle("on", +im.dataset.cycle === n)); if (cap) cap.textContent = CAPS[n]; };
-  /* only wire the video if the file is actually there (a fetch HEAD keeps the console clean) */
   if (vid) fetch("../assets/hook-demo.mp4", { method: "HEAD" }).then(r => {
     if (!r.ok) return;
     vid.addEventListener("loadeddata", () => {
@@ -161,8 +190,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     });
     vid.src = "../assets/hook-demo.mp4";
   }).catch(() => {});
-  if ("IntersectionObserver" in window) new IntersectionObserver(es => { visible = es.some(e => e.isIntersecting); }, { threshold: 0.2 }).observe(phone);
-  if (!reduced) timer = setInterval(() => { if (visible && !phone.classList.contains("has-video")) show((i + 1) % CAPS.length); }, 3600);
+  if (!reduced) timer = setInterval(() => { if (visible() && !phone.classList.contains("has-video")) show((i + 1) % CAPS.length); }, 3600);
 })();
 
 /* ---------- THE SIGNATURE: hold to catch ----------
@@ -172,15 +200,30 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
    synthesized, mutable; visuals work without it. ---------- */
 (() => {
   const btn = document.getElementById("recBtn"); if (!btn) return;
-  const ring = document.getElementById("ringFill");
+  const hook = document.getElementById("hookSpin");
   const ringsG = document.getElementById("layerRings");
-  const beats = [...document.querySelectorAll("#beats circle")];
+  const beats = [...document.querySelectorAll("#beats circle, #beats i")];
   const tTime = document.getElementById("tapeTime"), tTake = document.getElementById("tapeTake"), tDot = document.getElementById("tapeDot");
   const hint = document.getElementById("catchHint");
   const muteBtn = document.getElementById("muteBtn"), clearBtn = document.getElementById("clearBtn");
 
-  const C = 2 * Math.PI * 72;
-  ring.style.strokeDasharray = C; ring.style.strokeDashoffset = C;
+  /* the hook orbits the dot while we're rolling — one turn every 1.7s, clockwise, linear — and
+     eases back to rest in .25s when we stop, exactly as HookRecordMark does in the app */
+  const TURN = 1.7;
+  let angle = 0, settleRaf = 0;
+  const setHook = a => { angle = a; if (hook) hook.style.transform = `rotate(${a}deg)`; };
+  const cancelSettle = () => { if (settleRaf) { cancelAnimationFrame(settleRaf); settleRaf = 0; } };
+  function settle() {
+    cancelSettle();
+    if (!hook || reduced) { setHook(0); return; }
+    const from = angle, to = (from % 360) > 180 ? 360 : 0, t0 = performance.now();
+    const step = now => {
+      const p = Math.min(1, (now - t0) / 250), e = 1 - Math.pow(1 - p, 3);
+      setHook(from + (to - from) * e);
+      if (p < 1) settleRaf = requestAnimationFrame(step); else { settleRaf = 0; setHook(0); }
+    };
+    settleRaf = requestAnimationFrame(step);
+  }
   const BPM = 100, BEAT = 60 / BPM, BAR = BEAT * 4, MAX = 5;
   const COLORS = ["#B86A4A", "#D9A24C", "#7E9B67", "#A9668E", "#7B94A6"];   /* the app's layer colors */
   const NOTES  = [130.81, 196.00, 329.63, 493.88, 587.33];                 /* C3 G3 E4 B4 D5 — a Cmaj9 that fills in as you stack */
@@ -210,10 +253,10 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     const o = ctx.createOscillator(), o2 = ctx.createOscillator(), f = ctx.createBiquadFilter();
     const g = ctx.createGain(), p = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
     o.type = "triangle"; o.frequency.value = NOTES[n];
-    o2.type = "sine";     o2.frequency.value = NOTES[n] * 2.004;             /* a whisper of octave shimmer */
+    o2.type = "sine";     o2.frequency.value = NOTES[n] * 2.004;
     f.type = "lowpass";   f.frequency.value = 880 + n * 220; f.Q.value = 0.7;
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.13, t + 0.55);
-    lfo.type = "sine"; lfo.frequency.value = 1 / BAR; lg.gain.value = 0.07;   /* breathes once a bar, like a loop */
+    lfo.type = "sine"; lfo.frequency.value = 1 / BAR; lg.gain.value = 0.07;
     p.gain.value = 0.9; lfo.connect(lg).connect(p.gain);
     o.connect(f); o2.connect(f); f.connect(g).connect(p).connect(master);
     o.start(t); o2.start(t); lfo.start(t);
@@ -229,8 +272,8 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   function frame() {
     const t = performance.now() / 1000;
     if (holding) {
-      const el = t - holdStart, prog = (el % BAR) / BAR, b = Math.floor(el / BEAT);
-      ring.style.strokeDashoffset = reduced ? 0 : C * (1 - prog);
+      const el = t - holdStart, b = Math.floor(el / BEAT);
+      if (!reduced) setHook(((el / TURN) * 360) % 360);
       if (b !== lastBeat) { lastBeat = b; const bi = b % 4; beats.forEach((c, i) => c.classList.toggle("hit", i === bi)); click(bi === 0); }
       tTime.textContent = fmt(el);
     } else if (layers.length) {
@@ -242,6 +285,8 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   function startHold() {
     if (holding || layers.length >= MAX) return;
     audio();
+    if (hook) hook.classList.remove("boot");
+    cancelSettle(); setHook(0);
     holding = true; holdStart = performance.now() / 1000; lastBeat = -1;
     btn.setAttribute("aria-pressed", "true"); btn.classList.add("holding"); tDot.classList.add("live");
     hint.textContent = "Counting you in… let go when you've got it.";
@@ -252,7 +297,8 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     holding = false;
     const len = performance.now() / 1000 - holdStart;
     btn.setAttribute("aria-pressed", "false"); btn.classList.remove("holding"); tDot.classList.remove("live");
-    ring.style.strokeDashoffset = C; beats.forEach(c => c.classList.remove("hit"));
+    settle();
+    beats.forEach(c => c.classList.remove("hit"));
     if (len < 0.35) { hint.textContent = "Hold it a little longer — give it a bar."; if (!layers.length) tTime.textContent = "00:00.0"; return; }
     catchLayer(len);
   }
@@ -260,7 +306,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     const n = layers.length; if (n >= MAX) return;
     if (!n) loopStart = performance.now() / 1000;
     const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    c.setAttribute("cx", "160"); c.setAttribute("cy", "160"); c.setAttribute("r", String(92 + n * 14));
+    c.setAttribute("cx", "160"); c.setAttribute("cy", "160"); c.setAttribute("r", String(150 + n * 8));
     c.setAttribute("class", "layer"); c.style.stroke = COLORS[n]; c.style.setProperty("--d", BAR + "s");
     ringsG.appendChild(c);
     layers.push({ el: c, v: voice(n) });
@@ -293,9 +339,11 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     if (!ctx) return;
     if (document.hidden) ctx.suspend().catch(() => {}); else if (layers.length) ctx.resume().catch(() => {});
   });
+  /* the app's launch moment: the hook spins up as the page opens, then rests */
+  if (hook && !reduced) { hook.classList.add("boot"); setTimeout(() => hook.classList.remove("boot"), 3450); }
 })();
 
-/* ---------- live rhyme demo — the app's REAL rhyme engine (ported from the live page) ---------- */
+/* ---------- live rhyme demo — the app's REAL rhyme engine ---------- */
 (() => {
   const demo = document.getElementById("rhymeDemo");
   const input = document.getElementById("rhymeInput");
@@ -355,11 +403,8 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
       })
       .catch(() => demo.classList.remove("rhyme-warming"));
   }
-  /* boot when the demo is within ~900px of the viewport — checked on scroll (never lags),
-     and immediately on any interaction with the box */
-  const near = () => { if (!booted && demo.getBoundingClientRect().top < innerHeight + 900) boot(); };
-  scrollHandlers.push(near);
-  near();
+  /* boot when the box is within ~900px of the viewport, or the moment it's touched */
+  scrollHandlers.push(() => { if (!booted && relTop(demo) < vpH() + 900) boot(); });
   input.addEventListener("focus", boot, { once: true });
 
   const btns = [...demo.querySelectorAll(".rhyme-lang button")];
@@ -379,5 +424,18 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   render();
 })();
 
-/* kick everything that follows the page once, so first paint is right */
+/* ---------- embedded: tell the host how tall we are, whenever that changes ---------- */
+if (IS_EMBEDDED) {
+  const foot = document.querySelector("footer");
+  let lastH = 0;
+  const postHeight = () => {
+    const h = Math.ceil(foot ? foot.getBoundingClientRect().bottom + (window.scrollY || 0) : doc.scrollHeight);
+    if (h > 0 && Math.abs(h - lastH) > 4) { lastH = h; parent.postMessage({ hook: "h", h }, "*"); }
+  };
+  addEventListener("load", postHeight);
+  if ("ResizeObserver" in window) new ResizeObserver(postHeight).observe(document.body);
+  postHeight(); setTimeout(postHeight, 700); setTimeout(postHeight, 2500);
+}
+
+/* first paint: everything that follows the page, computed once */
 tick();
