@@ -1,0 +1,54 @@
+# Pro-Osc v2 — handoff to the Osc Collection chat (2026-09-02)
+
+**Plain summary.** This folder is a second version of clayandkelsy.com/pro-osc, built on the
+system that made the Hook page work, in the Osc Collection's own world (paper, ink, Courier
+Prime, one accent per synth). It is a preview: nothing here is live. Preview it at
+https://clayburton.github.io/hook-site/pro-osc-v2/ . Your job is to apply the same moves to the
+other four synth pages and the collection page, then the WordPress embeds.
+
+## What changed, and the lesson behind each move
+1. **Above the fold answers the three questions in three seconds** — what it sounds like
+   (Hear it first, plays instantly), what it costs ($29 beside the button), will it run (the
+   three "facts" pills: free Kontakt Player · macOS & Windows · 83 presets). From the August
+   competitor teardown; it was buried before.
+2. **The signature: the interface in use.** The hand-drawn interface sits in the hero and
+   comes alive while a sound plays: the crystal glows with the level, a cut-off light sweeps
+   the filter. Hook's rule: one bold move per page, everything else quiet. heylemon.ai's lesson:
+   show the product working, not a picture of it.
+3. **Audio is the primary UI.** One `<audio>`, `preload="none"`, streams on tap (iOS needs the
+   tap), one sound at a time, level meter through Web Audio. The demosc files send
+   `Access-Control-Allow-Origin: *`; keep that, or drop the analyser (the sound still plays).
+4. **Reading light + nightfall** land on the objection flip ("It looks playful. Then you hear
+   it.") — the page dips to dark exactly where the copy turns serious. Same code as Hook.
+5. **The interface stays, the features scroll**: Hook's sticky-phone walkthrough, with a
+   highlight box that moves to the control each feature is about. Coordinates are `--x/--y/--w/--h`
+   percentages on each `.hl` — adjust per synth's interface image.
+6. **Proof within a screen of the promise** (UX Peak rule): a real reviewer quote in the
+   objection section, the three verified-buyer reviews kept verbatim, the makers line.
+7. **Video loads only when asked**: a thumbnail with a play button; YouTube's ~500 KB player
+   arrives on click. Speed pass lesson.
+8. **One sticky reach for the action**: the nav pill "Buy · $29". No second bottom bar.
+9. **Embed-ready**: app.js is Hook's engine, so the WordPress host block works unchanged
+   (`../wordpress-embed.html`: change ORIGIN/path, the wordmark, and the link ids). The host
+   draws the menu bar (zero-lag) and hides this page's own nav.
+
+## Copy
+Everything is Kelsy's, verbatim from the live page and the demosc page, except these NEW lines
+(Kelsy approves before anything ships): the three facts pills; "It looks playful. Then you hear
+it." and the sentence after it; the Folia Soundstudio quote (a real receipt from
+`C&K Marketing/instruments/proof/osc-2.0-page-kit.md`, review titled "JOKE or a REAL DEAL?");
+the makers line; "Tap a sound. It streams, nothing to download."; the preset names
+"Preset 1–4" (the demosc page names them "Pro-Osc · live"; give them real names if they have them).
+
+## Verify before going live
+Links are the ones I could confirm: product page `/product/pro-osc/`, shop `/shop/`, Kontakt
+Player. Two are guesses: the Osc Collection link (points at `/shop/`) and DEM-Osc (`/dem-osc/`).
+Standing rule (FACTS): Osc stays on Kontakt/NI as-is; "for Kontakt" stays in the SEO title; no
+"standalone" or "leaving NI" angle anywhere.
+
+## To make the next synth page
+Copy the three files. Change: `--acc` (chip #40b25f, jx #d85fa6, digi #e08a43, moo #9a6ad0,
+dem #16b5a6), the name in the nav/title/hero, the copy blocks, the interface image, the five
+features, the audio list, the highlight coordinates, the video id, the reviews. Nothing in
+app.js needs to change. The collection page is the same skeleton with five hero cards where
+the interface is, each with its own accent, and one shared sound strip.

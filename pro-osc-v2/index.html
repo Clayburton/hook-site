@@ -1,0 +1,208 @@
+<!doctype html>
+<!-- ======================================================================
+  PRO-OSC — v2 PREVIEW (not live). Built 2026-09-02 from the Hook page's system, for the Osc
+  Collection chat to apply to every synth page and the collection page. Read HANDOFF.md first.
+  Copy is Kelsy's, verbatim from the live page; the few new lines are marked NEW in HANDOFF.md.
+  Media streams from the live demosc site (https://clayburton.github.io/demosc/pro-osc/).
+  Same three files as Hook: index.html (sections marked ============ NAME ============),
+  styles.css (tokens first; one block per section), app.js (STANDALONE or EMBEDDED, same contract).
+  ====================================================================== -->
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pro-Osc — Analog synth for Kontakt, 83 presets</title>
+<meta name="description" content="Pro-Osc is a vintage-era analog synth sampled into a modern Kontakt instrument. 83 handcrafted presets, 30 convolution spaces, full NKS. $29.">
+<meta name="theme-color" content="#ece2d0">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://clayburton.github.io">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+
+<!-- ============ NAV (follows the page; hidden under the C&K bar when embedded) ============ -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Pro-Osc — back to top"><b>Pro-Osc</b><span class="tag">The Osc Collection · Analog</span></a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#hear">Hear it</a><a href="#inside">Inside</a><a href="#reviews">Reviews</a><a href="#buy">Buy</a>
+    </nav>
+    <a class="pill-cta" href="https://clayandkelsy.com/product/pro-osc/">Buy · $29</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO — the interface in use ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="micro rise">The Osc Collection &middot; Analog</p>
+      <h1 class="rise">Pro&#8209;Osc</h1>
+      <p class="tagline rise">A vintage-era analog synth, sampled into a modern instrument.</p>
+      <p class="lede rise">Built from the raw oscillators of a Curtis-filtered vintage analog synth &mdash; then wrapped in a hand-drawn interface. Cinematic warmth that fills the room, and 83 handcrafted presets with no filler, all performable from the mod wheel.</p>
+      <div class="buy-row rise">
+        <span class="price">$29</span>
+        <a class="btn" href="https://clayandkelsy.com/product/pro-osc/">Buy Pro-Osc &rarr;</a>
+        <a class="btn ghost" id="hearFirst" href="#hear"><i class="play-ico" aria-hidden="true"></i>Hear it first</a>
+      </div>
+      <p class="fine rise">Or get all five in the <a href="https://clayandkelsy.com/shop/">Osc Collection &mdash; $99</a> &middot; new here? <a href="https://clayandkelsy.com/dem-osc/">try DEM-Osc free</a></p>
+      <ul class="facts rise" aria-label="The three things">
+        <li>Runs in the <b>free Kontakt Player</b></li>
+        <li><b>macOS</b> &amp; <b>Windows</b></li>
+        <li><b>83 presets</b>, no filler</li>
+      </ul>
+    </div>
+    <figure class="rig" id="rig" aria-label="The Pro-Osc interface, alive while a sound plays">
+      <img src="https://clayburton.github.io/demosc/pro-osc/interface.webp" alt="Pro-Osc's hand-drawn interface: three oscillator selectors, panning, attack and release, a cut-off slider, and tabs for envelope, reverb and FX, LFO and mod wheel, stepped sequencer, and vibrato" width="1100" height="908" fetchpriority="high" decoding="async">
+      <i class="glow" aria-hidden="true"></i>
+      <i class="cut" aria-hidden="true"></i>
+      <figcaption>Every knob, on one hand-drawn screen &middot; <span id="rigCap">tap a sound and it moves</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ HEAR IT — the sounds, streaming, one tap ============ -->
+<section class="hear" id="hear">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="micro">Hear it</p>
+      <h2>Real sounds,<br>straight from Pro&#8209;Osc.</h2>
+      <p class="sub">Four presets and a full track &mdash; every sound below was made with Pro-Osc alone.</p>
+    </div>
+    <div class="sounds reveal" role="group" aria-label="Sounds">
+      <button class="snd" data-src="https://clayburton.github.io/demosc/pro-osc/audio/pro-1.mp3" aria-pressed="false"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>Preset 1</b><small>Pro-Osc &middot; live</small></button>
+      <button class="snd" data-src="https://clayburton.github.io/demosc/pro-osc/audio/pro-2.mp3" aria-pressed="false"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>Preset 2</b><small>Pro-Osc &middot; live</small></button>
+      <button class="snd" data-src="https://clayburton.github.io/demosc/pro-osc/audio/pro-3.mp3" aria-pressed="false"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>Preset 3</b><small>Pro-Osc &middot; live</small></button>
+      <button class="snd" data-src="https://clayburton.github.io/demosc/pro-osc/audio/pro-4.mp3" aria-pressed="false"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>Preset 4</b><small>Pro-Osc &middot; live</small></button>
+      <button class="snd song" data-src="https://clayburton.github.io/demosc/pro-osc/audio/song.mp3" aria-pressed="false"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>Terry Town</b><small>A full track &mdash; every sound but the drums is Pro-Osc. &middot; 1:20</small></button>
+    </div>
+    <p class="hint reveal" id="hearHint">Tap a sound. It streams, nothing to download.</p>
+  </div>
+</section>
+
+<!-- ============ THEN YOU HEAR IT (nightfall lands here) ============ -->
+<section class="then" id="then">
+  <div class="wrap narrow">
+    <p class="micro reveal">The thing reviewers say</p>
+    <p class="big rl">It looks playful. Then you hear it.</p>
+    <p class="big rl">Every knob is drawn by hand, and the sound underneath is a real vintage analog synth, sampled shape by shape, run through real spaces.</p>
+    <blockquote class="quote rl"><p>&ldquo;The sound here is serious&hellip; I really like it.&rdquo;</p><footer>Folia Soundstudio &middot; from a review titled <em>&ldquo;JOKE or a REAL DEAL?&rdquo;</em> &mdash; he landed on real deal</footer></blockquote>
+  </div>
+</section>
+
+<!-- ============ INSIDE — the interface stays, the features scroll ============ -->
+<section class="inside" id="inside">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="micro">What&rsquo;s under the hood</p>
+      <h2>Familiar sounds.<br>Refreshing interface.</h2>
+    </div>
+    <div class="walk">
+      <figure class="walk-phone" id="walkPhone" aria-hidden="true">
+        <img src="https://clayburton.github.io/demosc/pro-osc/interface.webp" alt="" width="1100" height="908" decoding="async" loading="lazy">
+        <i class="hl" data-step="0" style="--x:2%;--y:2%;--w:62%;--h:40%"></i>
+        <i class="hl" data-step="1" style="--x:20%;--y:56%;--w:18%;--h:7%"></i>
+        <i class="hl" data-step="2" style="--x:57%;--y:56%;--w:21%;--h:7%"></i>
+        <i class="hl" data-step="3" style="--x:38%;--y:56%;--w:19%;--h:7%"></i>
+        <i class="hl" data-step="4" style="--x:77%;--y:56%;--w:17%;--h:7%"></i>
+      </figure>
+      <ol class="walk-steps">
+        <li class="walk-step" data-step="0"><span class="fig">14</span><h3>Wave shapes, three at a time</h3><p>Three oscillator selectors, each with 14 sampled shapes from a Curtis-filtered vintage analog synth &mdash; plus per-oscillator pitch and pan.</p></li>
+        <li class="walk-step" data-step="1"><span class="fig">30</span><h3>Convolution spaces built in</h3><p>Cross-synthesis through our favorite outboard reverbs and eurorack effects &mdash; 15 reverbs and 15 FX, ready to convolve your sound.</p></li>
+        <li class="walk-step" data-step="2"><span class="fig">&#8635;</span><h3>A stepped sequencer with a twist</h3><p>It only steps when a note arrives &mdash; swapping the loaded wave shape per note to bring melodies and chords to life.</p></li>
+        <li class="walk-step" data-step="3"><span class="fig">&#8767;</span><h3>Cut-Off LFO &amp; a mod-wheel command center</h3><p>A dedicated filter LFO with plenty of shapes, plus a control center that maps many parameters to your mod wheel at once.</p></li>
+        <li class="walk-step" data-step="4"><span class="fig">&asymp;</span><h3>Vibrato, glide, slop &amp; spread</h3><p>Classic vibrato with speed and fade-in, plus polyphonic glide, pitch slop and pan spread to keep everything alive and human.</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SEE IT MOVE (video loads only when asked) ============ -->
+<section class="see" id="see">
+  <div class="wrap narrow">
+    <div class="sec-head reveal"><p class="micro">See it move</p><h2>Watch Pro&#8209;Osc in action.</h2></div>
+    <button class="yt reveal" id="yt" data-id="inPEXDp2xmg" aria-label="Play the Pro-Osc video">
+      <img src="https://i.ytimg.com/vi/inPEXDp2xmg/maxresdefault.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
+      <span class="yt-play" aria-hidden="true"></span>
+    </button>
+    <p class="hint reveal">Prefer a walkthrough? <a href="https://www.youtube.com/watch?v=inPEXDp2xmg">Watch the Pro-Osc tutorial &rarr;</a></p>
+  </div>
+</section>
+
+<!-- ============ THE DETAILS ============ -->
+<section class="details" id="details">
+  <div class="wrap">
+    <div class="sec-head reveal"><p class="micro">The details</p><h2>Everything in the box.</h2></div>
+    <div class="cols reveal">
+      <div><h3>Key features</h3><ul class="ticks">
+        <li>83 handcrafted presets, no filler</li>
+        <li>14 wave shapes from a Curtis-filtered vintage analog synth</li>
+        <li>30 custom impulse responses (15 reverbs + 15 eurorack FX)</li>
+        <li>Note-triggered stepped sequencer</li>
+        <li>Cut-Off LFO, Vibrato, Pitch Slop &amp; polyphonic Glide</li>
+        <li>Full NKS support &mdash; Maschine &amp; Komplete Kontrol</li></ul></div>
+      <div><h3>Requirements</h3><ul class="ticks">
+        <li>Install &amp; download through Native Access</li>
+        <li>Runs in the free Kontakt 6+ Player, full Kontakt 6 &amp; 7, Komplete Kontrol or Maschine 2</li>
+        <li>macOS &amp; Windows</li></ul>
+        <a class="btn ghost small" href="https://www.native-instruments.com/en/products/komplete/samplers/kontakt-7-player/">Get the free Kontakt Player &rarr;</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section class="reviews" id="reviews">
+  <div class="wrap">
+    <div class="sec-head reveal"><p class="micro">From the studio</p><h2>Loved by producers.</h2></div>
+    <ul class="quotes reveal">
+      <li><span class="stars" aria-label="Five stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><p>&ldquo;From the first chord struck I was speechless &mdash; finally soft-synths with soul, and they sound stellar.&rdquo;</p><footer><b>Sean Tobin</b> Verified buyer &middot; Pro-Osc</footer></li>
+      <li><span class="stars" aria-label="Five stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><p>&ldquo;Pro-Osc is packed full of analogue goodness &mdash; a lush, warm sound with a uniqueness reminiscent of when synths ruled the airwaves.&rdquo;</p><footer><b>Patrick C.</b> Verified buyer &middot; Pro-Osc</footer></li>
+      <li><span class="stars" aria-label="Five stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><p>&ldquo;True analog sounds. The graphics and design are top, and the presets are a great start point for sonic exploration. A work of love for sure.&rdquo;</p><footer><b>CarloAlberto Villani Rigo</b> Verified buyer &middot; Osc Collection</footer></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ THE MAKERS ============ -->
+<section class="makers">
+  <div class="wrap narrow reveal">
+    <p class="micro">Who made it</p>
+    <p class="cki">Pro-Osc is made by <a href="https://clayandkelsy.com">Clay and Kelsy Instruments</a> &mdash; two artists who make the music too, and sample the real machines they write with. Real oscillators, real character.</p>
+  </div>
+</section>
+
+<!-- ============ BUY + FAQ ============ -->
+<section class="buy" id="buy">
+  <div class="wrap">
+    <div class="buy-card reveal">
+      <p class="micro">Make it yours</p>
+      <h2>Bring Pro&#8209;Osc home.</h2>
+      <div class="buy-row"><span class="price">$29</span><a class="btn" href="https://clayandkelsy.com/product/pro-osc/">Buy Pro-Osc &rarr;</a></div>
+      <p class="fine">Or get all five &mdash; the <a href="https://clayandkelsy.com/shop/">Osc Collection for $99</a> (save $45). New here? <a href="https://clayandkelsy.com/dem-osc/">DEM-Osc is free.</a></p>
+    </div>
+    <div class="faq reveal">
+      <details><summary>Do I need to own Kontakt?<span class="faq-x" aria-hidden="true"></span></summary><p>No &mdash; Pro-Osc runs in the free Kontakt Player (Kontakt 6 or higher). Install it through Native Access.</p></details>
+      <details><summary>What operating systems are supported?<span class="faq-x" aria-hidden="true"></span></summary><p>macOS and Windows, with full NKS support for Maschine and Komplete Kontrol.</p></details>
+      <details><summary>What&rsquo;s inside?<span class="faq-x" aria-hidden="true"></span></summary><p>Three oscillators with 14 wave shapes each from a Curtis-filtered vintage analog synth, 30 convolution spaces, a note-triggered stepped sequencer, a mod-wheel command center, and 83 handcrafted presets.</p></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <b class="foot-brand">Clay &amp; Kelsy Instruments</b>
+    <p>Real oscillators, real character.</p>
+    <nav><a href="https://clayandkelsy.com">clayandkelsy.com</a><a href="https://clayandkelsy.com/shop/">The Osc Collection</a></nav>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js" defer></script>
+<script type="module" src="app.js?v=1"></script>
+</body>
+</html>
