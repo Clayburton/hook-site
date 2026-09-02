@@ -118,6 +118,7 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 .wm-inline { height: 1.45em; width: auto; display: inline-block; vertical-align: -.16em; overflow: visible; color: var(--hook); margin-right: .05em; }
 .wm-inline .s { fill: none; stroke: currentColor; stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; }
 .wm-inline .head { fill: none; stroke: var(--red); stroke-width: 26; stroke-linecap: round; }
+.wm-inline.h { height: .92em; vertical-align: -.1em; margin-right: .02em; color: var(--ink); }   /* inside a heading: h as tall as the capitals */
 .nav-links { margin-left: auto; display: flex; gap: 1.7rem; }
 .nav-links a { font-family: var(--sans); font-weight: 700; font-size: .92rem; color: var(--ink-soft); text-decoration: none; transition: color .2s; }
 .nav-links a:hover { color: var(--ink); }
