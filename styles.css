@@ -179,26 +179,26 @@ html[data-theme="dark"]  .screen img.s-dark.on { opacity: 1; transition-delay: 0
 .catch-rings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 /* the hook: the app's own layer, as a mask, so it's charcoal on paper and cream after dark */
 .hook-spin {
-  position: absolute; inset: 0; background: var(--hook);
+  position: absolute; left: -1.6%; top: -.4%; width: 100%; height: 100%;   /* the mark's registration point lands dead center */
+  background: var(--hook); opacity: .62;
   -webkit-mask: url("assets/hook-spin.png") center / 100% 100% no-repeat;
           mask: url("assets/hook-spin.png") center / 100% 100% no-repeat;
-  transform-origin: 50% 50%; will-change: transform;
+  transform-origin: 51.6% 50.4%; will-change: transform;                   /* spins around the button, no wobble */
   transition: background-color .9s ease;
 }
 .hook-spin.boot { animation: hookspin 1.7s linear 2; }      /* the app's launch spin: two turns, then rest */
 @keyframes hookspin { to { transform: rotate(360deg); } }
-/* the record dot, at the mark's registration */
+/* the record button, as before — coral, lit, no inner mark — with the hook orbiting it */
 .rec {
-  position: absolute; left: 51.6%; top: 50.4%; width: 34.4%; height: 34.4%; margin: 0; padding: 0;
-  transform: translate(-50%, -50%); border-radius: 50%; border: 0;
-  background: #F30C10; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 10px 24px -10px rgba(243,12,16,.55), inset 0 1px 0 rgba(255,255,255,.22), inset 0 -2px 6px rgba(0,0,0,.12), 0 0 0 0 rgba(243,12,16,0);
-  transition: transform .18s var(--ease), box-shadow .25s var(--ease);
+  position: absolute; left: 50%; top: 50%; width: 88px; height: 88px; margin: -44px 0 0 -44px; padding: 0; border-radius: 50%; border: 0;
+  background: var(--red); cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 12px 28px -10px var(--red-deep), inset 0 1px 0 rgba(255,255,255,.32), 0 0 0 0 rgba(240,78,60,0);
+  transition: transform .18s var(--ease), box-shadow .25s var(--ease), background-color .2s;
 }
-.rec:hover { transform: translate(-50%, -50%) scale(1.04); }
-.rec.holding { transform: translate(-50%, -50%) scale(.93); box-shadow: 0 6px 16px -8px rgba(243,12,16,.6), inset 0 1px 0 rgba(255,255,255,.18), inset 0 -2px 6px rgba(0,0,0,.14), 0 0 0 12px rgba(243,12,16,.14); }
+.rec:hover { transform: scale(1.04); }
+.rec.holding { transform: scale(.93); box-shadow: 0 6px 18px -8px var(--red-deep), inset 0 1px 0 rgba(255,255,255,.2), 0 0 0 14px rgba(240,78,60,.16); }
 .rec.full { background: var(--ink); box-shadow: 0 10px 24px -12px var(--shadow), inset 0 1px 0 var(--highlight); }
-.rec:focus-visible { outline: 3px solid var(--ink); outline-offset: 8px; }
+.rec:focus-visible { outline: 3px solid var(--ink); outline-offset: 6px; }
 /* stacked takes ring the mark, outside the hook, in the app's layer colors */
 .layer { fill: none; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 5 11; opacity: 0; animation-name: travel, layerIn; animation-duration: var(--d, 2.4s), .5s; animation-iteration-count: infinite, 1; animation-fill-mode: none, forwards; animation-timing-function: linear, var(--ease); }
 @keyframes travel  { to { stroke-dashoffset: -64; } }
@@ -416,6 +416,7 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(-40deg)
   .lede { font-size: 1.08rem; }
   .catch { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: .6rem; }
   .catch-stage { width: 132px; height: 132px; }
+  .rec { width: 78px; height: 78px; margin: -39px 0 0 -39px; }
   .catch-meta { max-width: 26em; }
   .tape { justify-content: center; }
   .catch-tools { justify-content: center; }

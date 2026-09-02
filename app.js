@@ -306,7 +306,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     const n = layers.length; if (n >= MAX) return;
     if (!n) loopStart = performance.now() / 1000;
     const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    c.setAttribute("cx", "160"); c.setAttribute("cy", "160"); c.setAttribute("r", String(150 + n * 8));
+    c.setAttribute("cx", "160"); c.setAttribute("cy", "160"); c.setAttribute("r", String(150 + n * 9));
     c.setAttribute("class", "layer"); c.style.stroke = COLORS[n]; c.style.setProperty("--d", BAR + "s");
     ringsG.appendChild(c);
     layers.push({ el: c, v: voice(n) });
