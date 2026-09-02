@@ -1,5 +1,7 @@
 /* =====================================================================
-   Hook — v2 preview stylesheet
+   Hook — LIVE stylesheet (clayandkelsy.com/hook). Reference for future C&K pages: see the
+   note at the top of index.html. Tokens first (light, then the dark theme), then one block
+   per section, each marked  ---------- name ----------  in a block comment, so you can grep for it.
    Warm paper, coral record-dot, serif for the human voice, Nunito for UI,
    and a mono tape-counter for the studio details. One bold move (the
    hold-to-catch hero); everything else quiet and disciplined.

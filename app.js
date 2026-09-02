@@ -5,6 +5,9 @@
    measures against that; the nav is pinned by JS and only shows once the C&K menu bar has
    scrolled away; we post our height and theme color back up so the frame fits and the page
    behind it matches. Everything degrades: no JS → static page; reduced motion → no animation. */
+/* Reusable on any C&K page: everything down to the hold-to-catch block (viewport pipe, nav, reveals,
+   reading light, theme + nightfall, walkthrough, height posting). Hook-only: hold-to-catch, hero phone,
+   rhyme demo. Blocks are marked  ---------- name ----------  in block comments, so you can grep for them. */
 
 const doc = document.documentElement;
 const IS_EMBEDDED = window.self !== window.top;
