@@ -14,7 +14,7 @@ const IS_EMBEDDED = window.self !== window.top;
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const coarse  = matchMedia("(pointer: coarse)").matches;
 const NAV_H = 64;
-const THEME_BG = { light: "#ece2d0", dark: "#161009" };
+const THEME_BG = { light: "#f0e8d7", dark: "#161009" };
 const themeMeta = document.querySelector('meta[name="theme-color"]');
 let userTouchedTheme = false;
 if (IS_EMBEDDED) document.body.classList.add("embedded");

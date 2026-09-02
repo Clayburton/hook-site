@@ -33,6 +33,10 @@ other four synth pages and the collection page, then the WordPress embeds.
    (`../wordpress-embed.html`: change ORIGIN/path, the wordmark, and the link ids). The host
    draws the menu bar (zero-lag) and hides this page's own nav.
 
+## Paper
+The page ground is #f0e8d7: one step lighter than demosc's #ece2d0 and warmer than Hook's #F6EFE4,
+so the synth pages and Hook read as siblings, not twins (Clay asked; my call). Cards #f7f1e4.
+
 ## Copy
 Everything is Kelsy's, verbatim from the live page and the demosc page, except these NEW lines
 (Kelsy approves before anything ships): the three facts pills; "It looks playful. Then you hear

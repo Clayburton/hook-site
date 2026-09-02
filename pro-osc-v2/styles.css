@@ -8,7 +8,7 @@
    ===================================================================== */
 
 :root {
-  --bg: #ece2d0;  --card: #f4eddd;  --panel: #e7dcc4;  --line: #dccfb6;
+  --bg: #f0e8d7;  --card: #f7f1e4;  --panel: #e9dfc9;  --line: #dccfb6;   /* one step lighter than demosc's #ece2d0; warmer than Hook's #F6EFE4, so the two read as siblings */
   --ink: #17120c;  --ink-soft: #6d6353;  --ink-faint: rgba(23,18,12,.34);
   --acc: #3c8ed0;  --acc-deep: #2f76b0;  --on-acc: #f7f3ea;  --acc-soft: rgba(60,142,208,.14);
   --pink: #d85fa6;  --shadow: rgba(23,18,12,.55);
@@ -128,7 +128,7 @@ h3 { font-size: 1.18rem; line-height: 1.25; }
 .walk-phone.embedded { position: absolute; top: 0; left: 0; width: calc(50% - clamp(14px, 2.5vw, 36px)); will-change: transform; }
 .walk-phone { border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line); background: #fbf8f2; }
 .walk-phone img { display: block; }
-.walk-phone .hl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 1.5px solid var(--acc); border-radius: 10px; box-shadow: 0 0 0 9999px rgba(236,226,208,.6), 0 0 0 3px var(--acc-soft); opacity: 0; transition: opacity .5s var(--ease), left .5s var(--ease), top .5s var(--ease), width .5s var(--ease), height .5s var(--ease); pointer-events: none; }   /* a spotlight: everything but the control dims */
+.walk-phone .hl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 1.5px solid var(--acc); border-radius: 10px; box-shadow: 0 0 0 9999px rgba(240,232,215,.62), 0 0 0 3px var(--acc-soft); opacity: 0; transition: opacity .5s var(--ease), left .5s var(--ease), top .5s var(--ease), width .5s var(--ease), height .5s var(--ease); pointer-events: none; }   /* a spotlight: everything but the control dims */
 .walk-phone .hl.on { opacity: 1; }
 .walk-steps { list-style: none; margin: 0; padding: 0; grid-column: 2; }
 .walk-step { min-height: calc(var(--vh) * .55); display: flex; flex-direction: column; justify-content: center; gap: .5rem; opacity: .32; transition: opacity .5s var(--ease); }
