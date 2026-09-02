@@ -181,18 +181,18 @@ html[data-theme="dark"]  .screen img.s-dark.on { opacity: 1; transition-delay: 0
 .catch-rings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 /* the hook: the app's own layer, as a mask, so it's charcoal on paper and cream after dark */
 .hook-spin {
-  position: absolute; left: -1.6%; top: -.4%; width: 100%; height: 100%;   /* the mark's registration point lands dead center */
+  position: absolute; left: -3%; top: -3%; width: 100%; height: 100%;   /* the mark's registration point lands dead center */
   background: var(--hook); opacity: .92;
   -webkit-mask: url("assets/hook-spin.png") center / 100% 100% no-repeat;
           mask: url("assets/hook-spin.png") center / 100% 100% no-repeat;
-  transform-origin: 51.6% 50.4%; will-change: transform;                   /* spins around the button, no wobble */
+  transform-origin: 53% 53%; will-change: transform;                   /* spins around the button, no wobble */
   transition: background-color .9s ease;
 }
 .hook-spin.boot { animation: hookspin 1.7s linear 2; }      /* the app's launch spin: two turns, then rest */
 @keyframes hookspin { to { transform: rotate(360deg); } }
 /* the record button, as before — coral, lit, no inner mark — with the hook orbiting it */
 .rec {
-  position: absolute; left: 50%; top: 50%; width: 84px; height: 84px; margin: -42px 0 0 -42px; padding: 0; border-radius: 50%; border: 0;
+  position: absolute; left: 50%; top: 50%; width: 80px; height: 80px; margin: -40px 0 0 -40px; padding: 0; border-radius: 50%; border: 0;
   background: var(--red); cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
   box-shadow: 0 12px 28px -10px var(--red-deep), inset 0 1px 0 rgba(255,255,255,.32), 0 0 0 0 rgba(240,78,60,0);
   transition: transform .18s var(--ease), box-shadow .25s var(--ease), background-color .2s;
@@ -418,7 +418,7 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(-40deg)
   .lede { font-size: 1.08rem; }
   .catch { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: .6rem; }
   .catch-stage { width: 156px; height: 156px; }
-  .rec { width: 74px; height: 74px; margin: -37px 0 0 -37px; }
+  .rec { width: 70px; height: 70px; margin: -35px 0 0 -35px; }
   .catch-meta { max-width: 26em; }
   .tape { justify-content: center; }
   .catch-tools { justify-content: center; }
