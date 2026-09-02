@@ -23,7 +23,7 @@ if (IS_EMBEDDED) document.body.classList.add("embedded");
    Embedded: host.top = the frame's top edge in the host viewport (positive while the C&K header
    is above us, negative once we've scrolled past the top), host.vh = the host viewport height.
    An element's position relative to the host viewport is its frame position + host.top. */
-const host = { top: 0, vh: 0, top0: null, ready: false };
+const host = { top: 0, vh: 0, top0: null, ready: false, nav: false };   /* nav: the host draws the menu bar itself */
 const vpH   = () => IS_EMBEDDED ? (host.vh || 800) : innerHeight;
 const vpTop = () => IS_EMBEDDED ? Math.max(0, -host.top) : (window.scrollY || 0);
 const off   = () => IS_EMBEDDED ? host.top : 0;
@@ -45,7 +45,11 @@ const scrollHandlers = [];
 function tick() { for (const h of scrollHandlers) h(); }
 if (IS_EMBEDDED) {
   addEventListener("message", e => {
-    const d = e.data; if (!d || d.hookHost !== "vp" || typeof d.top !== "number") return;
+    const d = e.data; if (!d || !d.hookHost) return;
+    /* a host with its own fixed menu bar (the newer embed) sends its link clicks down here */
+    if (d.hookHost === "go") { const t = d.id && document.querySelector(d.id); if (t) t.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); return; }
+    if (d.hookHost !== "vp" || typeof d.top !== "number") return;
+    if (d.nav && !host.nav) { host.nav = true; const n = document.getElementById("nav"); if (n) n.style.display = "none"; }
     host.top = d.top; if (typeof d.vh === "number" && d.vh > 0) host.vh = d.vh;
     if (!host.ready) { host.ready = true; host.top0 = Math.max(0, d.top); fitHero(); }
     setVh(); tick();
@@ -67,6 +71,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener("click
   e.preventDefault();
   if (lenis) lenis.scrollTo(t, { offset: -76, duration: 1.15 });
   else t.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+}));
+
+/* embedded under a host menu bar: "Notify me" asks the host to scroll up and swap the frame, so the
+   notify page never opens thousands of pixels below the fold */
+document.querySelectorAll('a[href="notify.html"]').forEach(a => a.addEventListener("click", e => {
+  if (!IS_EMBEDDED || !host.nav) return;
+  e.preventDefault(); parent.postMessage({ hook: "go", href: "notify.html" }, "*");
 }));
 
 /* ---------- nav: rides along. Standalone it's sticky; embedded it's pinned by hand and only

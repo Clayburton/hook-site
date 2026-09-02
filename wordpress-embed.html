@@ -1,27 +1,46 @@
 <!-- ============================================================
-     Hook — full-bleed embed for clayandkelsy.com/hook/
-     Paste this WHOLE file into ONE "Custom HTML" block on the page.
-     The page needs nothing else.
-
+     HOOK — WordPress embed for clayandkelsy.com/hook  (paste this whole file as ONE Custom HTML block)
      What it does:
-     · Loads the Hook site fresh on every visit (?v=<timestamp>) so you always
-       see the latest version — no cached copies.
-     · Grows the frame to fit Hook's content (Hook posts its height).
-     · Paints the WordPress page the same color as the page inside (Hook
-       posts its theme color when it dips to dark), so the frame is invisible.
-     · Posts the viewport position to Hook on every scroll — that is how the
-       Hook menu bar knows to stay hidden while the C&K menu bar is on screen
-       and to pin to the top the moment it scrolls away, and how the page's
-       reveals and nightfall follow your scroll.
-     · Smooth, inertial scrolling for the whole page on desktop (Lenis), for
-       that premium feel. Touch devices keep native scrolling. If it ever
-       misbehaves with the theme, delete the "smooth feel" block at the bottom
-       and everything else keeps working.
-
-     The style hides the WordPress THEME's own footer (#colophon) on this page
-     only — Hook brings its own footer. (Scoped: this block only exists on /hook/.)
+     · Embeds the Hook page (GitHub Pages) full-bleed in an iframe that grows to fit its content,
+       so there is exactly one scrollbar on the page: this one.
+     · Draws Hook's menu bar HERE, fixed to the browser window, so it follows the scroll with zero
+       lag. (A menu bar inside the iframe can only follow a frame late, which reads as jitter.)
+       It appears the moment the C&K header scrolls away and hides while the header is on screen.
+     · Tells the page where the viewport is on every scroll (its effects follow it), paints this
+       page the same colour as the page's theme, and routes menu clicks down into the page.
+     · Smooth, inertial scrolling on desktop (Lenis) — the last <script>; safe to delete if it
+       ever misbehaves.
+     · Hides the WordPress theme's own footer (#colophon) on this page only.
+     Message contract with the page (app.js): page→here {hook:"h",h} {hook:"bg",color} {hook:"go",href};
+     here→page {hookHost:"vp",top,vh,nav:true} {hookHost:"go",id}.
      ============================================================ -->
-<style>#colophon{display:none !important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap">
+<style>
+#colophon{display:none !important}
+#hook-nav{position:fixed;top:var(--wp-admin--admin-bar--height,0px);left:0;right:0;z-index:9990;height:64px;display:flex;align-items:center;gap:1.1rem;padding:0 clamp(16px,4vw,40px);box-sizing:border-box;background:rgba(246,239,228,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid #D9C5A6;color:#2A2724;font-family:Nunito,-apple-system,"Helvetica Neue",Arial,sans-serif;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .3s ease,transform .3s ease,background-color .9s ease,color .9s ease,border-color .9s ease}
+#hook-nav.show{opacity:1;transform:none;pointer-events:auto}
+#hook-nav.dark{background:rgba(21,16,10,.82);border-color:#483525;color:#F3ECDE}
+#hook-nav a{color:inherit;text-decoration:none;box-shadow:none;border:0}
+#hook-nav .hn-brand{display:inline-flex;align-items:center;gap:.6rem}
+#hook-nav .hn-wm{height:26px;width:auto;display:block;overflow:visible;color:#41333E}
+#hook-nav.dark .hn-wm{color:#F3ECDE}
+#hook-nav .hn-wm .s{fill:none;stroke:currentColor;stroke-width:26;stroke-linecap:round;stroke-linejoin:round}
+#hook-nav .hn-wm .play{fill:none;stroke:#F04E3C;stroke-width:26;stroke-linecap:round;stroke-dasharray:82 918;animation:hnplay 4.8s linear infinite}
+@keyframes hnplay{to{stroke-dashoffset:-1000}}
+#hook-nav .hn-tag{font:italic 400 .92rem "Iowan Old Style","Source Serif 4",Georgia,serif;opacity:.72}
+#hook-nav .hn-links{margin-left:auto;display:flex;gap:1.4rem}
+#hook-nav .hn-links a{font-weight:700;font-size:.92rem;opacity:.78}
+#hook-nav .hn-links a:hover{opacity:1}
+#hook-nav .hn-pill{font-weight:800;font-size:.86rem;color:#FDF8EF;background:#F04E3C;border-radius:999px;padding:.6em 1.1em;white-space:nowrap}
+#hook-nav .hn-pill:hover{background:#D83E2C;color:#FDF8EF}
+@media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-tag{display:none}}
+@media (prefers-reduced-motion:reduce){#hook-nav{transition:none}#hook-nav .hn-wm .play{animation:none}}
+</style>
+<div id="hook-nav" aria-label="Hook menu">
+  <a class="hn-brand" href="https://clayandkelsy.com/hook/" data-go="#top"><svg class="hn-wm" viewBox="0 0 575 240" aria-hidden="true"><path class="s" d="M42 214V26"/><path class="s" d="M42 140C42 104 64 86 98 86C132 86 152 106 152 142V214"/><path class="s" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="play" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="s" d="M480 214V26"/><path class="s" d="M480 150L550 84"/><path class="s" d="M502 130L558 214"/></svg><span class="hn-tag">Catch the big one.</span></a>
+  <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/hook/#loop" data-go="#loop">Loop</a><a href="https://clayandkelsy.com/hook/#words" data-go="#words">Words</a><a href="https://clayandkelsy.com/hook/#keep" data-go="#keep">Keep it</a><a href="https://clayandkelsy.com/hook/#pricing" data-go="#pricing">Pricing</a></nav>
+  <a class="hn-pill" href="https://clayburton.github.io/hook-site/notify.html">Notify me</a>
+</div>
 <div id="hook-embed" style="margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);width:100vw;">
   <iframe id="hook-frame"
     title="Hook — a writer's looper for iPhone"
@@ -30,51 +49,57 @@
     allow="autoplay"
     loading="eager"></iframe>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
 <script>
 (function () {
   var ORIGIN = "https://clayburton.github.io";
-  var frame = document.getElementById("hook-frame");
-  /* fresh every visit — defeats the iframe-document cache that used to serve stale copies */
+  var frame = document.getElementById("hook-frame"), nav = document.getElementById("hook-nav");
+  /* load the page fresh every visit — defeats the iframe-document cache that once served a stale copy */
   frame.src = ORIGIN + "/hook-site/?v=" + Date.now();
   var lastH = 0;
+  function go(href) { window.scrollTo(0, 0); frame.src = ORIGIN + "/hook-site/" + href + "?v=" + Date.now(); }
   window.addEventListener("message", function (e) {
     if (e.origin !== ORIGIN || !e.data) return;
-    /* auto-grow: the page posts its content height; 8px guard stops resize loops */
-    if (e.data.hook === "h" && typeof e.data.h === "number") {
-      var h = Math.round(e.data.h);
-      if (Math.abs(h - lastH) > 8) { lastH = h; frame.style.height = h + "px"; }
-    }
-    /* theme sync: paint the WP page the same color as the page inside */
+    /* auto-grow: the page posts its content height; the 8px guard stops resize loops */
+    if (e.data.hook === "h" && typeof e.data.h === "number") { var h = Math.round(e.data.h); if (Math.abs(h - lastH) > 8) { lastH = h; frame.style.height = h + "px"; } }
+    /* theme sync: paint this page the same colour as the page inside, and switch the menu bar */
     if (e.data.hook === "bg" && /^#[0-9a-fA-F]{6}$/.test(e.data.color || "")) {
       frame.style.background = e.data.color;
       document.documentElement.style.setProperty("background-color", e.data.color, "important");
       document.body.style.setProperty("background-color", e.data.color, "important");
+      nav.classList.toggle("dark", e.data.color.toLowerCase() === "#15100a");
     }
+    /* the page asks to open one of its own pages (Notify me): scroll up first, then swap the frame */
+    if (e.data.hook === "go" && typeof e.data.href === "string" && /^[a-z0-9-]+\.html$/.test(e.data.href)) go(e.data.href);
   });
-  /* tell Hook where the viewport is, on every scroll (rAF-throttled) */
+  /* tell the page where the viewport is, and show our menu bar once the C&K header has scrolled away */
   var queued = false;
   function postViewport() {
-    queued = false;
-    if (!frame.contentWindow) return;
+    queued = false; if (!frame.contentWindow) return;
     var r = frame.getBoundingClientRect();
-    frame.contentWindow.postMessage({ hookHost: "vp", top: r.top, vh: window.innerHeight }, ORIGIN);
+    nav.classList.toggle("show", r.top < -10);
+    frame.contentWindow.postMessage({ hookHost: "vp", top: r.top, vh: window.innerHeight, nav: true }, ORIGIN);
   }
-  window.addEventListener("scroll", function () {
-    if (!queued) { queued = true; requestAnimationFrame(postViewport); }
-  }, { passive: true });
+  window.addEventListener("scroll", function () { if (!queued) { queued = true; requestAnimationFrame(postViewport); } }, { passive: true });
   window.addEventListener("resize", postViewport);
   frame.addEventListener("load", postViewport);
   postViewport();
-  /* the smooth feel: inertial scrolling for the whole page — desktop only, and never for
-     people who asked for reduced motion. Safe to delete this block if it ever misbehaves. */
-  try {
-    var fine = window.matchMedia("(pointer: fine)").matches;
-    var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (window.Lenis && fine && !still) {
-      var lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
-      (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(performance.now());
-    }
-  } catch (err) {}
+  /* menu clicks: sections glide inside the page (it scrolls this window); the brand goes to the top */
+  nav.querySelectorAll("[data-go]").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (a.getAttribute("data-go") === "#top") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+      frame.contentWindow.postMessage({ hookHost: "go", id: a.getAttribute("data-go") }, ORIGIN);
+    });
+  });
+  nav.querySelector(".hn-pill").addEventListener("click", function (e) { e.preventDefault(); go("notify.html"); });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+<script>
+(function () {  /* smooth, inertial scrolling on desktop only — delete this block if it ever misbehaves */
+  if (!window.Lenis || !matchMedia("(pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
+  function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
 })();
 </script>
