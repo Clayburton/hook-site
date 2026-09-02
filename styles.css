@@ -119,6 +119,11 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 .wm-inline .s { fill: none; stroke: currentColor; stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; }
 .wm-inline .head { fill: none; stroke: var(--red); stroke-width: 26; stroke-linecap: round; }
 .wm-inline.h { height: .92em; vertical-align: -.1em; margin-right: .02em; color: var(--ink); }   /* inside a heading: h as tall as the capitals */
+/* the hero eyebrow: the mark and "A Writer's Looper" on one line, optically centred on each other;
+   the mark's own playhead is the accent, so the label's usual dot is dropped */
+.eyebrow-wm { display: inline-flex; align-items: center; gap: .55em; }
+.eyebrow-wm::before { display: none; }
+.wm-inline.eb { height: 1.7em; vertical-align: middle; margin: 0; position: relative; top: .04em; }
 .nav-links { margin-left: auto; display: flex; gap: 1.7rem; }
 .nav-links a { font-family: var(--sans); font-weight: 700; font-size: .92rem; color: var(--ink-soft); text-decoration: none; transition: color .2s; }
 .nav-links a:hover { color: var(--ink); }
