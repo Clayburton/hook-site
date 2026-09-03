@@ -51,6 +51,7 @@
 <div id="hook-phone" aria-hidden="true"><div class="scr"></div></div>
 <div id="hook-embed" style="margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);width:100vw;">
   <iframe id="hook-frame"
+    src="https://clayburton.github.io/hook-site/"
     title="Hook — a writer's looper for iPhone"
     style="display:block;width:100%;border:0;height:12000px;background:#F6EFE4;"
     scrolling="no"
@@ -76,7 +77,7 @@
     if (!walk) return;
     var vh = window.innerHeight, margin = walk.navH + vh * 0.05, ph = walk.width / walk.aspect;
     var secTop = r.top + walk.top, secBottom = r.top + walk.bottom;
-    var on = secTop < vh && secBottom > 0;
+    var on = (secTop < vh) ? (secBottom > 0) : false;   /* no '&&' here: WordPress rewrites '&' inside the block and kills the script */
     phone.classList.toggle("show", on); if (!on) return;
     var y = Math.max(secTop, Math.min(margin, secBottom - ph));   /* exactly what position:sticky would do */
     phone.style.left = (r.left + walk.left) + "px"; phone.style.width = walk.width + "px"; phone.style.top = y + "px";
