@@ -66,8 +66,8 @@ The makers paragraph is Kelsy's own from the Hook page (only the product name ch
 every synth page; never write a new one.
 
 ## Verify before going live
-Links are the ones I could confirm: product page `/product/pro-osc/`, shop `/shop/`, Kontakt
-Player. Two are guesses: the Osc Collection link (points at `/shopcki/`, the page that shows the collection — never an add-to-cart) and DEM-Osc (`/dem-osc/`).
+Links: Buy buttons may add to cart; every "Osc Collection" link opens `/shopcki/` (browse the collection —
+Clay: never an add-to-cart for the collection); DEM-Osc → `/dem-osc/`.
 Standing rule (FACTS): Osc stays on Kontakt/NI as-is; "for Kontakt" stays in the SEO title; no
 "standalone" or "leaving NI" angle anywhere.
 
