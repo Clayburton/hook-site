@@ -24,9 +24,12 @@ if (IS_EMBEDDED) document.body.classList.add("embedded");
    is above us, negative once we've scrolled past the top), host.vh = the host viewport height.
    An element's position relative to the host viewport is its frame position + host.top. */
 const host = { top: 0, vh: 0, top0: null, ready: false, nav: false };   /* nav: the host draws the menu bar itself */
-const vpH   = () => IS_EMBEDDED ? (host.vh || 800) : innerHeight;
-const vpTop = () => IS_EMBEDDED ? Math.max(0, -host.top) : (window.scrollY || 0);
-const off   = () => IS_EMBEDDED ? host.top : 0;
+/* host-driven measurement only once an auto-grow host has actually posted a viewport message
+   (host.ready); until then — standalone, or inside a fixed-height iframe that posts nothing —
+   fall back to this document's own native scroll, so the page is never stuck invisible. */
+const vpH   = () => (IS_EMBEDDED && host.ready) ? (host.vh || 800) : innerHeight;
+const vpTop = () => (IS_EMBEDDED && host.ready) ? Math.max(0, -host.top) : (window.scrollY || 0);
+const off   = () => (IS_EMBEDDED && host.ready) ? host.top : 0;
 const relTop    = el => el.getBoundingClientRect().top + off();
 const relBottom = el => el.getBoundingClientRect().bottom + off();
 function setVh() { doc.style.setProperty("--vh", vpH() + "px"); }
@@ -52,10 +55,12 @@ if (IS_EMBEDDED) {
     if (!host.ready) { host.ready = true; host.top0 = Math.max(0, d.top); fitHero(); }
     setVh(); tick();
   });
-} else {
-  addEventListener("scroll", tick, { passive: true });
-  addEventListener("resize", () => { setVh(); tick(); });
 }
+/* native scroll ALSO drives the page — standalone, AND inside a fixed-height iframe (the current
+   demosc /pro-osc/ embed posts no viewport messages). Harmless under an auto-grow host: that iframe
+   is content-height so it never scrolls internally, and host.ready makes the helpers ignore scrollY. */
+addEventListener("scroll", tick, { passive: true });
+addEventListener("resize", () => { setVh(); tick(); });
 /* embedded: the hero fills what's visible under the C&K header when the page opens */
 function fitHero() {
   const hero = document.querySelector(".hero");
@@ -83,7 +88,7 @@ document.querySelectorAll("a[data-host-go]").forEach(a => a.addEventListener("cl
     nav.classList.add("embedded");
     scrollHandlers.push(() => {
       nav.style.transform = `translate3d(0,${vpTop()}px,0)`;
-      nav.classList.toggle("pinned", host.top < -10);
+      nav.classList.toggle("pinned", vpTop() > 10);   /* works host-driven (−host.top) AND native-scroll */
     });
   } else {
     scrollHandlers.push(() => nav.classList.toggle("scrolled", vpTop() > 8));
