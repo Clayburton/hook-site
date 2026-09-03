@@ -45,7 +45,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=75">
+<link rel="stylesheet" href="styles.css?v=76">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -404,6 +404,27 @@ Secrets that the sycamores keep</textarea>
   </div>
 </section>
 
+<!-- ============ THE PROMISE (the app's first-open screen, in brief) ============
+     Four promises, every one checked against the app (no analytics, no ad kits, no network calls of
+     our own, iCloud backup off until the person turns it on). Copy is the app's welcome screen, word
+     for word. Keep it quiet: no card, no colour but the four layer rings. ============ -->
+<section class="promise" id="promise">
+  <div class="wrap narrow">
+    <div class="sec-head reveal">
+      <p class="micro">Before you start</p>
+      <h2>Your songs are yours.</h2>
+      <p class="lede-sm">Hook is made by two people, not a data company. Here&rsquo;s the whole deal:</p>
+    </div>
+    <ul class="promise-list reveal">
+      <li style="--c:var(--terra)"><i class="ring" aria-hidden="true"></i><div><b>Your recordings stay on your phone.</b><span>They leave only if you switch on your own iCloud backup. Even then, we can&rsquo;t hear them.</span></div></li>
+      <li style="--c:var(--ochre)"><i class="ring" aria-hidden="true"></i><div><b>No account. No tracking. No ads.</b><span>Nothing in Hook watches what you do. No analytics, no pixels, no ad kits.</span></div></li>
+      <li style="--c:var(--sage)"><i class="ring" aria-hidden="true"></i><div><b>We never sell your data.</b><span>We never collect it, so there&rsquo;s nothing to sell.</span></div></li>
+      <li style="--c:var(--plum)"><i class="ring" aria-hidden="true"></i><div><b>No tricks.</b><span>No countdowns, no fake urgency, no cancel mazes. The free version stays free.</span></div></li>
+    </ul>
+    <p class="promise-foot reveal">Made to honor your creative time. That&rsquo;s it.<span>You&rsquo;ll see this promise the first time you open the app.</span></p>
+  </div>
+</section>
+
 <!-- ============ VOICES (PREVIEW: placeholder quotes — swap for real tester words) ============ -->
 <!-- Testimonials: HIDDEN until there are real tester quotes (Clay, 2026-09-02: no placeholders
      on the live site). To bring it back: swap in the real quotes below and remove the `hidden`
@@ -445,6 +466,10 @@ Secrets that the sycamores keep</textarea>
       <details class="faq-item reveal">
         <summary>Why can&rsquo;t I hear my own vocals in my headphones?<span class="faq-x" aria-hidden="true"></span></summary>
         <p>Just like a vocal booth: once the takes start piling up and it gets hard to hear yourself, slip your headphones off one ear and keep layering. Nothing&rsquo;s wrong &mdash; one ear on the mix, one on the room is how singers have tracked forever.</p>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Do you keep or sell my recordings?<span class="faq-x" aria-hidden="true"></span></summary>
+        <p>No. Your recordings stay on your phone unless you switch on your own iCloud backup, and nothing in Hook watches what you do. We never collect your data, so there is nothing to sell. The whole promise is just above.</p>
       </details>
       <details class="faq-item reveal">
         <summary>Does Hook replace Ableton, or any DAW?<span class="faq-x" aria-hidden="true"></span></summary>
@@ -503,7 +528,7 @@ Secrets that the sycamores keep</textarea>
   <div class="wrap foot-in">
     <svg class="wordmark foot-wm" viewBox="0 0 575 240" aria-hidden="true"><path class="s" d="M42 214V26"/><path class="s" d="M42 140C42 104 64 86 98 86C132 86 152 106 152 142V214"/><path class="s" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="play" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="s" d="M480 214V26"/><path class="s" d="M480 150L550 84"/><path class="s" d="M502 130L558 214"/></svg>
     <p>Catch the big one.<br>Made by Clay and Kelsy Instruments.</p>
-    <nav><a href="https://clayandkelsy.com">clayandkelsy.com</a><a href="#privacy">Privacy</a></nav>
+    <nav><a href="https://clayandkelsy.com">clayandkelsy.com</a><a href="#promise">Privacy</a></nav>
   </div>
 </footer>
 

@@ -358,6 +358,18 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(-40deg)
 .vwho .mono { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-family: var(--sans); font-weight: 800; font-size: .72rem; letter-spacing: .02em; color: #FDF8EF; }
 .mono[data-c="clay"]{background:#B08968}.mono[data-c="sage"]{background:#869072}.mono[data-c="denim"]{background:#7B94A6}.mono[data-c="plum"]{background:#977E92}.mono[data-c="ochre"]{background:#C0993F}.mono[data-c="terra"]{background:#A26B57}
 
+/* ---------- the promise: the app's first-open screen, in brief (sits after the makers, before the FAQ) ---------- */
+.promise { padding-top: 0; }
+.promise .lede-sm { margin-left: 0; }
+.promise-list { list-style: none; margin: 1.7rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem 2.4rem; }
+.promise-list li { display: grid; grid-template-columns: 16px 1fr; gap: .85rem; align-items: start; }
+.promise-list .ring { display: block; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid var(--c); margin-top: .3em; }
+.promise-list b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.08rem; line-height: 1.3; letter-spacing: -.005em; }
+.promise-list span { display: block; margin-top: .3rem; font-size: .98rem; line-height: 1.5; color: var(--ink-soft); }
+.promise-foot { margin: 2rem 0 0; font-style: italic; }
+.promise-foot span { display: block; font-style: normal; font-family: var(--sans); font-weight: 700; font-size: .8rem; letter-spacing: .02em; color: var(--ink-faint); margin-top: .45rem; }
+@media (max-width: 640px) { .promise-list { grid-template-columns: 1fr; gap: 1.15rem; } }
+
 /* ---------- faq ---------- */
 .faq-list { margin-top: 1.5rem; border-top: 1px solid var(--line); }
 .faq-item { border-bottom: 1px solid var(--line); }
