@@ -23,7 +23,12 @@ if (IS_EMBEDDED) document.body.classList.add("embedded");
    Embedded: host.top = the frame's top edge in the host viewport (positive while the C&K header
    is above us, negative once we've scrolled past the top), host.vh = the host viewport height.
    An element's position relative to the host viewport is its frame position + host.top. */
-const host = { top: 0, vh: 0, top0: null, ready: false, nav: false };   /* nav: the host draws the menu bar itself */
+const host = { top: 0, vh: 0, top0: null, ready: false, nav: false, adminH: 0, vel: 0, t: 0, settle: 0 };   /* adminH: live coverage of the WP admin bar (0 for visitors); nav: the host draws the menu bar itself */
+/* Pinned things are placed from host messages that arrive a frame or two after the host has scrolled, which reads
+   as jitter. lead() predicts where the host will be by paint time from the scroll velocity; when scrolling stops
+   the velocity is zeroed so everything settles exactly. */
+const LEAD_MS = 24;
+const lead = () => host.vel * LEAD_MS;
 /* host-driven measurement only once an auto-grow host has actually posted a viewport message
    (host.ready); until then — standalone, or inside a fixed-height iframe that posts nothing —
    fall back to this document's own native scroll, so the page is never stuck invisible. */
@@ -51,7 +56,11 @@ if (IS_EMBEDDED) {
     if (d.hookHost === "go") { const t = d.id && document.querySelector(d.id); if (t) t.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); return; }
     if (d.hookHost !== "vp" || typeof d.top !== "number") return;
     if (d.nav && !host.nav) { host.nav = true; const n = document.getElementById("nav"); if (n) n.style.display = "none"; }
+    const now = performance.now(), dt = now - host.t;
+    host.vel = (host.t && dt > 0 && dt < 200) ? (d.top - host.top) / dt : 0; host.t = now;
+    clearTimeout(host.settle); host.settle = setTimeout(() => { host.vel = 0; tick(); }, 90);
     host.top = d.top; if (typeof d.vh === "number" && d.vh > 0) host.vh = d.vh;
+    if (typeof d.adminH === "number") host.adminH = d.adminH;
     if (!host.ready) { host.ready = true; host.top0 = Math.max(0, d.top); fitHero(); }
     setVh(); tick();
   });
@@ -84,15 +93,20 @@ document.querySelectorAll("a[data-host-go]").forEach(a => a.addEventListener("cl
    appears once the C&K menu bar has scrolled off the top ---------- */
 (() => {
   const nav = document.getElementById("nav"); if (!nav) return;
-  if (IS_EMBEDDED) {
-    nav.classList.add("embedded");
-    scrollHandlers.push(() => {
-      nav.style.transform = `translate3d(0,${vpTop()}px,0)`;
-      nav.classList.toggle("pinned", vpTop() > 10);   /* works host-driven (−host.top) AND native-scroll */
-    });
-  } else {
-    scrollHandlers.push(() => nav.classList.toggle("scrolled", vpTop() > 8));
-  }
+  scrollHandlers.push(() => {
+    if (host.ready) {
+      /* auto-grow host only: the iframe never scrolls itself, so pin the bar by hand and drop it below the
+         WP admin bar (host.adminH is the bar's live coverage — 0 for visitors, so their view is unchanged). */
+      if (!nav.classList.contains("embedded")) nav.classList.add("embedded");
+      nav.style.transform = `translate3d(0,${Math.max(0, -(host.top + lead())) + host.adminH}px,0)`;
+      nav.classList.toggle("pinned", vpTop() > 10);
+    } else {
+      /* standalone OR a fixed-window iframe (the page scrolls natively): native CSS sticky — smooth,
+         no per-scroll transform, so nothing to jitter. */
+      if (nav.classList.contains("embedded")) { nav.classList.remove("embedded"); nav.style.transform = ""; }
+      nav.classList.toggle("scrolled", vpTop() > 8);
+    }
+  });
 })();
 /* ---------- hero entrance: stagger order for the CSS rise ---------- */
 document.querySelectorAll(".rise").forEach((el, i) => el.style.setProperty("--i", i));
@@ -148,10 +162,10 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   const steps = [...document.querySelectorAll(".walk-step")];
   if (!steps.length || !phone) return;
   const desktop = () => matchMedia("(min-width: 900px)").matches;
-  if (IS_EMBEDDED) phone.classList.add("embedded");
+  /* the phone is native position:sticky by default (smooth); it only becomes JS-pinned under an auto-grow host */
   let cur = -1;
   scrollHandlers.push(() => {
-    if (!desktop()) return;
+    if (!desktop()) { phone.style.transform = ""; phone.classList.remove("embedded"); return; }   /* phone flows in normal position on mobile */
     const h = vpH(); let idx = 0;
     steps.forEach((s, i) => { if (relTop(s) < h * 0.55) idx = i; });
     if (idx !== cur) {
@@ -159,11 +173,15 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
       imgs.forEach(im => im.classList.toggle("on", im.dataset.step === key));
       steps.forEach((s, i) => s.classList.toggle("active", i === idx));
     }
-    /* embedded: sticky by hand — the frame never scrolls, so CSS sticky never engages */
-    if (IS_EMBEDDED && walk) {
-      const want = NAV_H + h * 0.05 - relTop(walk);
+    /* auto-grow host only: the frame never scrolls, so pin the phone by hand. In a fixed-window iframe
+       (or standalone) the page scrolls natively, so native CSS position:sticky handles it — no jitter. */
+    if (host.ready && walk) {
+      if (!phone.classList.contains("embedded")) phone.classList.add("embedded");
+      const want = NAV_H + h * 0.05 - (relTop(walk) + lead());
       const y = Math.max(0, Math.min(want, walk.getBoundingClientRect().height - phone.getBoundingClientRect().height));
       phone.style.transform = `translate3d(0,${Math.round(y)}px,0)`;
+    } else if (phone.classList.contains("embedded")) {
+      phone.classList.remove("embedded"); phone.style.transform = "";
     }
   });
 })();

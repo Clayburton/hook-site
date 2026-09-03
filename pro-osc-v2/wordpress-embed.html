@@ -1,0 +1,106 @@
+<!-- ============================================================
+     PRO-OSC — WordPress embed for clayandkelsy.com/pro-osc  (paste this whole file as ONE Custom HTML block)
+     What it does:
+     · Embeds the Pro-Osc page (GitHub Pages) full-bleed in an iframe that grows to fit its content,
+       so there is exactly one scrollbar on the page: this one.
+     · Draws Pro-Osc's menu bar HERE, fixed to the browser window, so it follows the scroll with zero
+       lag. (A menu bar inside the iframe can only follow a frame late, which reads as jitter.)
+       It appears the moment the C&K header scrolls away and hides while the header is on screen.
+     · Tells the page where the viewport is on every scroll (its effects follow it), paints this
+       page the same colour as the page's theme, and routes menu clicks down into the page.
+     · Smooth, inertial scrolling on desktop (Lenis) — the last <script>; safe to delete if it
+       ever misbehaves.
+     · Hides the WordPress theme's own footer (#colophon) on this page only.
+     Message contract with the page (app.js): page→here {hook:"h",h} {hook:"bg",color} {hook:"go",href};
+     here→page {hookHost:"vp",top,vh,nav:true} {hookHost:"go",id}.
+     ============================================================ -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Nunito:wght@700;800&display=swap">
+<style>
+#colophon{display:none !important}
+#hook-nav{position:fixed;top:var(--wp-admin--admin-bar--height,0px);left:0;right:0;z-index:9990;height:64px;display:flex;align-items:center;gap:1.1rem;padding:0 clamp(16px,4vw,40px);box-sizing:border-box;background:rgba(240,232,215,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid #D9C5A6;color:#2A2724;font-family:Nunito,-apple-system,"Helvetica Neue",Arial,sans-serif;opacity:0;transform:translateY(-8px);will-change:transform,opacity;pointer-events:none;transition:opacity .3s ease,transform .3s ease,background-color .9s ease,color .9s ease,border-color .9s ease}
+#hook-nav.show{opacity:1;transform:none;pointer-events:auto}
+#hook-nav.dark{background:rgba(21,16,10,.82);border-color:#483525;color:#F3ECDE}
+#hook-nav a{color:inherit;text-decoration:none;box-shadow:none;border:0}
+#hook-nav .hn-brand{display:inline-flex;align-items:center;gap:.6rem}
+#hook-nav .hn-wm{height:26px;width:auto;display:block;overflow:visible;color:#41333E}
+#hook-nav.dark .hn-wm{color:#F3ECDE}
+#hook-nav .hn-wm .s{fill:none;stroke:currentColor;stroke-width:26;stroke-linecap:round;stroke-linejoin:round}
+#hook-nav .hn-wm .play{fill:none;stroke:#F04E3C;stroke-width:26;stroke-linecap:round;stroke-dasharray:82 918;animation:hnplay 4.8s linear infinite}
+@keyframes hnplay{to{stroke-dashoffset:-1000}}
+#hook-nav .hn-name{font-family:"Courier Prime","Courier New",monospace;font-weight:700;font-size:1.1rem;color:#3c8ed0}
+#hook-nav .hn-tag{font:400 .74rem "Courier Prime","Courier New",monospace;letter-spacing:.12em;text-transform:uppercase;opacity:.72}
+#hook-nav .hn-links{margin-left:auto;display:flex;gap:1.4rem}
+#hook-nav .hn-links a{font-weight:700;font-size:.92rem;opacity:.78}
+#hook-nav .hn-links a:hover{opacity:1}
+#hook-nav .hn-pill{font-weight:800;font-size:.86rem;color:#f7f3ea;background:#3c8ed0;border-radius:999px;padding:.6em 1.1em;white-space:nowrap}
+#hook-nav .hn-pill:hover{background:#2f76b0;color:#f7f3ea}
+@media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-name{font-family:"Courier Prime","Courier New",monospace;font-weight:700;font-size:1.1rem;color:#3c8ed0}
+#hook-nav .hn-tag{display:none}}
+@media (prefers-reduced-motion:reduce){#hook-nav{transition:none}#hook-nav .hn-wm .play{animation:none}}
+</style>
+<div id="hook-nav" aria-label="Hook menu">
+  <a class="hn-brand" href="https://clayandkelsy.com/pro-osc/" data-go="#top"><b class="hn-name">Pro-Osc</b><span class="hn-tag">The Osc Collection · Analog</span></a>
+  <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/pro-osc/#hear" data-go="#hear">Hear it</a><a href="https://clayandkelsy.com/pro-osc/#inside" data-go="#inside">Inside</a><a href="https://clayandkelsy.com/pro-osc/#reviews" data-go="#reviews">Reviews</a><a href="https://clayandkelsy.com/pro-osc/#buy" data-go="#buy">Buy</a></nav>
+  <a class="hn-pill" href="https://clayandkelsy.com/cart/?add-to-cart=1149">Buy · $29</a>
+</div>
+<div id="hook-embed" style="margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);width:100vw;">
+  <iframe id="hook-frame"
+    title="Pro-Osc — analog synth for Kontakt"
+    style="display:block;width:100%;border:0;height:12000px;background:#f0e8d7;"
+    scrolling="no"
+    allow="autoplay"
+    loading="eager"></iframe>
+</div>
+<script>
+(function () {
+  var ORIGIN = "https://clayburton.github.io";
+  var frame = document.getElementById("hook-frame"), nav = document.getElementById("hook-nav");
+  /* load the page fresh every visit — defeats the iframe-document cache that once served a stale copy */
+  frame.src = ORIGIN + "/demosc/pro-osc/?v=" + Date.now();
+  var lastH = 0;
+  function go(href) { window.scrollTo(0, 0); frame.src = ORIGIN + "/demosc/pro-osc/" + href + "?v=" + Date.now(); }
+  window.addEventListener("message", function (e) {
+    if (e.origin !== ORIGIN || !e.data) return;
+    /* auto-grow: the page posts its content height; the 8px guard stops resize loops */
+    if (e.data.hook === "h" && typeof e.data.h === "number") { var h = Math.round(e.data.h); if (Math.abs(h - lastH) > 8) { lastH = h; frame.style.height = h + "px"; } }
+    /* theme sync: paint this page the same colour as the page inside, and switch the menu bar */
+    if (e.data.hook === "bg" && /^#[0-9a-fA-F]{6}$/.test(e.data.color || "")) {
+      frame.style.background = e.data.color;
+      document.documentElement.style.setProperty("background-color", e.data.color, "important");
+      document.body.style.setProperty("background-color", e.data.color, "important");
+      nav.classList.toggle("dark", e.data.color.toLowerCase() === "#161009");
+    }
+    /* the page asks to open one of its own pages (Notify me): scroll up first, then swap the frame */
+    if (e.data.hook === "go" && typeof e.data.href === "string" && /^[a-z0-9-]+\.html$/.test(e.data.href)) go(e.data.href);
+  });
+  /* tell the page where the viewport is, and show our menu bar once the C&K header has scrolled away */
+  var queued = false;
+  function postViewport() {
+    queued = false; if (!frame.contentWindow) return;
+    var r = frame.getBoundingClientRect();
+    nav.classList.toggle("show", r.top < -10);
+    frame.contentWindow.postMessage({ hookHost: "vp", top: r.top, vh: window.innerHeight, nav: true }, ORIGIN);
+  }
+  window.addEventListener("scroll", function () { if (!queued) { queued = true; requestAnimationFrame(postViewport); } }, { passive: true });
+  window.addEventListener("resize", postViewport);
+  frame.addEventListener("load", postViewport);
+  postViewport();
+  /* menu clicks: sections glide inside the page (it scrolls this window); the brand goes to the top */
+  nav.querySelectorAll("[data-go]").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (a.getAttribute("data-go") === "#top") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+      frame.contentWindow.postMessage({ hookHost: "go", id: a.getAttribute("data-go") }, ORIGIN);
+    });
+  });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+<script>
+(function () {  /* smooth, inertial scrolling on desktop only — delete this block if it ever misbehaves */
+  if (!window.Lenis || !matchMedia("(pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
+  function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+})();
+</script>

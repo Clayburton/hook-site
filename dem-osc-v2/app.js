@@ -23,7 +23,12 @@ if (IS_EMBEDDED) document.body.classList.add("embedded");
    Embedded: host.top = the frame's top edge in the host viewport (positive while the C&K header
    is above us, negative once we've scrolled past the top), host.vh = the host viewport height.
    An element's position relative to the host viewport is its frame position + host.top. */
-const host = { top: 0, vh: 0, top0: null, ready: false, nav: false };   /* nav: the host draws the menu bar itself */
+const host = { top: 0, vh: 0, top0: null, ready: false, nav: false, vel: 0, t: 0, settle: 0 };   /* nav: the host draws the menu bar itself */
+/* Pinned things (the nav, the walkthrough phone) are placed from host messages that arrive a frame or two after the
+   host has already scrolled, which reads as jitter. lead() predicts where the host will be by the time we paint,
+   from the scroll velocity; when scrolling stops the velocity is zeroed so everything settles exactly. */
+const LEAD_MS = 24;
+const lead = () => host.vel * LEAD_MS;
 /* host-driven measurement only once an auto-grow host has actually posted a viewport message
    (host.ready); until then — standalone, or inside a fixed-height iframe that posts nothing —
    fall back to this document's own native scroll, so the page is never stuck invisible. */
@@ -51,6 +56,9 @@ if (IS_EMBEDDED) {
     if (d.hookHost === "go") { const t = d.id && document.querySelector(d.id); if (t) t.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); return; }
     if (d.hookHost !== "vp" || typeof d.top !== "number") return;
     if (d.nav && !host.nav) { host.nav = true; const n = document.getElementById("nav"); if (n) n.style.display = "none"; }
+    const now = performance.now(), dt = now - host.t;
+    host.vel = (host.t && dt > 0 && dt < 200) ? (d.top - host.top) / dt : 0; host.t = now;
+    clearTimeout(host.settle); host.settle = setTimeout(() => { host.vel = 0; tick(); }, 90);
     host.top = d.top; if (typeof d.vh === "number" && d.vh > 0) host.vh = d.vh;
     if (!host.ready) { host.ready = true; host.top0 = Math.max(0, d.top); fitHero(); }
     setVh(); tick();
@@ -87,7 +95,7 @@ document.querySelectorAll("a[data-host-go]").forEach(a => a.addEventListener("cl
   if (IS_EMBEDDED) {
     nav.classList.add("embedded");
     scrollHandlers.push(() => {
-      nav.style.transform = `translate3d(0,${vpTop()}px,0)`;
+      nav.style.transform = `translate3d(0,${Math.max(0, -(host.top + lead()))}px,0)`;
       nav.classList.toggle("pinned", vpTop() > 10);   /* works host-driven (−host.top) AND native-scroll */
     });
   } else {
@@ -161,7 +169,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     }
     /* embedded: sticky by hand — the frame never scrolls, so CSS sticky never engages */
     if (IS_EMBEDDED && walk) {
-      const want = NAV_H + h * 0.05 - relTop(walk);
+      const want = NAV_H + h * 0.05 - (relTop(walk) + lead());
       const y = Math.max(0, Math.min(want, walk.getBoundingClientRect().height - phone.getBoundingClientRect().height));
       phone.style.transform = `translate3d(0,${Math.round(y)}px,0)`;
     }
