@@ -23,7 +23,7 @@ if (IS_EMBEDDED) document.body.classList.add("embedded");
    Embedded: host.top = the frame's top edge in the host viewport (positive while the C&K header
    is above us, negative once we've scrolled past the top), host.vh = the host viewport height.
    An element's position relative to the host viewport is its frame position + host.top. */
-const host = { top: 0, vh: 0, top0: null, ready: false, nav: false, vel: 0, t: 0, settle: 0 };   /* nav: the host draws the menu bar itself */
+const host = { top: 0, vh: 0, top0: null, ready: false, nav: false, phone: false, vel: 0, t: 0, settle: 0 };   /* nav: the host draws the menu bar itself */
 /* Pinned things (the nav, the walkthrough phone) are placed from host messages that arrive a frame or two after the
    host has already scrolled, which reads as jitter. lead() predicts where the host will be by the time we paint,
    from the scroll velocity; when scrolling stops the velocity is zeroed so everything settles exactly. */
@@ -45,6 +45,24 @@ if (!IS_EMBEDDED && !reduced && !coarse && window.Lenis) {
   requestAnimationFrame(raf);
 }
 
+/* ---------- the walkthrough phone, drawn by the host ----------
+   A phone pinned from host messages always lands a frame late (jitter). When the host block says
+   phone:true, we hide our phone (it keeps its grid space) and send the host the geometry it needs
+   to draw the same phone with position:fixed on its own page: the section's top/bottom, the phone
+   box, the screens (light/dark pairs) and which step is on. The host clamps it like sticky would. */
+function postWalk() {
+  if (!IS_EMBEDDED || !host.phone) return;
+  const walk = document.querySelector(".walk"), phone = document.getElementById("walkPhone");
+  if (!walk || !phone || !matchMedia("(min-width: 900px)").matches) { parent.postMessage({ hook: "walk", off: true }, "*"); return; }
+  phone.classList.add("hosted");
+  const w = walk.getBoundingClientRect(), p = phone.getBoundingClientRect(), y0 = window.scrollY || 0;
+  const imgs = [...phone.querySelectorAll("img[data-step]")];
+  const steps = {};
+  imgs.forEach(im => { const k = im.dataset.step; steps[k] = steps[k] || {}; steps[k][im.classList.contains("s-dark") ? "dark" : "light"] = { src: im.currentSrc || im.src, focus: im.style.getPropertyValue("--focus") || "0%" }; });
+  parent.postMessage({ hook: "walk", top: w.top + y0, bottom: w.bottom + y0, left: p.left, width: p.width, aspect: 664 / 1440, navH: NAV_H, steps }, "*");
+}
+addEventListener("resize", postWalk);
+
 /* ---------- one pipe for everything that follows the page ---------- */
 const scrollHandlers = [];
 function tick() { for (const h of scrollHandlers) h(); }
@@ -55,6 +73,7 @@ if (IS_EMBEDDED) {
     if (d.hookHost === "go") { const t = d.id && document.querySelector(d.id); if (t) t.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); return; }
     if (d.hookHost !== "vp" || typeof d.top !== "number") return;
     if (d.nav && !host.nav) { host.nav = true; const n = document.getElementById("nav"); if (n) n.style.display = "none"; }
+    if (d.phone && !host.phone) { host.phone = true; postWalk(); }   /* the host draws the walkthrough phone itself (zero lag) */
     const now = performance.now(), dt = now - host.t;
     host.vel = (host.t && dt > 0 && dt < 200) ? (d.top - host.top) / dt : 0; host.t = now;
     clearTimeout(host.settle); host.settle = setTimeout(() => { host.vel = 0; tick(); }, 90);
@@ -181,9 +200,10 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
       cur = idx; const key = String(idx);
       imgs.forEach(im => im.classList.toggle("on", im.dataset.step === key));
       steps.forEach((s, i) => s.classList.toggle("active", i === idx));
+      if (host.phone) parent.postMessage({ hook: "step", n: idx }, "*");
     }
     /* embedded: sticky by hand — the frame never scrolls, so CSS sticky never engages */
-    if (IS_EMBEDDED && walk) {
+    if (IS_EMBEDDED && walk && !host.phone) {
       const want = NAV_H + h * 0.05 - (relTop(walk) + lead());
       const y = Math.max(0, Math.min(want, walk.getBoundingClientRect().height - phone.getBoundingClientRect().height));
       phone.style.transform = `translate3d(0,${Math.round(y)}px,0)`;
@@ -448,7 +468,7 @@ if (IS_EMBEDDED) {
   let lastH = 0;
   const postHeight = () => {
     const h = Math.ceil(Math.max(foot ? foot.getBoundingClientRect().bottom + (window.scrollY || 0) : 0, document.body.scrollHeight));
-    if (h > 0 && Math.abs(h - lastH) > 4) { lastH = h; parent.postMessage({ hook: "h", h }, "*"); }
+    if (h > 0 && Math.abs(h - lastH) > 4) { lastH = h; parent.postMessage({ hook: "h", h }, "*"); postWalk(); }
   };
   addEventListener("load", postHeight);
   if ("ResizeObserver" in window) new ResizeObserver(postHeight).observe(document.body);

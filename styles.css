@@ -410,6 +410,7 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(-40deg)
   .walk-steps { grid-column: 2; }
   .walk-phone { grid-column: 1; }
   .walk-phone.embedded { position: absolute; top: 0; left: 0; will-change: transform; }
+  .walk-phone.hosted { visibility: hidden; transform: none !important; }   /* the host page draws it; this keeps the grid space */
   .walk-step { min-height: calc(var(--vh) * .62); display: flex; flex-direction: column; justify-content: center; opacity: .42; transition: opacity .5s ease; }
   .walk-step.active { opacity: 1; }
   .walk-step:first-child { min-height: calc(var(--vh) * .52); }

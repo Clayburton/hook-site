@@ -3,8 +3,8 @@
      What it does:
      · Embeds the Hook page (GitHub Pages) full-bleed in an iframe that grows to fit its content,
        so there is exactly one scrollbar on the page: this one.
-     · Draws Hook's menu bar HERE, fixed to the browser window, so it follows the scroll with zero
-       lag. (A menu bar inside the iframe can only follow a frame late, which reads as jitter.)
+     · Draws Hook's menu bar AND the walkthrough phone HERE, fixed to the browser window, so they
+       follow the scroll with zero lag. (A menu bar inside the iframe can only follow a frame late, which reads as jitter.)
        It appears the moment the C&K header scrolls away and hides while the header is on screen.
      · Tells the page where the viewport is on every scroll (its effects follow it), paints this
        page the same colour as the page's theme, and routes menu clicks down into the page.
@@ -35,12 +35,20 @@
 #hook-nav .hn-pill:hover{background:#D83E2C;color:#FDF8EF}
 @media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-tag{display:none}}
 @media (prefers-reduced-motion:reduce){#hook-nav{transition:none}#hook-nav .hn-wm .play{animation:none}}
+/* the walkthrough phone, drawn here so it sits dead still while the page scrolls under it */
+#hook-phone{position:fixed;z-index:9980;display:none;pointer-events:none}
+#hook-phone.show{display:block}
+#hook-phone .scr{position:relative;aspect-ratio:664/1440;overflow:hidden;border-radius:clamp(28px,9.5%,42px);border:1.5px solid #D9C5A6;background:#EADCC6;box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 24px 48px -18px rgba(42,39,36,.55),0 60px 90px -40px rgba(42,39,36,.55)}
+#hook-phone.dark .scr{border-color:#483525;background:#33251B;box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 48px -18px #000,0 60px 90px -40px #000}
+#hook-phone img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;opacity:0;transition:opacity .55s ease .28s}
+#hook-phone:not(.dark) img.light.on,#hook-phone.dark img.dark.on{opacity:1;transition-delay:0s}
 </style>
 <div id="hook-nav" aria-label="Hook menu">
   <a class="hn-brand" href="https://clayandkelsy.com/hook/" data-go="#top"><svg class="hn-wm" viewBox="0 0 575 240" aria-hidden="true"><path class="s" d="M42 214V26"/><path class="s" d="M42 140C42 104 64 86 98 86C132 86 152 106 152 142V214"/><path class="s" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="play" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="s" d="M480 214V26"/><path class="s" d="M480 150L550 84"/><path class="s" d="M502 130L558 214"/></svg><span class="hn-tag">Catch the big one.</span></a>
   <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/hook/#loop" data-go="#loop">Loop</a><a href="https://clayandkelsy.com/hook/#words" data-go="#words">Words</a><a href="https://clayandkelsy.com/hook/#keep" data-go="#keep">Keep it</a><a href="https://clayandkelsy.com/hook/#pricing" data-go="#pricing">Pricing</a></nav>
   <a class="hn-pill" href="https://clayburton.github.io/hook-site/notify.html">Notify me</a>
 </div>
+<div id="hook-phone" aria-hidden="true"><div class="scr"></div></div>
 <div id="hook-embed" style="margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);width:100vw;">
   <iframe id="hook-frame"
     title="Hook — a writer's looper for iPhone"
@@ -53,6 +61,26 @@
 (function () {
   var ORIGIN = "https://clayburton.github.io";
   var frame = document.getElementById("hook-frame"), nav = document.getElementById("hook-nav");
+  var phone = document.getElementById("hook-phone"), scr = phone.querySelector(".scr"), walk = null, step = 0;
+  function buildPhone(w) {
+    scr.innerHTML = "";
+    Object.keys(w.steps).forEach(function (k) {
+      ["light", "dark"].forEach(function (t) {
+        var im = w.steps[k][t]; if (!im) return;
+        var el = document.createElement("img"); el.src = im.src; el.alt = ""; el.className = t + (String(step) === k ? " on" : "");
+        el.dataset.step = k; el.style.objectPosition = "50% " + im.focus; scr.appendChild(el);
+      });
+    });
+  }
+  function placePhone(r) {
+    if (!walk) return;
+    var vh = window.innerHeight, margin = walk.navH + vh * 0.05, ph = walk.width / walk.aspect;
+    var secTop = r.top + walk.top, secBottom = r.top + walk.bottom;
+    var on = secTop < vh && secBottom > 0;
+    phone.classList.toggle("show", on); if (!on) return;
+    var y = Math.max(secTop, Math.min(margin, secBottom - ph));   /* exactly what position:sticky would do */
+    phone.style.left = (r.left + walk.left) + "px"; phone.style.width = walk.width + "px"; phone.style.top = y + "px";
+  }
   /* load the page fresh every visit — defeats the iframe-document cache that once served a stale copy */
   frame.src = ORIGIN + "/hook-site/?v=" + Date.now();
   var lastH = 0;
@@ -67,9 +95,12 @@
       document.documentElement.style.setProperty("background-color", e.data.color, "important");
       document.body.style.setProperty("background-color", e.data.color, "important");
       nav.classList.toggle("dark", e.data.color.toLowerCase() === "#15100a");
+      phone.classList.toggle("dark", e.data.color.toLowerCase() === "#15100a");
     }
     /* the page asks to open one of its own pages (Notify me): scroll up first, then swap the frame */
     if (e.data.hook === "go" && typeof e.data.href === "string" && /^[a-z0-9-]+\.html$/.test(e.data.href)) go(e.data.href);
+    if (e.data.hook === "walk") { walk = e.data.off ? null : e.data; if (walk) { buildPhone(walk); placePhone(frame.getBoundingClientRect()); } else phone.classList.remove("show"); }
+    if (e.data.hook === "step" && typeof e.data.n === "number") { step = e.data.n; scr.querySelectorAll("img").forEach(function (im) { im.classList.toggle("on", im.dataset.step === String(step)); }); }
   });
   /* tell the page where the viewport is, and show our menu bar once the C&K header has scrolled away */
   var queued = false;
@@ -77,7 +108,8 @@
     queued = false; if (!frame.contentWindow) return;
     var r = frame.getBoundingClientRect();
     nav.classList.toggle("show", r.top < -10);
-    frame.contentWindow.postMessage({ hookHost: "vp", top: r.top, vh: window.innerHeight, nav: true }, ORIGIN);
+    placePhone(r);
+    frame.contentWindow.postMessage({ hookHost: "vp", top: r.top, vh: window.innerHeight, nav: true, phone: true }, ORIGIN);
   }
   window.addEventListener("scroll", function () { if (!queued) { queued = true; requestAnimationFrame(postViewport); } }, { passive: true });
   window.addEventListener("resize", postViewport);
