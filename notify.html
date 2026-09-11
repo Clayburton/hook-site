@@ -49,7 +49,7 @@
   .back:hover{ color:var(--ink); border-color:var(--ink-soft); }
 
   /* embedded inside the Hook iframe: content sets the height, not the (huge) outer frame */
-  html.embedded body{ min-height:0; display:block; padding:40px 20px 48px; }
+  html.embedded body{ min-height:0; display:block; padding:112px 20px 64px; }
   html.embedded .wrap{ margin:0 auto; }
 </style>
 </head>
@@ -91,6 +91,7 @@
       if (EMBEDDED) {
         document.documentElement.classList.add("embedded");
         parent.postMessage({ hook: "walk", off: true }, "*");
+        parent.postMessage({ hook: "bg", color: "#F6EFE4" }, "*");   /* repaint host page to paper */
         window.addEventListener("load", postH);
         window.addEventListener("resize", postH);
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(postH);
