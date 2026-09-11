@@ -5,12 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Get notified — Hook</title>
 <meta name="robots" content="noindex">
-<!-- Standalone signup page for Hook. Opened in a new tab by the "Notify me" button on the
-     Hook page. The MailPoet "Hook Launch" form (id 2) is embedded here at a SINGLE iframe
-     layer (this page -> MailPoet), which renders reliably — unlike embedding it on the Hook
-     page, which nested it three deep (WP -> Hook -> MailPoet) and intermittently painted a
-     white box. MailPoet's auto-resize posts to window.top, which is this page, so the form
-     sizes itself correctly here. -->
+<!-- Hook signup page. The "Notify me" buttons open it TWO ways: as its own tab, and (via the
+     WordPress host block's go()) swapped into the Hook page's auto-growing iframe. It handles both.
+     Standalone: centered on the viewport; MailPoet's auto-resize posts to window.top (this page),
+     so the form sizes itself. Embedded: window.top is the WordPress page, so MailPoet's resize
+     never reaches us, and 100vh equals the outer frame's leftover height (~13000px), which used to
+     leave the form centered thousands of px down in blank paper (the "broken" page). Embedded mode
+     therefore top-aligns the content, keeps the small form at its default height, tells the Hook
+     block our real height so the outer frame shrinks to fit, clears the leftover walkthrough phone,
+     and sends the back link to the top window. The MailPoet form (id 2) is a single email field. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600&display=swap" rel="stylesheet">
@@ -44,6 +47,10 @@
   .fine{ color:var(--ink-soft); font-size:.86rem; line-height:1.5; margin:1.2rem auto 0; max-width:30em; }
   .back{ display:inline-block; margin-top:1.5rem; color:var(--ink-soft); font-size:.9rem; text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:1px; }
   .back:hover{ color:var(--ink); border-color:var(--ink-soft); }
+
+  /* embedded inside the Hook iframe: content sets the height, not the (huge) outer frame */
+  html.embedded body{ min-height:0; display:block; padding:40px 20px 48px; }
+  html.embedded .wrap{ margin:0 auto; }
 </style>
 </head>
 <body>
@@ -55,23 +62,41 @@
       <iframe id="mpf" title="Get notified when Hook launches" scrolling="no" loading="eager"></iframe>
     </div>
     <p class="fine">We keep it rare &middot; Unsubscribe anytime.</p>
-    <a class="back" href="https://clayandkelsy.com/hook/">&larr; Back to Hook</a>
+    <a class="back" href="https://clayandkelsy.com/hook/" target="_top">&larr; Back to Hook</a>
   </main>
   <script>
     (function(){
       var ORIGIN = "https://clayandkelsy.com";
+      var EMBEDDED = window.self !== window.top;   /* swapped into the Hook iframe by go() */
       var f = document.getElementById("mpf");
       /* fresh form + token every visit */
       f.src = ORIGIN + "/?mailpoet_form_iframe=2&t=" + Date.now();
-      /* single layer here, so MailPoet's height message reaches us — size the form to fit */
+
+      /* standalone (top-level tab): MailPoet's resize posts to window.top = us, so fit the form */
       window.addEventListener("message", function(e){
         if (e.origin !== ORIGIN) return;
         var d = e.data;
         if (typeof d === "string") { try { d = JSON.parse(d); } catch (err) { return; } }
         if (!d) return;
         var h = d.MailPoetIframeHeight;
-        if (h && !isNaN(h)) { f.style.height = Math.round(Number(h)) + "px"; }
+        if (h && !isNaN(h)) { f.style.height = Math.round(Number(h)) + "px"; postH(); }
       });
+
+      /* embedded: tell the Hook block our real height so the outer frame shrinks to fit (the whole
+         point of the fix), and clear the walkthrough phone the frame was drawing for the Hook page */
+      function postH(){
+        if (!EMBEDDED) return;
+        parent.postMessage({ hook: "h", h: Math.ceil(document.body.getBoundingClientRect().height) }, "*");
+      }
+      if (EMBEDDED) {
+        document.documentElement.classList.add("embedded");
+        parent.postMessage({ hook: "walk", off: true }, "*");
+        window.addEventListener("load", postH);
+        window.addEventListener("resize", postH);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(postH);
+        [150, 500, 1200].forEach(function(t){ setTimeout(postH, t); });
+        postH();
+      }
     })();
   </script>
 </body>
