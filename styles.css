@@ -115,6 +115,7 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 .wordmark .play { fill: none; stroke: var(--red); stroke-width: 26; stroke-linecap: round; stroke-dasharray: 82 918; animation: wmplay 4.8s linear infinite; }
 @keyframes wmplay { to { stroke-dashoffset: -1000; } }
 .foot-wm { height: 22px; }
+.foot-name { font-family: var(--sans); font-weight: 900; letter-spacing: .14em; font-size: 1rem; color: var(--hook); display: block; }
 /* the word "hook" inside small labels: the same mark, still, sitting on the text baseline */
 .wm-inline { height: 1.45em; width: auto; display: inline-block; vertical-align: -.16em; overflow: visible; color: var(--hook); margin-right: .05em; }
 .wm-inline .s { fill: none; stroke: currentColor; stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; }

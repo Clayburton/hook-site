@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Get notified — Hook</title>
+<title>Get notified</title>
 <meta name="robots" content="noindex">
 <!-- Hook signup page. The "Notify me" buttons open it TWO ways: as its own tab, and (via the
      WordPress host block's go()) swapped into the Hook page's auto-growing iframe. It handles both.
@@ -51,18 +51,19 @@
   /* embedded inside the Hook iframe: content sets the height, not the (huge) outer frame */
   html.embedded body{ min-height:0; display:block; padding:112px 20px 64px; }
   html.embedded .wrap{ margin:0 auto; }
+  .brandtext{ font-family:var(--serif); font-weight:600; font-size:1.7rem; letter-spacing:-.01em; color:#41333E; }
 </style>
 </head>
 <body>
   <main class="wrap">
-    <span class="mark"><svg class="wordmark" viewBox="0 0 575 240" role="img" aria-label="Hook"><path class="s" d="M42 214V26"/><path class="s" d="M42 140C42 104 64 86 98 86C132 86 152 106 152 142V214"/><path class="s" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="play" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="s" d="M480 214V26"/><path class="s" d="M480 150L550 84"/><path class="s" d="M502 130L558 214"/></svg></span>
+    <span class="mark"><b class="brandtext">Songwriting</b></span>
     <h1>Be the first to play it.</h1>
-    <p class="sub">Leave your email and we&rsquo;ll tell you the day Hook goes live &mdash; and, now and then, something else we&rsquo;ve made.</p>
+    <p class="sub">Leave your email and we&rsquo;ll tell you the day it goes live &mdash; and, now and then, something else we&rsquo;ve made.</p>
     <div class="formcard">
-      <iframe id="mpf" title="Get notified when Hook launches" scrolling="no" loading="eager"></iframe>
+      <iframe id="mpf" title="Get notified when Songwriting launches" scrolling="no" loading="eager"></iframe>
     </div>
     <p class="fine">We keep it rare &middot; Unsubscribe anytime.</p>
-    <a class="back" href="https://clayandkelsy.com/hook/" target="_top">&larr; Back to Hook</a>
+    <a class="back" href="https://clayandkelsy.com/hook/" target="_top">&larr; Back to Songwriting</a>
   </main>
   <script>
     (function(){

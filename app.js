@@ -228,7 +228,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
       vid.hidden = false; phone.classList.add("has-video");
       if (timer) { clearInterval(timer); timer = null; }
       vid.play().catch(() => {});
-      if (cap) cap.textContent = "Hook, in use";
+      if (cap) cap.textContent = "Songwriting, in use";
     });
     vid.src = "assets/hook-demo.mp4";
   }).catch(() => {});

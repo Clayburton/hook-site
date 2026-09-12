@@ -27,6 +27,8 @@
 #hook-nav .hn-wm .s{fill:none;stroke:currentColor;stroke-width:26;stroke-linecap:round;stroke-linejoin:round}
 #hook-nav .hn-wm .play{fill:none;stroke:#F04E3C;stroke-width:26;stroke-linecap:round;stroke-dasharray:82 918;animation:hnplay 4.8s linear infinite}
 @keyframes hnplay{to{stroke-dashoffset:-1000}}
+#hook-nav .hn-name{font:900 .92rem/1 "Nunito",ui-rounded,system-ui,sans-serif;letter-spacing:.16em;color:#41333E}
+#hook-nav.dark .hn-name{color:#F3ECDE}
 #hook-nav .hn-tag{font:italic 400 .92rem "Iowan Old Style","Source Serif 4",Georgia,serif;opacity:.72}
 #hook-nav .hn-links{margin-left:auto;display:flex;gap:1.4rem}
 #hook-nav .hn-links a{font-weight:700;font-size:.92rem;opacity:.78}
@@ -43,8 +45,8 @@
 #hook-phone img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;opacity:0;transition:opacity .55s ease .28s}
 #hook-phone:not(.dark) img.light.on,#hook-phone.dark img.dark.on{opacity:1;transition-delay:0s}
 </style>
-<div id="hook-nav" aria-label="Hook menu">
-  <a class="hn-brand" href="https://clayandkelsy.com/hook/" data-go="#top"><svg class="hn-wm" viewBox="0 0 575 240" aria-hidden="true"><path class="s" d="M42 214V26"/><path class="s" d="M42 140C42 104 64 86 98 86C132 86 152 106 152 142V214"/><path class="s" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="play" pathLength="1000" d="M316 152A62 62 0 1 1 192 152A62 62 0 1 1 316 152A62 62 0 1 0 440 152A62 62 0 1 0 316 152"/><path class="s" d="M480 214V26"/><path class="s" d="M480 150L550 84"/><path class="s" d="M502 130L558 214"/></svg><span class="hn-tag">Catch the big one.</span></a>
+<div id="hook-nav" aria-label="Songwriting menu">
+  <a class="hn-brand" href="https://clayandkelsy.com/hook/" data-go="#top"><b class="hn-name">Songwriting</b><span class="hn-tag">by Clay and Kelsy</span></a>
   <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/hook/#loop" data-go="#loop">Loop</a><a href="https://clayandkelsy.com/hook/#words" data-go="#words">Words</a><a href="https://clayandkelsy.com/hook/#keep" data-go="#keep">Keep it</a><a href="https://clayandkelsy.com/hook/#pricing" data-go="#pricing">Pricing</a></nav>
   <a class="hn-pill" href="https://clayburton.github.io/hook-site/notify.html">Notify me</a>
 </div>
@@ -52,7 +54,7 @@
 <div id="hook-embed" style="margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);width:100vw;">
   <iframe id="hook-frame"
     src="https://clayburton.github.io/hook-site/"
-    title="Hook — a writer's looper for iPhone"
+    title="Songwriting by Clay and Kelsy"
     style="display:block;width:100%;border:0;height:12000px;background:#F6EFE4;"
     scrolling="no"
     allow="autoplay"
