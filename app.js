@@ -256,7 +256,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   const BPM = 100, BEAT = 60 / BPM, BAR = BEAT * 4, MAX = 5;
   const COLORS = ["#B86A4A", "#D9A24C", "#7E9B67", "#A9668E", "#7B94A6"];   /* the app's layer colors */
   const NOTES  = [130.81, 196.00, 329.63, 493.88, 587.33];                 /* C3 G3 E4 B4 D5 — a Cmaj9 that fills in as you stack */
-  const IDLE = "Hold to catch. Let go and it loops. Hold again to stack a layer.";
+  const IDLE = "Try it. Hold to record a loop.";
 
   let ctx = null, master = null, soundOn = true;
   let holding = false, holdStart = 0, lastBeat = -1, loopStart = 0, layers = [], raf = 0;
@@ -317,7 +317,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     armSweep();
     holding = true; holdStart = performance.now() / 1000; lastBeat = -1;
     btn.setAttribute("aria-pressed", "true"); btn.classList.add("holding"); tDot.classList.add("live");
-    hint.textContent = "Counting you in… let go when you've got it.";
+    hint.textContent = "Counting you in. Let go when you're done.";
     if (!raf) raf = requestAnimationFrame(frame);
   }
   function endHold() {
@@ -327,7 +327,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     btn.setAttribute("aria-pressed", "false"); btn.classList.remove("holding"); tDot.classList.remove("live");
     setSweep(0);
     beats.forEach(c => c.classList.remove("hit"));
-    if (len < 0.35) { hint.textContent = "Hold it a little longer — give it a bar."; if (!layers.length) tTime.textContent = "00:00.0"; return; }
+    if (len < 0.35) { hint.textContent = "Hold a little longer, give it a full bar."; if (!layers.length) tTime.textContent = "00:00.0"; return; }
     catchLayer(len);
   }
   function catchLayer(len) {
@@ -341,8 +341,8 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     tTake.textContent = "TAKE " + (n + 1) + (n ? "  ·  " + (n + 1) + " layers" : "");
     tTime.textContent = fmt(len);
     clearBtn.hidden = false;
-    hint.textContent = (n + 1 >= MAX) ? "Five layers deep. That's a song — go export it."
-                     : (n === 0 ? "Looping. Hold again to stack a layer." : "Stacked. Hold again for another.");
+    hint.textContent = (n + 1 >= MAX) ? "Five layers, that's a song. In the app, you'd export it."
+                     : (n === 0 ? "And it's looping. Hold again to stack a layer." : "Another layer, stacked. Keep going.");
     btn.classList.toggle("full", n + 1 >= MAX);
     if (!raf) raf = requestAnimationFrame(frame);
   }

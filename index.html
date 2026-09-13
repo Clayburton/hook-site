@@ -102,11 +102,11 @@
             <circle class="o-sweep" id="oSweep" cx="160" cy="160" r="104" pathLength="100"></circle>
             <g id="layerRings"></g>
           </svg>
-          <button class="rec" id="recBtn" aria-label="Hold to catch a loop. Let go and it loops. Hold again to stack a layer." aria-pressed="false"></button>
+          <button class="rec" id="recBtn" aria-label="Record button. Hold to record a loop, let go and it loops, hold again to stack a layer." aria-pressed="false"></button>
         </div>
         <div class="catch-meta">
           <p class="tape" aria-live="polite"><span class="tape-dot" id="tapeDot" aria-hidden="true">●</span><span id="tapeTime">00:00.0</span><span class="tape-beats" id="beats" aria-hidden="true"><i></i><i></i><i></i><i></i></span>100 BPM<span class="tape-sep">·</span>4/4<span class="tape-take" id="tapeTake">no takes yet</span></p>
-          <p class="catch-hint" id="catchHint">Hold to catch. Let go and it loops. Hold again to stack a layer.</p>
+          <p class="catch-hint" id="catchHint">Try it. Hold to record a loop.</p>
           <div class="catch-tools">
             <button type="button" class="tiny" id="muteBtn" aria-pressed="true">Sound on</button>
             <button type="button" class="tiny" id="clearBtn" hidden>Clear takes</button>
@@ -548,7 +548,7 @@ Secrets that the sycamores keep</textarea>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js" defer></script>
-<script type="module" src="app.js?v=49"></script>
+<script type="module" src="app.js?v=50"></script>
 <!-- animated brandmark: the sweep orbits the o, cycling the four layer colours; a full turn holds, then eases to the next -->
 <script>
 (function(){
