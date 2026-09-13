@@ -45,7 +45,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=77">
+<link rel="stylesheet" href="styles.css?v=78">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -92,12 +92,16 @@
       <!-- THE SIGNATURE: hold to catch. Press and hold: it counts you in. Let go: it loops.
            Hold again: a new layer rings the button in the app's colors and adds a voice. -->
       <div class="catch rise" id="catch">
-        <!-- The app's record mark, exactly: the red dot sits still while the hook orbits it.
-             hook.png (from the app's animation assets) is a mask, so the hook takes the theme ink;
-             the dot is drawn at the mark's registration (center 51.6%/50.4%, radius 17.2%). -->
+        <!-- The record mark: the O is a thick ink ring around the coral dot. Hold and the current
+             layer colour (COLORS[layers.length] in app.js) sweeps all the way around the O as the
+             count-in fills; let go and it rests as just the O, with the caught take as a colour ring
+             outside. Each hold is the next layer colour, so five build the chord. -->
         <div class="catch-stage">
-          <svg class="catch-rings" viewBox="0 0 320 320" aria-hidden="true"><g id="layerRings"></g></svg>
-          <div class="hook-spin" id="hookSpin" aria-hidden="true"></div>
+          <svg class="catch-rings" viewBox="0 0 320 320" aria-hidden="true">
+            <circle class="o-ring" cx="160" cy="160" r="104"></circle>
+            <circle class="o-sweep" id="oSweep" cx="160" cy="160" r="104" pathLength="100"></circle>
+            <g id="layerRings"></g>
+          </svg>
           <button class="rec" id="recBtn" aria-label="Hold to catch a loop. Let go and it loops. Hold again to stack a layer." aria-pressed="false"></button>
         </div>
         <div class="catch-meta">
@@ -544,7 +548,7 @@ Secrets that the sycamores keep</textarea>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js" defer></script>
-<script type="module" src="app.js?v=47"></script>
+<script type="module" src="app.js?v=49"></script>
 <!-- animated brandmark: the sweep orbits the o, cycling the four layer colours; a full turn holds, then eases to the next -->
 <script>
 (function(){

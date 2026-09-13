@@ -242,30 +242,17 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
    synthesized, mutable; visuals work without it. ---------- */
 (() => {
   const btn = document.getElementById("recBtn"); if (!btn) return;
-  const hook = document.getElementById("hookSpin");
+  const sweep = document.getElementById("oSweep");
   const ringsG = document.getElementById("layerRings");
   const beats = [...document.querySelectorAll("#beats circle, #beats i")];
   const tTime = document.getElementById("tapeTime"), tTake = document.getElementById("tapeTake"), tDot = document.getElementById("tapeDot");
   const hint = document.getElementById("catchHint");
   const muteBtn = document.getElementById("muteBtn"), clearBtn = document.getElementById("clearBtn");
 
-  /* the hook orbits the dot while we're rolling — one turn every 1.7s, clockwise, linear — and
-     eases back to rest in .25s when we stop, exactly as HookRecordMark does in the app */
-  const TURN = 1.7;
-  let angle = 0, settleRaf = 0;
-  const setHook = a => { angle = a; if (hook) hook.style.transform = `rotate(${a}deg)`; };
-  const cancelSettle = () => { if (settleRaf) { cancelAnimationFrame(settleRaf); settleRaf = 0; } };
-  function settle() {
-    cancelSettle();
-    if (!hook || reduced) { setHook(0); return; }
-    const from = angle, to = (from % 360) > 180 ? 360 : 0, t0 = performance.now();
-    const step = now => {
-      const p = Math.min(1, (now - t0) / 250), e = 1 - Math.pow(1 - p, 3);
-      setHook(from + (to - from) * e);
-      if (p < 1) settleRaf = requestAnimationFrame(step); else { settleRaf = 0; setHook(0); }
-    };
-    settleRaf = requestAnimationFrame(step);
-  }
+  /* the sweep: while holding, the current layer colour draws all the way around the O over one bar,
+     a recording ring filling as it counts you in; on release the O is bare again, ready for the next colour */
+  const setSweep = frac => { if (!sweep) return; const f = Math.max(0, Math.min(1, frac)); sweep.style.strokeDashoffset = String(100 * (1 - f)); sweep.style.opacity = f > 0.002 ? "1" : "0"; };
+  const armSweep = () => { if (sweep) sweep.style.stroke = COLORS[layers.length] || COLORS[0]; setSweep(0); };
   const BPM = 100, BEAT = 60 / BPM, BAR = BEAT * 4, MAX = 5;
   const COLORS = ["#B86A4A", "#D9A24C", "#7E9B67", "#A9668E", "#7B94A6"];   /* the app's layer colors */
   const NOTES  = [130.81, 196.00, 329.63, 493.88, 587.33];                 /* C3 G3 E4 B4 D5 — a Cmaj9 that fills in as you stack */
@@ -315,7 +302,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     const t = performance.now() / 1000;
     if (holding) {
       const el = t - holdStart, b = Math.floor(el / BEAT);
-      if (!reduced) setHook(((el / TURN) * 360) % 360);
+      setSweep(el / BAR);
       if (b !== lastBeat) { lastBeat = b; const bi = b % 4; beats.forEach((c, i) => c.classList.toggle("hit", i === bi)); click(bi === 0); }
       tTime.textContent = fmt(el);
     } else if (layers.length) {
@@ -327,8 +314,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   function startHold() {
     if (holding || layers.length >= MAX) return;
     audio();
-    if (hook) hook.classList.remove("boot");
-    cancelSettle(); setHook(0);
+    armSweep();
     holding = true; holdStart = performance.now() / 1000; lastBeat = -1;
     btn.setAttribute("aria-pressed", "true"); btn.classList.add("holding"); tDot.classList.add("live");
     hint.textContent = "Counting you in… let go when you've got it.";
@@ -339,7 +325,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     holding = false;
     const len = performance.now() / 1000 - holdStart;
     btn.setAttribute("aria-pressed", "false"); btn.classList.remove("holding"); tDot.classList.remove("live");
-    settle();
+    setSweep(0);
     beats.forEach(c => c.classList.remove("hit"));
     if (len < 0.35) { hint.textContent = "Hold it a little longer — give it a bar."; if (!layers.length) tTime.textContent = "00:00.0"; return; }
     catchLayer(len);
@@ -348,7 +334,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     const n = layers.length; if (n >= MAX) return;
     if (!n) loopStart = performance.now() / 1000;
     const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    c.setAttribute("cx", "160"); c.setAttribute("cy", "160"); c.setAttribute("r", String(150 + n * 9));
+    c.setAttribute("cx", "160"); c.setAttribute("cy", "160"); c.setAttribute("r", String(128 + n * 9));
     c.setAttribute("class", "layer"); c.style.stroke = COLORS[n]; c.style.setProperty("--d", BAR + "s");
     ringsG.appendChild(c);
     layers.push({ el: c, v: voice(n) });
@@ -381,8 +367,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     if (!ctx) return;
     if (document.hidden) ctx.suspend().catch(() => {}); else if (layers.length) ctx.resume().catch(() => {});
   });
-  /* the app's launch moment: the hook spins up as the page opens, then rests */
-  if (hook && !reduced) { hook.classList.add("boot"); setTimeout(() => hook.classList.remove("boot"), 3450); }
+  /* at rest the mark is just the O (the sweep is hidden until you hold) */
 })();
 
 /* ---------- live rhyme demo — the app's REAL rhyme engine ---------- */
