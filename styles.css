@@ -165,7 +165,8 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 /* the same moving wordmark, small in the nav and as the after-dark heading */
 .bm-wordmark.wm-nav { width: auto; height: 1.24rem; }
 .wm-h2-wrap { margin: .4rem 0 0; line-height: 0; }
-.bm-wordmark.wm-h2 { width: 100%; max-width: 420px; height: auto; }
+.bm-wordmark.wm-h2 { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto; }
+.bm-wordmark.wm-foot { width: auto; height: 1.32rem; vertical-align: middle; }
 .badge-row { margin: 1.4rem 0 0; }
 .soon-pill {
   display: inline-flex; align-items: center; gap: .55rem; font-family: var(--sans); font-weight: 800; font-size: .84rem;
