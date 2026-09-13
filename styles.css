@@ -166,7 +166,7 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 .bm-wordmark.wm-nav { width: auto; height: 1.24rem; }
 .wm-h2-wrap { margin: .4rem 0 0; line-height: 0; }
 .bm-wordmark.wm-h2 { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto; }
-.bm-wordmark.wm-foot { width: auto; height: 1.32rem; vertical-align: middle; }
+.bm-wordmark.wm-foot { width: auto; height: 1.62rem; vertical-align: middle; }
 .badge-row { margin: 1.4rem 0 0; }
 .soon-pill {
   display: inline-flex; align-items: center; gap: .55rem; font-family: var(--sans); font-weight: 800; font-size: .84rem;
@@ -418,8 +418,8 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(-40deg)
 
 /* ---------- footer ---------- */
 .foot { border-top: 1px solid var(--line); padding: 2.4rem 0 3.4rem; }
-.foot-in { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-.foot p { margin: 0; flex: 1; font-size: .92rem; line-height: 1.5; color: var(--ink-soft); }
+.foot-in { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.foot p { margin: 0; flex: 1; font-family: var(--serif); font-style: italic; font-size: .82rem; line-height: 1.5; color: var(--ink-soft); }
 .foot nav { display: flex; gap: 1.2rem; }
 .foot nav a { font-family: var(--sans); font-weight: 700; font-size: .88rem; color: var(--ink-soft); text-decoration: none; }
 .foot nav a:hover { color: var(--ink); }
