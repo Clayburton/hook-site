@@ -30,6 +30,11 @@
 #hook-nav .hn-name{font:900 .92rem/1 "Nunito",ui-rounded,system-ui,sans-serif;letter-spacing:.16em;color:#41333E}
 #hook-nav.dark .hn-name{color:#F3ECDE}
 #hook-nav .hn-tag{font:italic 400 .92rem "Iowan Old Style","Source Serif 4",Georgia,serif;opacity:.72}
+#hook-nav .hn-wm2{height:22px;width:auto;display:block;overflow:visible}
+#hook-nav .hn-wm2 .hn-t{font:500 184px/1 "Iowan Old Style","Source Serif 4",Georgia,serif;letter-spacing:-6px;fill:#2A2724}
+#hook-nav.dark .hn-wm2 .hn-t{fill:#F3ECDE}
+#hook-nav .hn-wm2 .hn-d{fill:#F04E3C}
+#hook-nav.dark .hn-wm2 .hn-d{fill:#FA5E48}
 #hook-nav .hn-links{margin-left:auto;display:flex;gap:1.4rem}
 #hook-nav .hn-links a{font-weight:700;font-size:.92rem;opacity:.78}
 #hook-nav .hn-links a:hover{opacity:1}
@@ -46,7 +51,7 @@
 #hook-phone:not(.dark) img.light.on,#hook-phone.dark img.dark.on{opacity:1;transition-delay:0s}
 </style>
 <div id="hook-nav" aria-label="Songwriting menu">
-  <a class="hn-brand" href="https://clayandkelsy.com/songwriting/" data-go="#top"><b class="hn-name">Songwriting</b><span class="hn-tag">by Clay and Kelsy</span></a>
+  <a class="hn-brand" href="https://clayandkelsy.com/songwriting/" data-go="#top"><svg class="hn-wm2" viewBox="0 0 1000 220" role="img" aria-label="Songwriting"><defs><mask id="hn-wmask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="220"><text x="500" y="166" text-anchor="middle" class="hn-t hn-m">Songwriting</text></mask></defs><text x="500" y="166" text-anchor="middle" class="hn-t">Songwriting</text><g mask="url(#hn-wmask)"><path class="hn-s"></path></g><circle class="hn-d" cx="152" cy="118" r="11"></circle></svg><span class="hn-tag">by Clay and Kelsy</span></a>
   <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/songwriting/#loop" data-go="#loop">Loop</a><a href="https://clayandkelsy.com/songwriting/#words" data-go="#words">Words</a><a href="https://clayandkelsy.com/songwriting/#keep" data-go="#keep">Keep it</a><a href="https://clayandkelsy.com/songwriting/#pricing" data-go="#pricing">Pricing</a></nav>
   <a class="hn-pill" href="https://clayburton.github.io/hook-site/notify.html">Notify me</a>
 </div>
@@ -136,5 +141,51 @@
   var lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
   function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
   requestAnimationFrame(raf);
+})();
+</script>
+<script>
+(function () {   /* the moving wordmark in the pinned nav: the sweep orbits the o, cycling the four layer colours */
+  var wm = document.querySelector("#hook-nav .hn-wm2"); if (!wm) return;
+  var word = wm.querySelector(".hn-t:not(.hn-m)"), maskT = wm.querySelector(".hn-m");
+  var sweep = wm.querySelector(".hn-s"), dot = wm.querySelector(".hn-d");
+  var meter = document.createElement("canvas").getContext("2d");
+  var pal = [[184,106,74],[217,162,76],[126,155,103],[169,102,142]];
+  var geo = null, elapsed = 0, prev = 0;
+  var reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
+  function measure() {
+    if (word.getNumberOfChars() > 1) {
+      word.style.fontSize = "184px"; if (maskT) { maskT.style.fontSize = "184px"; }
+      var wdt = word.getComputedTextLength();
+      if (wdt > 1000) { var fs = (184 * 1000 / wdt) + "px"; word.style.fontSize = fs; if (maskT) { maskT.style.fontSize = fs; } }
+      var type = getComputedStyle(word);
+      meter.font = type.fontWeight + " " + type.fontSize + " " + type.fontFamily;
+      var g = meter.measureText("o");
+      var start = word.getStartPositionOfChar(1);
+      var lft = start.x - g.actualBoundingBoxLeft, rgt = start.x + g.actualBoundingBoxRight;
+      var top = 166 - g.actualBoundingBoxAscent, bot = 166 + g.actualBoundingBoxDescent;
+      geo = { cx: (lft + rgt) / 2, cy: (top + bot) / 2, r: Math.max(rgt - lft, bot - top) * 0.56 };
+      var dr = (bot - top) * 0.123;
+      dot.setAttribute("cx", geo.cx.toFixed(2)); dot.setAttribute("cy", geo.cy.toFixed(2)); dot.setAttribute("r", dr.toFixed(2));
+    }
+  }
+  function frame(t) {
+    if (prev) { if (!reduce) { elapsed += Math.min(t - prev, 100); } }
+    prev = t;
+    if (geo) {
+      var turns = elapsed / 4800, cur = Math.floor(turns) % 4, phase = turns - Math.floor(turns);
+      var raw = (phase - 0.77) / 0.23, blend = raw > 1 ? 1 : (raw > 0 ? raw : 0), ease = blend * blend * (3 - 2 * blend), nxt = (cur + 1) % 4;
+      var a0 = pal[cur], a1 = pal[nxt];
+      sweep.style.fill = "rgb(" + Math.round(a0[0] + (a1[0] - a0[0]) * ease) + "," + Math.round(a0[1] + (a1[1] - a0[1]) * ease) + "," + Math.round(a0[2] + (a1[2] - a0[2]) * ease) + ")";
+      var cx = geo.cx, cy = geo.cy, r = geo.r, ang = phase * Math.PI * 2 - Math.PI / 2, ext = Math.PI * 0.52, a = ang - ext;
+      var x1 = cx + r * Math.cos(a), y1 = cy + r * Math.sin(a), x2 = cx + r * Math.cos(ang), y2 = cy + r * Math.sin(ang);
+      var big = ext > Math.PI ? 1 : 0;
+      sweep.setAttribute("d", "M " + cx + " " + cy + " L " + x1 + " " + y1 + " A " + r + " " + r + " 0 " + big + " 1 " + x2 + " " + y2 + " Z");
+    }
+    requestAnimationFrame(frame);
+  }
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measure); }
+  measure();
+  try { new ResizeObserver(measure).observe(wm); } catch (e) {}
+  requestAnimationFrame(frame);
 })();
 </script>
