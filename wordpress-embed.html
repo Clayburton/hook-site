@@ -22,13 +22,6 @@
 #hook-nav.dark{background:rgba(21,16,10,.82);border-color:#483525;color:#F3ECDE}
 #hook-nav a{color:inherit;text-decoration:none;box-shadow:none;border:0}
 #hook-nav .hn-brand{display:inline-flex;align-items:center;gap:.6rem}
-#hook-nav .hn-wm{height:26px;width:auto;display:block;overflow:visible;color:#41333E}
-#hook-nav.dark .hn-wm{color:#F3ECDE}
-#hook-nav .hn-wm .s{fill:none;stroke:currentColor;stroke-width:26;stroke-linecap:round;stroke-linejoin:round}
-#hook-nav .hn-wm .play{fill:none;stroke:#F04E3C;stroke-width:26;stroke-linecap:round;stroke-dasharray:82 918;animation:hnplay 4.8s linear infinite}
-@keyframes hnplay{to{stroke-dashoffset:-1000}}
-#hook-nav .hn-name{font:900 .92rem/1 "Nunito",ui-rounded,system-ui,sans-serif;letter-spacing:.16em;color:#41333E}
-#hook-nav.dark .hn-name{color:#F3ECDE}
 #hook-nav .hn-tag{font:italic 400 .92rem "Iowan Old Style","Source Serif 4",Georgia,serif;opacity:.72}
 #hook-nav .hn-wm2{height:22px;width:auto;display:block;overflow:visible}
 #hook-nav .hn-wm2 .hn-t{font:500 184px/1 "Iowan Old Style","Source Serif 4",Georgia,serif;letter-spacing:-6px;fill:#2A2724}
@@ -41,7 +34,7 @@
 #hook-nav .hn-pill{font-weight:800;font-size:.86rem;color:#FDF8EF;background:#F04E3C;border-radius:999px;padding:.6em 1.1em;white-space:nowrap}
 #hook-nav .hn-pill:hover{background:#D83E2C;color:#FDF8EF}
 @media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-tag{display:none}}
-@media (prefers-reduced-motion:reduce){#hook-nav{transition:none}#hook-nav .hn-wm .play{animation:none}}
+@media (prefers-reduced-motion:reduce){#hook-nav{transition:none}}
 /* the walkthrough phone, drawn here so it sits dead still while the page scrolls under it */
 #hook-phone{position:fixed;z-index:9980;display:none;pointer-events:none}
 #hook-phone.show{display:block}
