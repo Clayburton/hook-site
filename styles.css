@@ -154,6 +154,14 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 }
 .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; position: relative; }
 .hero-copy { position: relative; z-index: 2; }
+
+/* ---------- animated brandmark (hero title) ---------- */
+.brandmark { margin: 0 0 1.1rem; max-width: 600px; }
+.bm-wordmark { display: block; width: 100%; height: auto; overflow: visible; }
+.bm-title { font-family: var(--serif); font-weight: 500; font-size: 184px; letter-spacing: -6px; fill: var(--ink); }
+.bm-byline { font-family: var(--serif); font-weight: 400; font-style: italic; font-size: 46px; letter-spacing: .3px; fill: var(--ink-soft); }
+.bm-dot { fill: var(--red); }
+@media (max-width: 720px) { .brandmark { max-width: 430px; } }
 .badge-row { margin: 1.4rem 0 0; }
 .soon-pill {
   display: inline-flex; align-items: center; gap: .55rem; font-family: var(--sans); font-weight: 800; font-size: .84rem;
@@ -337,7 +345,7 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(-40deg)
 
 /* ---------- makers ---------- */
 .makers { text-align: center; }
-.mark.big img { width: 74px; height: 74px; }
+.mark.big img { width: auto; height: 88px; }
 .manifesto { margin: 1.3rem auto 0; max-width: 34em; font-size: clamp(1.2rem, 2vw, 1.4rem); line-height: 1.45; }
 .manifesto p { margin: 0 0 .9rem; }
 .mf-cite { font-family: var(--sans); font-weight: 700; font-size: .88rem; color: var(--ink-soft); }
