@@ -162,6 +162,10 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 .bm-byline { font-family: var(--serif); font-weight: 400; font-style: italic; font-size: 46px; letter-spacing: .3px; fill: var(--ink-soft); }
 .bm-dot { fill: var(--red); }
 @media (max-width: 720px) { .brandmark { max-width: 430px; } }
+/* the same moving wordmark, small in the nav and as the after-dark heading */
+.bm-wordmark.wm-nav { width: auto; height: 1.24rem; }
+.wm-h2-wrap { margin: .4rem 0 0; line-height: 0; }
+.bm-wordmark.wm-h2 { width: 100%; max-width: 420px; height: auto; }
 .badge-row { margin: 1.4rem 0 0; }
 .soon-pill {
   display: inline-flex; align-items: center; gap: .55rem; font-family: var(--sans); font-weight: 800; font-size: .84rem;
