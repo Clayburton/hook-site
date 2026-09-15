@@ -462,3 +462,12 @@ if (IS_EMBEDDED) {
 
 /* first paint: everything that follows the page, computed once */
 tick();
+
+/* ---------- no pop-in: every screenshot is fetched up front (no lazy loading) and then pre-decoded,
+   so by the time a section reveals, a screen cycles, or the theme swaps, the pixels are already there ---------- */
+(() => {
+  const warm = im => { if (im.decode) im.decode().catch(() => {}); };
+  document.querySelectorAll("img[src]").forEach(im => {
+    if (im.complete) warm(im); else im.addEventListener("load", () => warm(im), { once: true });
+  });
+})();
