@@ -157,10 +157,11 @@ html[data-theme="dark"] .mark .m-dark { opacity: 1; }
 .hero-copy { position: relative; z-index: 2; }
 
 /* ---------- animated brandmark (hero title) ---------- */
-.hero-lockup { max-width: 600px; }
-.hero-mark { display: block; height: clamp(52px, 6.5vw, 74px); width: auto; margin: 0 auto .8rem; filter: drop-shadow(0 10px 18px var(--shadow)); opacity: 0; animation: rise .95s var(--ease) 60ms forwards, floaty 7.5s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .hero-mark { animation: rise .95s var(--ease) 60ms forwards; } }
-.brandmark { margin: 0 0 1.1rem; max-width: 600px; }
+/* the app's own lockup: the four layers beside the word, sized off the same box so they scale with it and sit at cap height */
+.brandmark { margin: 0 0 1.1rem; max-width: 714px; display: flex; align-items: flex-start; gap: 3.6%; }
+.brandmark .bm-wordmark { flex: 1 1 auto; width: auto; min-width: 0; }
+.hero-mark { flex: 0 0 auto; width: 11.05%; height: auto; margin-top: 2.69%; filter: drop-shadow(0 8px 14px var(--shadow)); }
+@media (max-width: 640px) { .hero-mark { display: none; } .brandmark { max-width: 600px; } }
 .bm-wordmark { display: block; width: 100%; height: auto; overflow: visible; }
 .bm-title { font-family: var(--serif); font-weight: 500; font-size: 184px; letter-spacing: -6px; fill: var(--ink); }
 .bm-byline { font-family: var(--serif); font-weight: 400; font-style: italic; font-size: 46px; letter-spacing: .3px; fill: var(--ink-soft); }
