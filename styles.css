@@ -383,7 +383,9 @@ html[data-theme="dark"] .nf-ics .ic-moon { opacity: 0; transform: rotate(-40deg)
     0 24px 44px -18px var(--shadow), 0 50px 80px -36px var(--shadow);
 }
 .watch .face { border-radius: 19% / 16%; overflow: hidden; background: #000; aspect-ratio: 416 / 496; }
-.watch .face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.watch .face { position: relative; }
+.watch .face img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .55s ease .28s; }
+html[data-theme="light"] .watch .face img.s-light, html[data-theme="dark"] .watch .face img.s-dark { opacity: 1; transition-delay: 0s; }
 .watch .crown, .watch .side {
   position: absolute; right: -4.5%; width: 4.5%; border-radius: 0 4px 4px 0;
   background: linear-gradient(90deg, #2A2523, #4A423E 55%, #2A2523);
