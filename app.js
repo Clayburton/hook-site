@@ -158,6 +158,8 @@ document.querySelectorAll(".rise").forEach((el, i) => el.style.setProperty("--i"
 function setTheme(t, persist) {
   doc.setAttribute("data-theme", t);
   if (themeMeta) themeMeta.setAttribute("content", THEME_BG[t]);
+  const fav = document.getElementById("favicon");
+  if (fav) fav.href = "assets/songwriting-favicon-" + (t === "dark" ? "dark" : "light") + ".png?v=20260916";
   const lab = document.getElementById("nfLabel");
   if (lab) lab.textContent = t === "dark" ? "Turn off dark mode" : "Turn on dark mode";
   if (persist) userTouchedTheme = true;
