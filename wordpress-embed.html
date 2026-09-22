@@ -1,60 +1,52 @@
 <!-- ============================================================
-     HOOK — WordPress embed for clayandkelsy.com/songwriting  (paste this whole file as ONE Custom HTML block)
+     SONGWRITING — WordPress embed for clayandkelsy.com/songwriting  (paste this whole file as ONE Custom HTML block)
      What it does:
-     · Embeds the Hook page (GitHub Pages) full-bleed in an iframe that grows to fit its content,
-       so there is exactly one scrollbar on the page: this one.
-     · Draws Hook's menu bar AND the walkthrough phone HERE, fixed to the browser window, so they
-       follow the scroll with zero lag. (A menu bar inside the iframe can only follow a frame late, which reads as jitter.)
-       It appears the moment the C&K header scrolls away and hides while the header is on screen.
-     · Tells the page where the viewport is on every scroll (its effects follow it), paints this
-       page the same colour as the page's theme, and routes menu clicks down into the page.
-     · Smooth, inertial scrolling on desktop (Lenis) — the last <script>; safe to delete if it
-       ever misbehaves.
+     · Embeds the Songwriting page (GitHub Pages) full-bleed in an iframe that grows to fit its
+       content, so there is exactly one scrollbar on the page: this one.
+     · Draws the product menu bar HERE, fixed to the browser window, so it follows the scroll with
+       zero lag. It appears the moment the C&K global header scrolls away and hides while it is on screen.
+     · Tells the page where the viewport is on every scroll, paints this page the same colour as the
+       page's theme, routes menu clicks (and the theme control) down into the page.
+     · Smooth, inertial scrolling on desktop (Lenis) — the last <script>; safe to delete if it misbehaves.
      · Hides the WordPress theme's own footer (#colophon) on this page only.
-     Message contract with the page (app.js): page→here {hook:"h",h} {hook:"bg",color} {hook:"go",href};
-     here→page {hookHost:"vp",top,vh,nav:true} {hookHost:"go",id}.
+     Message contract with the page (app.js): page then here {hook:"h",h} {hook:"bg",color} {hook:"go",href};
+     here then page {hookHost:"vp",top,vh,nav:true} {hookHost:"go",id} {hookHost:"theme"}.
      ============================================================ -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
 <style>
 #colophon{display:none !important}
-#hook-nav{position:fixed;top:var(--wp-admin--admin-bar--height,0px);left:0;right:0;z-index:9990;height:64px;display:flex;align-items:center;gap:1.1rem;padding:0 clamp(16px,4vw,40px);box-sizing:border-box;background:rgba(246,239,228,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid #D9C5A6;color:#2A2724;font-family:Nunito,-apple-system,"Helvetica Neue",Arial,sans-serif;opacity:0;transform:translateY(-8px);will-change:transform,opacity;pointer-events:none;transition:opacity .3s ease,transform .3s ease,background-color .9s ease,color .9s ease,border-color .9s ease}
+#hook-nav{position:fixed;top:var(--wp-admin--admin-bar--height,0px);left:0;right:0;z-index:9990;height:64px;display:flex;align-items:center;gap:22px;padding:0 clamp(16px,4vw,40px);box-sizing:border-box;background:rgba(245,239,227,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid #d8cfbe;color:#302e29;font-family:Nunito,-apple-system,"Helvetica Neue",Arial,sans-serif;opacity:0;transform:translateY(-8px);will-change:transform,opacity;pointer-events:none;transition:opacity .3s ease,transform .3s ease,background-color .4s ease,color .4s ease,border-color .4s ease}
 #hook-nav.show{opacity:1;transform:none;pointer-events:auto}
-#hook-nav.dark{background:rgba(21,16,10,.82);border-color:#483525;color:#F3ECDE}
-#hook-nav a{color:inherit;text-decoration:none;box-shadow:none;border:0}
-#hook-nav .hn-brand{display:inline-flex;align-items:center;gap:.38rem}
-#hook-nav .hn-mark{height:26px;width:auto;display:block}
-#hook-nav .hn-tag{font:italic 400 .82rem "Iowan Old Style","Source Serif 4",Georgia,serif;opacity:.72}
-#hook-nav .hn-wm2{height:26px;width:auto;display:block;overflow:visible}
-#hook-nav .hn-wm2 .hn-t{font:500 184px/1 "Iowan Old Style","Source Serif 4",Georgia,serif;letter-spacing:-6px;fill:#2A2724}
-#hook-nav.dark .hn-wm2 .hn-t{fill:#F3ECDE}
-#hook-nav .hn-wm2 .hn-d{fill:#F04E3C}
-#hook-nav.dark .hn-wm2 .hn-d{fill:#FA5E48}
-#hook-nav .hn-links{margin-left:auto;display:flex;gap:1.4rem}
-#hook-nav .hn-links a{font-weight:700;font-size:.92rem;opacity:.78}
-#hook-nav .hn-links a:hover{opacity:1}
-#hook-nav .hn-pill{font-weight:800;font-size:.86rem;color:#FDF8EF;background:#F04E3C;border-radius:999px;padding:.6em 1.1em;white-space:nowrap}
-#hook-nav .hn-pill:hover{background:#D83E2C;color:#FDF8EF}
-@media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-tag{display:none}}
-@media (prefers-reduced-motion:reduce){#hook-nav{transition:none}}
-/* the walkthrough phone, drawn here so it sits dead still while the page scrolls under it */
-#hook-phone{position:fixed;z-index:9980;display:none;pointer-events:none}
-#hook-phone.show{display:block}
-#hook-phone .scr{position:relative;aspect-ratio:664/1440;overflow:hidden;border-radius:clamp(28px,9.5%,42px);border:1.5px solid #D9C5A6;background:#EADCC6;box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 24px 48px -18px rgba(42,39,36,.55),0 60px 90px -40px rgba(42,39,36,.55)}
-#hook-phone.dark .scr{border-color:#483525;background:#33251B;box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 48px -18px #000,0 60px 90px -40px #000}
-#hook-phone img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;opacity:0;transition:opacity .55s ease .28s}
-#hook-phone:not(.dark) img.light.on,#hook-phone.dark img.dark.on{opacity:1;transition-delay:0s}
+#hook-nav.dark{background:rgba(33,31,28,.86);border-color:#4b443b;color:#f2e8d7}
+#hook-nav a,#hook-nav button{color:inherit;text-decoration:none;box-shadow:none;border:0;background:none;font:inherit}
+#hook-nav .hn-brand{display:inline-flex;align-items:center;gap:11px}
+#hook-nav .hn-mark{height:30px;width:auto;display:block}
+#hook-nav .hn-name{font-family:"Source Serif 4",Georgia,serif;font-size:22px;line-height:1.02;letter-spacing:-.02em}
+#hook-nav .hn-name small{display:block;margin-top:2px;font-family:Nunito,sans-serif;font-size:11px;font-style:italic;letter-spacing:0;color:#716c60}
+#hook-nav.dark .hn-name small{color:#bdb4a4}
+#hook-nav .hn-links{margin-left:auto;display:flex;gap:30px}
+#hook-nav .hn-links a{font-weight:700;font-size:13px;opacity:.82}
+#hook-nav .hn-links a:hover{opacity:1;color:#ca4d37}
+#hook-nav.dark .hn-links a:hover{color:#f28c72}
+#hook-nav .hn-theme{cursor:pointer;font-size:20px;line-height:1;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;opacity:.85}
+#hook-nav .hn-theme:hover{opacity:1}
+#hook-nav .hn-pill{cursor:pointer;font-weight:800;font-size:13px;color:#fff9f1;background:#ca4d37;border-radius:4px;padding:.72em 1.15em;white-space:nowrap;transition:transform .2s ease}
+#hook-nav .hn-pill:hover{transform:translateY(-1px)}
+#hook-nav.dark .hn-pill{background:#f28c72;color:#211f1c}
+@media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-name small{display:none}}
+@media (prefers-reduced-motion:reduce){#hook-nav{transition:none}#hook-nav .hn-pill{transition:none}}
 </style>
 <div id="hook-nav" aria-label="Songwriting menu">
-  <a class="hn-brand" href="https://clayandkelsy.com/songwriting/" data-go="#top"><img class="hn-mark" src="https://clayburton.github.io/hook-site/assets/songwriting-mark.webp?v=20260916" alt="" width="168" height="176"><svg class="hn-wm2" viewBox="0 0 1000 220" role="img" aria-label="Songwriting"><defs><mask id="hn-wmask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="220"><text x="500" y="166" text-anchor="middle" class="hn-t hn-m">Songwriting</text></mask></defs><text x="500" y="166" text-anchor="middle" class="hn-t">Songwriting</text><g mask="url(#hn-wmask)"><path class="hn-s"></path></g><circle class="hn-d" cx="152" cy="118" r="11"></circle></svg><span class="hn-tag">by Clay and Kelsy</span></a>
-  <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/songwriting/#loop" data-go="#loop">Loop</a><a href="https://clayandkelsy.com/songwriting/#words" data-go="#words">Words</a><a href="https://clayandkelsy.com/songwriting/#keep" data-go="#keep">Keep it</a><a href="https://clayandkelsy.com/songwriting/#pricing" data-go="#pricing">Pricing</a></nav>
+  <a class="hn-brand" href="https://clayandkelsy.com/songwriting/" data-go="#top"><img class="hn-mark" src="https://clayburton.github.io/hook-site/assets/songwriting-mark.webp?v=20260916" alt="" width="168" height="176"><span class="hn-name">Songwriting<small>by Clay and Kelsy</small></span></a>
+  <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/songwriting/#loop" data-go="#loop">The feel</a><a href="https://clayandkelsy.com/songwriting/#words" data-go="#words">The words</a><a href="https://clayandkelsy.com/songwriting/#pricing" data-go="#pricing">The price</a></nav>
+  <button class="hn-theme" type="button" aria-label="Toggle dark mode" aria-pressed="false">&#9680;</button>
   <a class="hn-pill" href="https://clayburton.github.io/hook-site/notify.html">Notify me</a>
 </div>
-<div id="hook-phone" aria-hidden="true"><div class="scr"></div></div>
 <div id="hook-embed" style="margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);width:100vw;">
   <iframe id="hook-frame"
     src="https://clayburton.github.io/hook-site/"
     title="Songwriting by Clay and Kelsy"
-    style="display:block;width:100%;border:0;height:12000px;background:#F6EFE4;"
+    style="display:block;width:100%;border:0;height:12000px;background:#f5efe3;"
     scrolling="no"
     allow="autoplay"
     loading="eager"></iframe>
@@ -63,26 +55,7 @@
 (function () {
   var ORIGIN = "https://clayburton.github.io";
   var frame = document.getElementById("hook-frame"), nav = document.getElementById("hook-nav");
-  var phone = document.getElementById("hook-phone"), scr = phone.querySelector(".scr"), walk = null, step = 0;
-  function buildPhone(w) {
-    scr.innerHTML = "";
-    Object.keys(w.steps).forEach(function (k) {
-      ["light", "dark"].forEach(function (t) {
-        var im = w.steps[k][t]; if (!im) return;
-        var el = document.createElement("img"); el.src = im.src; el.alt = ""; el.className = t + (String(step) === k ? " on" : "");
-        el.dataset.step = k; el.style.objectPosition = "50% " + im.focus; scr.appendChild(el);
-      });
-    });
-  }
-  function placePhone(r) {
-    if (!walk) return;
-    var vh = window.innerHeight, margin = walk.navH + vh * 0.05, ph = walk.width / walk.aspect;
-    var secTop = r.top + walk.top, secBottom = r.top + walk.bottom;
-    var on = (vh > secTop) ? (secBottom > 0) : false;   /* no less-than sign and no double-ampersand on this line: WordPress mangles tag-shaped text inside a block */
-    phone.classList.toggle("show", on); if (!on) return;
-    var y = Math.max(secTop, Math.min(margin, secBottom - ph));   /* exactly what position:sticky would do */
-    phone.style.left = (r.left + walk.left) + "px"; phone.style.width = walk.width + "px"; phone.style.top = y + "px";
-  }
+  var themeBtn = nav.querySelector(".hn-theme");
   /* load the page fresh every visit — defeats the iframe-document cache that once served a stale copy */
   frame.src = ORIGIN + "/hook-site/?v=" + Date.now();
   var lastH = 0;
@@ -96,13 +69,19 @@
       frame.style.background = e.data.color;
       document.documentElement.style.setProperty("background-color", e.data.color, "important");
       document.body.style.setProperty("background-color", e.data.color, "important");
-      nav.classList.toggle("dark", e.data.color.toLowerCase() === "#15100a");
-      phone.classList.toggle("dark", e.data.color.toLowerCase() === "#15100a");
+      var dark = e.data.color.toLowerCase() === "#211f1c";
+      nav.classList.toggle("dark", dark);
+      themeBtn.setAttribute("aria-pressed", String(dark));
+      themeBtn.setAttribute("aria-label", dark ? "Turn on light mode" : "Turn on dark mode");
     }
     /* the page asks to open one of its own pages (Notify me): scroll up first, then swap the frame */
     if (e.data.hook === "go" && typeof e.data.href === "string" && /^[a-z0-9-]+\.html$/.test(e.data.href)) go(e.data.href);
-    if (e.data.hook === "walk") { walk = e.data.off ? null : e.data; if (walk) { buildPhone(walk); placePhone(frame.getBoundingClientRect()); } else phone.classList.remove("show"); }
-    if (e.data.hook === "step" && typeof e.data.n === "number") { step = e.data.n; scr.querySelectorAll("img").forEach(function (im) { im.classList.toggle("on", im.dataset.step === String(step)); }); }
+    /* section navigation: the frame never scrolls itself, so the page hands us the target's Y inside
+       the document and we scroll this window to it, landing below the fixed bar */
+    if (e.data.hook === "scrollto" && typeof e.data.y === "number") {
+      var NAVH = 80, base = frame.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0);
+      window.scrollTo({ top: Math.max(0, Math.round(base + e.data.y - NAVH)), behavior: "smooth" });
+    }
   });
   /* tell the page where the viewport is, and show our menu bar once the C&K header has scrolled away */
   var queued = false;
@@ -110,8 +89,7 @@
     queued = false; if (!frame.contentWindow) return;
     var r = frame.getBoundingClientRect();
     nav.classList.toggle("show", r.top < -10);
-    placePhone(r);
-    frame.contentWindow.postMessage({ hookHost: "vp", top: r.top, vh: window.innerHeight, nav: true, phone: true }, ORIGIN);
+    frame.contentWindow.postMessage({ hookHost: "vp", top: r.top, vh: window.innerHeight, nav: true }, ORIGIN);
   }
   window.addEventListener("scroll", function () { if (!queued) { queued = true; requestAnimationFrame(postViewport); } }, { passive: true });
   window.addEventListener("resize", postViewport);
@@ -125,6 +103,8 @@
       frame.contentWindow.postMessage({ hookHost: "go", id: a.getAttribute("data-go") }, ORIGIN);
     });
   });
+  /* theme control: the page owns the theme; we just ask it to toggle and reflect the result via {hook:"bg"} */
+  themeBtn.addEventListener("click", function () { if (frame.contentWindow) frame.contentWindow.postMessage({ hookHost: "theme" }, ORIGIN); });
   nav.querySelector(".hn-pill").addEventListener("click", function (e) { e.preventDefault(); go("notify.html"); });
 })();
 </script>
@@ -135,51 +115,5 @@
   var lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
   function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
   requestAnimationFrame(raf);
-})();
-</script>
-<script>
-(function () {   /* the moving wordmark in the pinned nav: the sweep orbits the o, cycling the four layer colours */
-  var wm = document.querySelector("#hook-nav .hn-wm2"); if (!wm) return;
-  var word = wm.querySelector(".hn-t:not(.hn-m)"), maskT = wm.querySelector(".hn-m");
-  var sweep = wm.querySelector(".hn-s"), dot = wm.querySelector(".hn-d");
-  var meter = document.createElement("canvas").getContext("2d");
-  var pal = [[184,106,74],[217,162,76],[126,155,103],[169,102,142]];
-  var geo = null, elapsed = 0, prev = 0;
-  var reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
-  function measure() {
-    if (word.getNumberOfChars() > 1) {
-      word.style.fontSize = "184px"; if (maskT) { maskT.style.fontSize = "184px"; }
-      var wdt = word.getComputedTextLength();
-      if (wdt > 1000) { var fs = (184 * 1000 / wdt) + "px"; word.style.fontSize = fs; if (maskT) { maskT.style.fontSize = fs; } }
-      var type = getComputedStyle(word);
-      meter.font = type.fontWeight + " " + type.fontSize + " " + type.fontFamily;
-      var g = meter.measureText("o");
-      var start = word.getStartPositionOfChar(1);
-      var lft = start.x - g.actualBoundingBoxLeft, rgt = start.x + g.actualBoundingBoxRight;
-      var top = 166 - g.actualBoundingBoxAscent, bot = 166 + g.actualBoundingBoxDescent;
-      geo = { cx: (lft + rgt) / 2, cy: (top + bot) / 2, r: Math.max(rgt - lft, bot - top) * 0.56 };
-      var dr = (bot - top) * 0.123;
-      dot.setAttribute("cx", geo.cx.toFixed(2)); dot.setAttribute("cy", geo.cy.toFixed(2)); dot.setAttribute("r", dr.toFixed(2));
-    }
-  }
-  function frame(t) {
-    if (prev) { if (!reduce) { elapsed += Math.min(t - prev, 100); } }
-    prev = t;
-    if (geo) {
-      var turns = elapsed / 4800, cur = Math.floor(turns) % 4, phase = turns - Math.floor(turns);
-      var raw = (phase - 0.77) / 0.23, blend = raw > 1 ? 1 : (raw > 0 ? raw : 0), ease = blend * blend * (3 - 2 * blend), nxt = (cur + 1) % 4;
-      var a0 = pal[cur], a1 = pal[nxt];
-      sweep.style.fill = "rgb(" + Math.round(a0[0] + (a1[0] - a0[0]) * ease) + "," + Math.round(a0[1] + (a1[1] - a0[1]) * ease) + "," + Math.round(a0[2] + (a1[2] - a0[2]) * ease) + ")";
-      var cx = geo.cx, cy = geo.cy, r = geo.r, ang = phase * Math.PI * 2 - Math.PI / 2, ext = Math.PI * 0.52, a = ang - ext;
-      var x1 = cx + r * Math.cos(a), y1 = cy + r * Math.sin(a), x2 = cx + r * Math.cos(ang), y2 = cy + r * Math.sin(ang);
-      var big = ext > Math.PI ? 1 : 0;
-      sweep.setAttribute("d", "M " + cx + " " + cy + " L " + x1 + " " + y1 + " A " + r + " " + r + " 0 " + big + " 1 " + x2 + " " + y2 + " Z");
-    }
-    requestAnimationFrame(frame);
-  }
-  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measure); }
-  measure();
-  try { new ResizeObserver(measure).observe(wm); } catch (e) {}
-  requestAnimationFrame(frame);
 })();
 </script>

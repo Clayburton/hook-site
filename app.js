@@ -1,475 +1,356 @@
-/* Hook — runs two ways.
-   STANDALONE (this document is the scroller): sticky nav, Lenis smooth scroll, native scroll events.
-   EMBEDDED (inside clayandkelsy.com's auto-growing iframe, which never scrolls itself): the host
-   posts its viewport ({hookHost:"vp", top, vh}) on every scroll; everything that follows the page
-   measures against that; the nav is pinned by JS and only shows once the C&K menu bar has
-   scrolled away; we post our height and theme color back up so the frame fits and the page
-   behind it matches. Everything degrades: no JS → static page; reduced motion → no animation. */
-/* Reusable on any C&K page: everything down to the hold-to-catch block (viewport pipe, nav, reveals,
-   reading light, theme + nightfall, walkthrough, height posting). Hook-only: hold-to-catch, hero phone,
-   rhyme demo. Blocks are marked  ---------- name ----------  in block comments, so you can grep for them. */
+/* Songwriting by Clay and Kelsy — page behavior.
+   Astra's redesign (sw- components) wired into the live clayandkelsy.com host.
 
-const doc = document.documentElement;
+   Two modes:
+   · STANDALONE (opened directly): the sw-nav sticks, anchors scroll this window.
+   · EMBEDDED (inside the WordPress auto-growing iframe, which never scrolls itself):
+     the host draws the pinned product bar and scrolls the outer page. This script
+     reports height and theme to the host and takes section/notify commands from it.
+
+   Host contract — page→host: {hook:"h",h} {hook:"bg",color} {hook:"go",href};
+   host→page: {hookHost:"vp",top,vh,nav:true} {hookHost:"go",id}.
+
+   Blocks below are marked with NAME banners in comments so you can grep for them. */
+(() => {
+'use strict';
+const root = document.querySelector('.sw-site'); if (!root) return;
+const $ = s => root.querySelector(s), $$ = s => [...root.querySelectorAll(s)];
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* HOST BRIDGE ---------------------------------------------------------------- */
 const IS_EMBEDDED = window.self !== window.top;
-const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const coarse  = matchMedia("(pointer: coarse)").matches;
-const NAV_H = 64;
-const THEME_BG = { light: "#F6EFE4", dark: "#15100A" };
-const themeMeta = document.querySelector('meta[name="theme-color"]');
-let userTouchedTheme = false;
-if (IS_EMBEDDED) document.body.classList.add("embedded");
+const THEME_BG = { light: '#f5efe3', dark: '#211f1c' };
+const host = { top: 0, vh: 800, nav: false, ready: false };
+if (IS_EMBEDDED) document.body.classList.add('embedded');
 
-/* ---------- the viewport we measure against ----------
-   Embedded: host.top = the frame's top edge in the host viewport (positive while the C&K header
-   is above us, negative once we've scrolled past the top), host.vh = the host viewport height.
-   An element's position relative to the host viewport is its frame position + host.top. */
-const host = { top: 0, vh: 0, top0: null, ready: false, nav: false, phone: false, vel: 0, t: 0, settle: 0 };   /* nav: the host draws the menu bar itself */
-/* Pinned things (the nav, the walkthrough phone) are placed from host messages that arrive a frame or two after the
-   host has already scrolled, which reads as jitter. lead() predicts where the host will be by the time we paint,
-   from the scroll velocity; when scrolling stops the velocity is zeroed so everything settles exactly. */
-const LEAD_MS = 24;
-const lead = () => host.vel * LEAD_MS;
-const vpH   = () => IS_EMBEDDED ? (host.vh || 800) : innerHeight;
-const vpTop = () => IS_EMBEDDED ? Math.max(0, -host.top) : (window.scrollY || 0);
-const off   = () => IS_EMBEDDED ? host.top : 0;
-const relTop    = el => el.getBoundingClientRect().top + off();
-const relBottom = el => el.getBoundingClientRect().bottom + off();
-function setVh() { doc.style.setProperty("--vh", vpH() + "px"); }
-setVh();
+const vpH = () => IS_EMBEDDED ? (host.vh || 800) : window.innerHeight;
+/* element top in the visible viewport, in both modes (embedded: the iframe never
+   scrolls, so a rect top is the document-absolute offset; add the frame's own top) */
+const relTop = el => { const t = el.getBoundingClientRect().top; return IS_EMBEDDED ? host.top + t : t; };
 
-/* ---------- smooth scroll: standalone desktop only (embedded, the host page does it) ---------- */
-let lenis = null;
-if (!IS_EMBEDDED && !reduced && !coarse && window.Lenis) {
-  lenis = new Lenis({ lerp: 0.085, smoothWheel: true, wheelMultiplier: 1 });
-  const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
-  requestAnimationFrame(raf);
-}
-
-/* ---------- the walkthrough phone, drawn by the host ----------
-   A phone pinned from host messages always lands a frame late (jitter). When the host block says
-   phone:true, we hide our phone (it keeps its grid space) and send the host the geometry it needs
-   to draw the same phone with position:fixed on its own page: the section's top/bottom, the phone
-   box, the screens (light/dark pairs) and which step is on. The host clamps it like sticky would. */
-function postWalk() {
-  if (!IS_EMBEDDED || !host.phone) return;
-  const walk = document.querySelector(".walk"), phone = document.getElementById("walkPhone");
-  if (!walk || !phone || !matchMedia("(min-width: 900px)").matches) { parent.postMessage({ hook: "walk", off: true }, "*"); return; }
-  phone.classList.add("hosted");
-  const w = walk.getBoundingClientRect(), p = phone.getBoundingClientRect(), y0 = window.scrollY || 0;
-  const imgs = [...phone.querySelectorAll("img[data-step]")];
-  const steps = {};
-  imgs.forEach(im => { const k = im.dataset.step; steps[k] = steps[k] || {}; steps[k][im.classList.contains("s-dark") ? "dark" : "light"] = { src: im.currentSrc || im.src, focus: im.style.getPropertyValue("--focus") || "0%" }; });
-  parent.postMessage({ hook: "walk", top: w.top + y0, bottom: w.bottom + y0, left: p.left, width: p.width, aspect: 664 / 1440, navH: NAV_H, steps }, "*");
-}
-addEventListener("resize", postWalk);
-
-/* ---------- one pipe for everything that follows the page ---------- */
 const scrollHandlers = [];
-function tick() { for (const h of scrollHandlers) h(); }
+const tick = () => { for (const h of scrollHandlers) h(); };
+
+let lastH = 0;
+function postHeight() {
+  if (!IS_EMBEDDED) return;
+  const h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+  if (h > 0 && Math.abs(h - lastH) > 4) { lastH = h; parent.postMessage({ hook: 'h', h }, '*'); }
+}
+function postBg() {
+  if (!IS_EMBEDDED) return;
+  const dark = document.documentElement.dataset.theme === 'dark';
+  parent.postMessage({ hook: 'bg', color: THEME_BG[dark ? 'dark' : 'light'] }, '*');
+}
+/* Scroll to a section. Standalone the iframe scrolls itself. Embedded, the frame
+   never scrolls and scrollIntoView does not reach the host, so the page hands the
+   host the target's Y and the host scrolls the outer window. */
+function scrollToTarget(t) {
+  if (!t) return;
+  if (IS_EMBEDDED) {
+    const y = t.getBoundingClientRect().top + (window.scrollY || 0);
+    parent.postMessage({ hook: 'scrollto', y }, '*');
+  } else {
+    t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }
+}
+
 if (IS_EMBEDDED) {
-  addEventListener("message", e => {
+  addEventListener('message', e => {
     const d = e.data; if (!d || !d.hookHost) return;
-    /* a host with its own fixed menu bar (the newer embed) sends its link clicks down here */
-    if (d.hookHost === "go") { const t = d.id && document.querySelector(d.id); if (t) t.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); return; }
-    if (d.hookHost !== "vp" || typeof d.top !== "number") return;
-    if (d.nav && !host.nav) { host.nav = true; const n = document.getElementById("nav"); if (n) n.style.display = "none"; }
-    if (d.phone && !host.phone) { host.phone = true; postWalk(); }   /* the host draws the walkthrough phone itself (zero lag) */
-    const now = performance.now(), dt = now - host.t;
-    host.vel = (host.t && dt > 0 && dt < 200) ? (d.top - host.top) / dt : 0; host.t = now;
-    clearTimeout(host.settle); host.settle = setTimeout(() => { host.vel = 0; tick(); }, 90);
-    host.top = d.top; if (typeof d.vh === "number" && d.vh > 0) host.vh = d.vh;
-    if (!host.ready) { host.ready = true; host.top0 = Math.max(0, d.top); fitHero(); }
-    setVh(); tick();
+    if (d.hookHost === 'go') {                       /* host menu / brand click */
+      scrollToTarget(d.id && document.querySelector(d.id));
+      return;
+    }
+    if (d.hookHost === 'theme') { toggleTheme(); return; }   /* host bar theme button; page stays the source of truth */
+    if (d.hookHost !== 'vp' || typeof d.top !== 'number') return;
+    if (d.nav) host.nav = true;
+    host.top = d.top;
+    if (typeof d.vh === 'number' && d.vh > 0) host.vh = d.vh;
+    host.ready = true;
+    tick();
   });
 } else {
-  addEventListener("scroll", tick, { passive: true });
-  addEventListener("resize", () => { setVh(); tick(); });
-}
-/* embedded: the hero fills what's visible under the C&K header when the page opens */
-function fitHero() {
-  const hero = document.querySelector(".hero");
-  if (hero && IS_EMBEDDED) hero.style.minHeight = Math.max(560, host.vh - (host.top0 || 0)) + "px";
+  addEventListener('scroll', tick, { passive: true });
+  addEventListener('resize', () => { tick(); }, { passive: true });
 }
 
-/* ---------- in-page links glide (scrollIntoView reaches the host page when embedded) ---------- */
-document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener("click", e => {
-  const id = a.getAttribute("href"); if (!id || id.length < 2) return;
+/* in-page anchors: glide, and reach the host page when embedded (scrollIntoView
+   inside the frame scrolls the outer window). Notify is handled separately below. */
+$$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+  const id = a.getAttribute('href'); if (!id || id.length < 2) return;
   const t = document.querySelector(id); if (!t) return;
   e.preventDefault();
-  if (lenis) lenis.scrollTo(t, { offset: -76, duration: 1.15 });
-  else t.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  scrollToTarget(t);
 }));
 
-/* embedded under a host menu bar: "Notify me" asks the host to scroll up and swap the frame, so the
-   notify page never opens thousands of pixels below the fold */
-document.querySelectorAll('a[href="notify.html"]').forEach(a => a.addEventListener("click", e => {
-  if (!IS_EMBEDDED || !host.nav) return;
-  e.preventDefault(); parent.postMessage({ hook: "go", href: "notify.html" }, "*");
+/* Notify: embedded under the host menu, ask the host to scroll up and swap the
+   frame to the signup page, so it never opens thousands of pixels below the fold.
+   Standalone, the link opens the real notify page normally. */
+$$('a[href*="notify.html"]').forEach(a => a.addEventListener('click', e => {
+  if (!IS_EMBEDDED) return;
+  e.preventDefault();
+  parent.postMessage({ hook: 'go', href: 'notify.html' }, '*');
 }));
 
-/* ---------- nav: rides along. Standalone it's sticky; embedded it's pinned by hand and only
-   appears once the C&K menu bar has scrolled off the top ---------- */
-(() => {
-  const nav = document.getElementById("nav"); if (!nav) return;
-  if (IS_EMBEDDED) {
-    nav.classList.add("embedded");
-    scrollHandlers.push(() => {
-      nav.style.transform = `translate3d(0,${Math.max(0, -(host.top + lead()))}px,0)`;
-      nav.classList.toggle("pinned", host.top < -10);
-    });
-  } else {
-    scrollHandlers.push(() => nav.classList.toggle("scrolled", vpTop() > 8));
-  }
-})();
-
-/* ---------- hero entrance: stagger order for the CSS rise ---------- */
-document.querySelectorAll(".rise").forEach((el, i) => el.style.setProperty("--i", i));
-
-/* ---------- reveal on approach — position-driven, so it never lags behind the page ---------- */
-(() => {
-  const els = [...document.querySelectorAll(".reveal")];
-  if (reduced) { els.forEach(el => el.classList.add("in")); return; }
-  let pending = els;
-  scrollHandlers.push(() => {
-    if (!pending.length) return;
-    const limit = vpH() * 0.93;
-    pending = pending.filter(el => { if (relTop(el) < limit) { el.classList.add("in"); return false; } return true; });
-  });
-})();
-
-/* ---------- reading light: long-form paragraphs sit faint and the ink settles as they
-   enter the reading zone (a band ~16–68% down the viewport), tracking the scroll ---------- */
-(() => {
-  const els = [...document.querySelectorAll(".rl")];
-  if (!els.length) return;
-  scrollHandlers.push(() => {
-    const vh = vpH(), top = vh * 0.16, bot = vh * 0.68, ramp = vh * 0.24;
-    for (const el of els) {
-      const c = (relTop(el) + relBottom(el)) / 2;
-      let o = 1;
-      if (c < top) o = 1 - Math.min(1, (top - c) / ramp);
-      else if (c > bot) o = 1 - Math.min(1, (c - bot) / ramp);
-      el.style.opacity = (0.28 + 0.72 * o).toFixed(3);
-    }
-  });
-})();
-
-/* ---------- theme + nightfall ---------- */
-function setTheme(t, persist) {
-  doc.setAttribute("data-theme", t);
-  if (themeMeta) themeMeta.setAttribute("content", THEME_BG[t]);
-  const fav = document.getElementById("favicon");
-  if (fav) fav.href = "assets/songwriting-favicon-" + (t === "dark" ? "dark" : "light") + ".png?v=20260916";
-  const lab = document.getElementById("nfLabel");
-  if (lab) lab.textContent = t === "dark" ? "Turn off dark mode" : "Turn on dark mode";
-  if (persist) userTouchedTheme = true;
-  if (IS_EMBEDDED) parent.postMessage({ hook: "bg", color: THEME_BG[t] }, "*");   /* the WP page matches */
+/* HERO SCREEN SELECTOR + THEME ----------------------------------------------- */
+let screen = 'lyrics';
+const screens = {
+  layers: ['13-stack-layers.webp', 'D6-stack-vocals-dark.webp', 'The real app showing four recorded layers with individual waveforms and controls'],
+  lyrics: ['recording-lyrics-light.webp', 'recording-lyrics-dark.webp', 'The real lyric editor with chords above words and rhymes colored by sound'],
+  perform: ['perform-light.webp', 'perform-dark.webp', 'The real Perform screen with large lyrics and chords for hands-free singing']
+};
+const heroScreen = $('#sw-hero-screen');
+function setScreen() {
+  const s = screens[screen], dark = document.documentElement.dataset.theme === 'dark';
+  heroScreen.src = 'assets/' + s[dark ? 1 : 0];
+  heroScreen.alt = s[2];
 }
-function cinema(t, persist, ms) {
-  doc.classList.add("theme-cinema"); setTheme(t, persist);
-  setTimeout(() => doc.classList.remove("theme-cinema"), ms);
+$$('[data-screen]').forEach(b => b.addEventListener('click', () => {
+  screen = b.dataset.screen;
+  $$('[data-screen]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  setScreen();
+}));
+function toggleTheme() {
+  const dark = document.documentElement.dataset.theme !== 'dark';
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  $('.sw-theme').setAttribute('aria-pressed', String(dark));
+  $('.sw-theme').setAttribute('aria-label', dark ? 'Turn on light mode' : 'Turn on dark mode');
+  $('#sw-night-switch').innerHTML = (dark ? 'Bring back the daylight' : 'Turn the lights down') + ' <span aria-hidden="true">↗</span>';
+  document.querySelector('meta[name="theme-color"]').content = dark ? '#211f1c' : '#f5efe3';
+  setScreen();
+  postBg();
+  postHeight();
 }
-setTheme("light", false);
-document.getElementById("themeToggle")?.addEventListener("click", () => {
-  cinema(doc.getAttribute("data-theme") === "dark" ? "light" : "dark", true, 1300);
-});
-/* the page dips to dark exactly where the copy says 4am */
+$('.sw-theme').addEventListener('click', toggleTheme);
+$('#sw-night-switch').addEventListener('click', toggleTheme);
+
+/* PRICING -------------------------------------------------------------------- */
+$$('[data-billing]').forEach(b => b.addEventListener('click', () => {
+  const year = b.dataset.billing === 'year';
+  $$('[data-billing]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  $('#sw-price').textContent = year ? '$29.99' : '$7.99';
+  $('#sw-period').textContent = year ? 'a year' : 'a month';
+  $('#sw-price-detail').textContent = year ? 'About $2.50 a month, billed annually.' : 'Billed monthly. Cancel anytime.';
+  postHeight();
+}));
+
+/* REAL RHYME ENGINE ---------------------------------------------------------- */
+/* The app's actual phonetic engine (assets/rhyme-engine.js) + the same English /
+   Spanish dictionaries the live page has always used, loaded lazily so the hero
+   stays fast. Not the preview's 5.8 MB embedded copy. */
 (() => {
-  const problem = document.getElementById("problem"); if (!problem) return;
-  let done = false;
-  scrollHandlers.push(() => {
-    if (done || relTop(problem) >= vpH() * 0.55) return;
-    done = true;
-    if (userTouchedTheme || doc.getAttribute("data-theme") === "dark") return;
-    cinema("dark", false, reduced ? 0 : 1700);
-  });
-})();
+  const input = $('#sw-rhyme-input'), mirror = $('#sw-rhyme-mirror');
+  const legend = $('.sw-rhyme-legend'), a11y = $('#sw-rhyme-accessible'), statusEl = $('#sw-rhyme-status');
+  const title = $('#sw-song-title'), paper = input && input.closest('.sw-lyric-paper');
+  if (!input || !mirror) return;
 
-/* ---------- walkthrough: the phone stays, the steps scroll, the screen follows ---------- */
-(() => {
-  const walk = document.querySelector(".walk"), phone = document.getElementById("walkPhone");
-  const imgs = phone ? [...phone.querySelectorAll("img")] : [];
-  const steps = [...document.querySelectorAll(".walk-step")];
-  if (!steps.length || !phone) return;
-  const desktop = () => matchMedia("(min-width: 900px)").matches;
-  if (IS_EMBEDDED) phone.classList.add("embedded");
-  let cur = -1;
-  scrollHandlers.push(() => {
-    if (!desktop()) return;
-    const h = vpH(); let idx = 0;
-    steps.forEach((s, i) => { if (relTop(s) < h * 0.55) idx = i; });
-    if (idx !== cur) {
-      cur = idx; const key = String(idx);
-      imgs.forEach(im => im.classList.toggle("on", im.dataset.step === key));
-      steps.forEach((s, i) => s.classList.toggle("active", i === idx));
-      if (host.phone) parent.postMessage({ hook: "step", n: idx }, "*");
-    }
-    /* embedded: sticky by hand — the frame never scrolls, so CSS sticky never engages */
-    if (IS_EMBEDDED && walk && !host.phone) {
-      const want = NAV_H + h * 0.05 - (relTop(walk) + lead());
-      const y = Math.max(0, Math.min(want, walk.getBoundingClientRect().height - phone.getBoundingClientRect().height));
-      phone.style.transform = `translate3d(0,${Math.round(y)}px,0)`;
-    }
-  });
-})();
-
-/* ---------- hero phone: the app in use. Cycles real screens; a real recording at
-   assets/hook-demo.mp4 takes the slot over if it exists ---------- */
-(() => {
-  const phone = document.getElementById("heroPhone"); if (!phone) return;
-  const vid = document.getElementById("heroVideo");
-  const imgs = [...phone.querySelectorAll("img[data-cycle]")];
-  const cap = document.getElementById("heroCap");
-  const CAPS = ["Words & chords", "Set the feel", "Counted in", "Stack your layers"];
-  let i = 0, timer = null;
-  const visible = () => relBottom(phone) > 0 && relTop(phone) < vpH();
-  const show = n => { i = n; imgs.forEach(im => im.classList.toggle("on", +im.dataset.cycle === n)); if (cap) cap.textContent = CAPS[n]; };
-  if (vid) fetch("assets/hook-demo.mp4", { method: "HEAD" }).then(r => {
-    if (!r.ok) return;
-    vid.addEventListener("loadeddata", () => {
-      vid.hidden = false; phone.classList.add("has-video");
-      if (timer) { clearInterval(timer); timer = null; }
-      vid.play().catch(() => {});
-      if (cap) cap.textContent = "Songwriting, in use";
-    });
-    vid.src = "assets/hook-demo.mp4";
-  }).catch(() => {});
-  if (!reduced) timer = setInterval(() => { if (visible() && !phone.classList.contains("has-video")) show((i + 1) % CAPS.length); }, 3600);
-})();
-
-/* ---------- THE SIGNATURE: hold to catch ----------
-   Press and hold the record button: it counts you in (a click per beat, the ring fills a bar).
-   Let go: the take is caught and it loops. Hold again: a new layer rings the button in the
-   app's colors and adds a voice, so five layers build a chord. Sound is Web Audio,
-   synthesized, mutable; visuals work without it. ---------- */
-(() => {
-  const btn = document.getElementById("recBtn"); if (!btn) return;
-  const sweep = document.getElementById("oSweep");
-  const ringsG = document.getElementById("layerRings");
-  const beats = [...document.querySelectorAll("#beats circle, #beats i")];
-  const tTime = document.getElementById("tapeTime"), tTake = document.getElementById("tapeTake"), tDot = document.getElementById("tapeDot");
-  const hint = document.getElementById("catchHint");
-  const muteBtn = document.getElementById("muteBtn"), clearBtn = document.getElementById("clearBtn");
-
-  /* the sweep: while holding, the current layer colour draws all the way around the O over one bar,
-     a recording ring filling as it counts you in; on release the O is bare again, ready for the next colour */
-  const setSweep = frac => { if (!sweep) return; const f = Math.max(0, Math.min(1, frac)); sweep.style.strokeDashoffset = String(100 * (1 - f)); sweep.style.opacity = f > 0.002 ? "1" : "0"; };
-  const armSweep = () => { if (sweep) sweep.style.stroke = COLORS[layers.length] || COLORS[0]; setSweep(0); };
-  const BPM = 100, BEAT = 60 / BPM, BAR = BEAT * 4, MAX = 5;
-  const COLORS = ["#B86A4A", "#D9A24C", "#7E9B67", "#A9668E", "#7B94A6"];   /* the app's layer colors */
-  const NOTES  = [130.81, 196.00, 329.63, 493.88, 587.33];                 /* C3 G3 E4 B4 D5 — a Cmaj9 that fills in as you stack */
-  const IDLE = "Try it. Hold to record a loop.";
-
-  let ctx = null, master = null, soundOn = true;
-  let holding = false, holdStart = 0, lastBeat = -1, loopStart = 0, layers = [], raf = 0;
-
-  function audio() {
-    if (ctx) { if (ctx.state === "suspended") ctx.resume().catch(() => {}); return ctx; }
-    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
-    ctx = new AC(); master = ctx.createGain(); master.gain.value = soundOn ? 0.5 : 0; master.connect(ctx.destination);
-    return ctx;
-  }
-  function click(accent) {
-    if (!ctx || !soundOn) return;
-    const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = "sine"; o.frequency.value = accent ? 1760 : 1175;
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(accent ? 0.45 : 0.28, t + 0.004);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.075);
-    o.connect(g).connect(master); o.start(t); o.stop(t + 0.1);
-  }
-  function voice(n) {
-    if (!ctx) return null;
-    const t = ctx.currentTime;
-    const o = ctx.createOscillator(), o2 = ctx.createOscillator(), f = ctx.createBiquadFilter();
-    const g = ctx.createGain(), p = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
-    o.type = "triangle"; o.frequency.value = NOTES[n];
-    o2.type = "sine";     o2.frequency.value = NOTES[n] * 2.004;
-    f.type = "lowpass";   f.frequency.value = 880 + n * 220; f.Q.value = 0.7;
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.13, t + 0.55);
-    lfo.type = "sine"; lfo.frequency.value = 1 / BAR; lg.gain.value = 0.07;
-    p.gain.value = 0.9; lfo.connect(lg).connect(p.gain);
-    o.connect(f); o2.connect(f); f.connect(g).connect(p).connect(master);
-    o.start(t); o2.start(t); lfo.start(t);
-    return { stop() {
-      const t2 = ctx.currentTime;
-      g.gain.cancelScheduledValues(t2); g.gain.setValueAtTime(Math.max(g.gain.value, 0.0001), t2);
-      g.gain.exponentialRampToValueAtTime(0.0001, t2 + 0.45);
-      o.stop(t2 + 0.5); o2.stop(t2 + 0.5); lfo.stop(t2 + 0.5);
-    } };
-  }
-  const fmt = s => { const m = Math.floor(s / 60), r = s % 60; return String(m).padStart(2, "0") + ":" + r.toFixed(1).padStart(4, "0"); };
-
-  function frame() {
-    const t = performance.now() / 1000;
-    if (holding) {
-      const el = t - holdStart, b = Math.floor(el / BEAT);
-      setSweep(el / BAR);
-      if (b !== lastBeat) { lastBeat = b; const bi = b % 4; beats.forEach((c, i) => c.classList.toggle("hit", i === bi)); click(bi === 0); }
-      tTime.textContent = fmt(el);
-    } else if (layers.length) {
-      const b = Math.floor((t - loopStart) / BEAT) % 4;
-      if (b !== lastBeat) { lastBeat = b; beats.forEach((c, i) => c.classList.toggle("hit", i === b)); }
-    }
-    raf = (holding || layers.length) ? requestAnimationFrame(frame) : 0;
-  }
-  function startHold() {
-    if (holding || layers.length >= MAX) return;
-    audio();
-    armSweep();
-    holding = true; holdStart = performance.now() / 1000; lastBeat = -1;
-    btn.setAttribute("aria-pressed", "true"); btn.classList.add("holding"); tDot.classList.add("live");
-    hint.textContent = "Counting you in. Let go when you're done.";
-    if (!raf) raf = requestAnimationFrame(frame);
-  }
-  function endHold() {
-    if (!holding) return;
-    holding = false;
-    const len = performance.now() / 1000 - holdStart;
-    btn.setAttribute("aria-pressed", "false"); btn.classList.remove("holding"); tDot.classList.remove("live");
-    setSweep(0);
-    beats.forEach(c => c.classList.remove("hit"));
-    if (len < 0.35) { hint.textContent = "Hold a little longer, give it a full bar."; if (!layers.length) tTime.textContent = "00:00.0"; return; }
-    catchLayer(len);
-  }
-  function catchLayer(len) {
-    const n = layers.length; if (n >= MAX) return;
-    if (!n) loopStart = performance.now() / 1000;
-    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    c.setAttribute("cx", "160"); c.setAttribute("cy", "160"); c.setAttribute("r", String(128 + n * 9));
-    c.setAttribute("class", "layer"); c.style.stroke = COLORS[n]; c.style.setProperty("--d", BAR + "s");
-    ringsG.appendChild(c);
-    layers.push({ el: c, v: voice(n) });
-    tTake.textContent = "TAKE " + (n + 1) + (n ? "  ·  " + (n + 1) + " layers" : "");
-    tTime.textContent = fmt(len);
-    clearBtn.hidden = false;
-    hint.textContent = (n + 1 >= MAX) ? "Five layers, that's a song. In the app, you'd export it."
-                     : (n === 0 ? "And it's looping. Hold again to stack a layer." : "Another layer, stacked. Keep going.");
-    btn.classList.toggle("full", n + 1 >= MAX);
-    if (!raf) raf = requestAnimationFrame(frame);
-  }
-  function clearAll() {
-    layers.forEach(l => { l.v && l.v.stop(); l.el.remove(); }); layers = [];
-    tTake.textContent = "no takes yet"; tTime.textContent = "00:00.0"; clearBtn.hidden = true;
-    btn.classList.remove("full"); beats.forEach(c => c.classList.remove("hit")); hint.textContent = IDLE;
-  }
-
-  btn.addEventListener("pointerdown", e => { e.preventDefault(); try { btn.setPointerCapture(e.pointerId); } catch (_) {} startHold(); });
-  ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev => btn.addEventListener(ev, endHold));
-  btn.addEventListener("contextmenu", e => e.preventDefault());
-  btn.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { e.preventDefault(); startHold(); } });
-  btn.addEventListener("keyup",   e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); endHold(); } });
-  muteBtn.addEventListener("click", () => {
-    soundOn = !soundOn;
-    muteBtn.setAttribute("aria-pressed", String(soundOn)); muteBtn.textContent = soundOn ? "Sound on" : "Sound off";
-    if (master && ctx) master.gain.setTargetAtTime(soundOn ? 0.5 : 0, ctx.currentTime, 0.05);
-  });
-  clearBtn.addEventListener("click", clearAll);
-  document.addEventListener("visibilitychange", () => {
-    if (!ctx) return;
-    if (document.hidden) ctx.suspend().catch(() => {}); else if (layers.length) ctx.resume().catch(() => {});
-  });
-  /* at rest the mark is just the O (the sweep is hidden until you hold) */
-})();
-
-/* ---------- live rhyme demo — the app's REAL rhyme engine ---------- */
-(() => {
-  const demo = document.getElementById("rhymeDemo");
-  const input = document.getElementById("rhymeInput");
-  const mirror = document.getElementById("rhymeMirror");
-  if (!demo || !input || !mirror) return;
-
-  const DEFAULTS = { en: input.value, es: (demo.getAttribute("data-es") || "").replace(/\\n/g, "\n") };
-  let engine = null, lang = "en";
+  const DEFAULTS = {
+    en: input.value,
+    es: 'Cae la noche sobre el mar\nTengo una canción por terminar\nGuardo tu voz en mi canción\nComo una luz en el corazón'
+  };
+  let engine = null, lang = 'en', booted = false, timer;
   const loaded = {};
-  const ready = () => engine && engine.englishReady() && (lang === "en" || engine.spanishReady());
+  const ready = () => engine && engine.englishReady() && (lang === 'en' || engine.spanishReady());
 
   function render() {
     const text = input.value;
     if (!ready()) {
-      mirror.textContent = text;
-      if (text.endsWith("\n") || text === "") mirror.appendChild(document.createTextNode("​"));
+      mirror.textContent = text + (text.endsWith('\n') || text === '' ? '​' : '');
+      mirror.scrollTop = input.scrollTop;
       return;
     }
     const spans = engine.analyze(text);
     const frag = document.createDocumentFragment();
+    const groups = new Map();
     let pos = 0;
     for (const s of spans) {
       if (s.start > pos) frag.appendChild(document.createTextNode(text.slice(pos, s.start)));
-      const el = document.createElement("i");
-      el.className = "rg" + (s.group % 12);
-      el.textContent = text.slice(s.start, s.end);
+      const el = document.createElement('i');
+      el.className = 'sw-rg' + (s.group % 12);
+      const word = text.slice(s.start, s.end);
+      el.textContent = word;
       frag.appendChild(el);
       pos = s.end;
+      if (!groups.has(s.group)) groups.set(s.group, []);
+      const lw = word.toLowerCase();
+      if (!groups.get(s.group).includes(lw)) groups.get(s.group).push(lw);
     }
     if (pos < text.length) frag.appendChild(document.createTextNode(text.slice(pos)));
-    if (text.endsWith("\n") || text === "") frag.appendChild(document.createTextNode("​"));
+    if (text.endsWith('\n') || text === '') frag.appendChild(document.createTextNode('​'));
     mirror.replaceChildren(frag);
+    mirror.scrollTop = input.scrollTop;
+
+    if (legend) {
+      legend.replaceChildren();
+      [...groups].filter(([, w]) => w.length > 1).slice(0, 3).forEach(([group, words]) => {
+        const span = document.createElement('span'), dot = document.createElement('i');
+        dot.style.background = 'currentColor';
+        span.className = 'sw-rg' + (group % 12);
+        span.append(dot, document.createTextNode(words.slice(0, 3).join(' / ')));
+        legend.append(span);
+      });
+    }
+    if (a11y) {
+      const fams = [...groups.values()].filter(w => w.length > 1);
+      a11y.textContent = fams.length ? 'Rhyme families: ' + fams.map(w => w.join(', ')).join('; ') : 'No repeated rhyme families yet.';
+    }
   }
-  input.addEventListener("input", render);
-  input.addEventListener("scroll", () => { mirror.scrollTop = input.scrollTop; });
+
+  input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(render, 90); });
+  input.addEventListener('scroll', () => { mirror.scrollTop = input.scrollTop; });
 
   function loadDict(which) {
     if (loaded[which]) return loaded[which];
-    const url = (which === "es" ? "assets/rhyme-dict-es.txt" : "assets/rhyme-dict.txt") + "?v=1";
+    const url = (which === 'es' ? 'assets/rhyme-dict-es.txt' : 'assets/rhyme-dict.txt') + '?v=1';
     loaded[which] = fetch(url).then(r => r.text()).then(txt => {
       const table = engine.parseDict(txt, which);
-      if (which === "es") engine.setSpanish(table); else engine.setEnglish(table);
+      if (which === 'es') engine.setSpanish(table); else engine.setEnglish(table);
       render();
     }).catch(() => { loaded[which] = null; });
     return loaded[which];
   }
-  let booted = false;
   function boot() {
     if (booted) return; booted = true;
-    demo.classList.add("rhyme-warming");
-    import("./assets/rhyme-engine.js?v=1")
-      .then(mod => { engine = mod; return loadDict("en"); })
-      .then(() => demo.classList.remove("rhyme-warming"))   /* Spanish loads on the Español tap (950 KB; most visitors never need it) */
-      .catch(() => demo.classList.remove("rhyme-warming"));
+    if (paper) paper.classList.add('sw-rhyme-warming');
+    import('./assets/rhyme-engine.js?v=1')
+      .then(mod => { engine = mod; return loadDict('en'); })
+      .then(() => { if (paper) paper.classList.remove('sw-rhyme-warming'); })
+      .catch(() => {
+        if (paper) paper.classList.remove('sw-rhyme-warming');
+        if (statusEl) statusEl.textContent = 'The rhyme preview could not load. You can still write here.';
+      });
   }
-  /* boot when the box is within ~900px of the viewport, or the moment it's touched */
-  scrollHandlers.push(() => { if (!booted && relTop(demo) < vpH() + 900) boot(); });
-  input.addEventListener("focus", boot, { once: true });
+  /* lazy: boot as the lyric box nears the viewport, or the moment it's touched */
+  scrollHandlers.push(() => { if (!booted && relTop(input) < vpH() + 900) boot(); });
+  input.addEventListener('focus', boot, { once: true });
+  input.addEventListener('pointerdown', boot, { once: true });
 
-  const btns = [...demo.querySelectorAll(".rhyme-lang button")];
-  btns.forEach(b => b.addEventListener("click", () => {
-    const next = b.getAttribute("data-lang");
+  $$('[data-lang]').forEach(b => b.addEventListener('click', () => {
+    const next = b.dataset.lang;
     if (next === lang) return;
     lang = next;
-    btns.forEach(x => x.setAttribute("aria-pressed", x.getAttribute("data-lang") === lang ? "true" : "false"));
+    $$('[data-lang]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
     input.value = DEFAULTS[lang] || input.value;
-    input.setAttribute("lang", lang);
-    if (lang === "es" && engine && !engine.spanishReady()) {
-      demo.classList.add("rhyme-warming");
-      loadDict("es").then(() => demo.classList.remove("rhyme-warming"));
+    input.lang = lang;
+    if (title) title.textContent = lang === 'en' ? 'Velvet Night' : 'Una canción por terminar';
+    if (!booted) { boot(); }
+    else if (lang === 'es' && engine && !engine.spanishReady()) {
+      if (paper) paper.classList.add('sw-rhyme-warming');
+      loadDict('es').then(() => { if (paper) paper.classList.remove('sw-rhyme-warming'); });
     } else render();
     input.focus();
   }));
   render();
 })();
 
-/* ---------- embedded: tell the host how tall we are, whenever that changes ---------- */
-if (IS_EMBEDDED) {
-  const foot = document.querySelector("footer.foot") || document.querySelector("body > footer");   /* the PAGE footer — blockquotes and cards may have their own <footer> */
-  let lastH = 0;
-  const postHeight = () => {
-    const h = Math.ceil(Math.max(foot ? foot.getBoundingClientRect().bottom + (window.scrollY || 0) : 0, document.body.scrollHeight));
-    if (h > 0 && Math.abs(h - lastH) > 4) { lastH = h; parent.postMessage({ hook: "h", h }, "*"); postWalk(); }
-  };
-  addEventListener("load", postHeight);
-  if ("ResizeObserver" in window) new ResizeObserver(postHeight).observe(document.body);
-  postHeight(); setTimeout(postHeight, 700); setTimeout(postHeight, 2500);
+/* PLAYABLE MIXER — synthesized illustrative arrangement, never records or asks
+   for a microphone. */
+$$('[data-wave]').forEach(w => {
+  const k = Number(w.dataset.wave);
+  for (let i = 0; i < 88; i++) {
+    const bar = document.createElement('i');
+    bar.style.setProperty('--bar', `${5 + Math.abs(Math.sin(i * (.54 + k * .08)) * Math.cos(i * .31 + k)) * 31}px`);
+    w.append(bar);
+  }
+});
+let ctx, master, gains, noiseBuffer, playing = false, timer2, step = 0, nextTime = 0, bpm = 84, beatTimeouts = [], nodes = new Set();
+const activeTrk = [true, true, true, true], trackNames = ['Keys', 'Bass', 'Melody', 'Percussion'];
+const mixer = $('#sw-mixer'), play = $('#sw-play'), statusA = $('#sw-audio-status');
+function initAudio() {
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) throw Error('Audio is unavailable in this browser');
+  ctx = new AC(); master = ctx.createGain(); master.gain.value = Number($('#sw-volume').value) / 100; master.connect(ctx.destination);
+  gains = activeTrk.map(on => { const g = ctx.createGain(); g.gain.value = on ? 1 : 0; g.connect(master); return g; });
+  noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * .12, ctx.sampleRate);
+  const data = noiseBuffer.getChannelData(0); for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
 }
-
-/* first paint: everything that follows the page, computed once */
-tick();
-
-/* ---------- no pop-in: every screenshot is fetched up front (no lazy loading) and then pre-decoded,
-   so by the time a section reveals, a screen cycles, or the theme swaps, the pixels are already there ---------- */
-(() => {
-  const warm = im => { if (im.decode) im.decode().catch(() => {}); };
-  document.querySelectorAll("img[src]").forEach(im => {
-    if (im.complete) warm(im); else im.addEventListener("load", () => warm(im), { once: true });
+function tone(midi, time, duration, volume, layer, type = 'sine') {
+  const osc = ctx.createOscillator(), env = ctx.createGain(); osc.type = type;
+  osc.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+  env.gain.setValueAtTime(0, time); env.gain.linearRampToValueAtTime(volume, time + .014); env.gain.exponentialRampToValueAtTime(.0001, time + duration);
+  osc.connect(env); env.connect(gains[layer]); osc.start(time); osc.stop(time + duration + .03);
+  nodes.add(osc); osc.onended = () => { nodes.delete(osc); osc.disconnect(); env.disconnect(); };
+}
+function percussion(time, kick) {
+  if (kick) {
+    const osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.frequency.setValueAtTime(90, time); osc.frequency.exponentialRampToValueAtTime(42, time + .14);
+    g.gain.setValueAtTime(.24, time); g.gain.exponentialRampToValueAtTime(.0001, time + .24);
+    osc.connect(g); g.connect(gains[3]); osc.start(time); osc.stop(time + .25);
+    nodes.add(osc); osc.onended = () => { nodes.delete(osc); osc.disconnect(); g.disconnect(); };
+  } else {
+    const n = ctx.createBufferSource(), g = ctx.createGain(), filter = ctx.createBiquadFilter();
+    n.buffer = noiseBuffer; filter.type = 'highpass'; filter.frequency.value = 6200;
+    g.gain.setValueAtTime(.045, time); g.gain.exponentialRampToValueAtTime(.0001, time + .08);
+    n.connect(filter); filter.connect(g); g.connect(gains[3]); n.start(time);
+    nodes.add(n); n.onended = () => { nodes.delete(n); n.disconnect(); filter.disconnect(); g.disconnect(); };
+  }
+}
+const chords = [[48, 55, 59, 64], [45, 52, 55, 60], [41, 48, 52, 57], [43, 50, 55, 59]];
+const melody = [76, null, 79, null, 74, null, 72, null, 76, null, 72, null, 71, null, 69, null, 72, null, 76, null, 79, null, 76, null, 74, null, 71, null, 67, null, 71, null];
+function schedule() {
+  while (playing && nextTime < ctx.currentTime + .13) {
+    const s = step % 32, beat = 60 / bpm, chord = chords[Math.floor(s / 8)];
+    if (s % 8 === 0) { chord.forEach((note, i) => tone(note, nextTime + i * .018, beat * 3.9, .045, 0, 'triangle')); }
+    if (s % 4 === 0) tone(chord[0] - 12, nextTime, beat * 1.85, .19, 1);
+    if (melody[s] !== null) tone(melody[s], nextTime, beat * .85, .065, 2);
+    percussion(nextTime, s % 4 === 0);
+    if (s % 2 === 0) {
+      const n = (s / 2) % 4;
+      const id = setTimeout(() => { if (playing) $$('.sw-beats i').forEach((el, i) => el.classList.toggle('active', i === n)); beatTimeouts = beatTimeouts.filter(x => x !== id); }, Math.max(0, (nextTime - ctx.currentTime) * 1000));
+      beatTimeouts.push(id);
+    }
+    nextTime += beat / 2; step++;
+  }
+}
+function stopAudio() {
+  playing = false; clearInterval(timer2); beatTimeouts.forEach(clearTimeout); beatTimeouts = [];
+  for (const n of nodes) { try { n.stop(); } catch {} } nodes.clear();
+  if (mixer) mixer.dataset.playing = 'false';
+  if (play) { play.setAttribute('aria-pressed', 'false'); play.setAttribute('aria-label', 'Play demo loop'); play.innerHTML = '<span aria-hidden="true">▶</span>'; }
+  $$('.sw-beats i').forEach(i => i.classList.remove('active'));
+  if (statusA) statusA.textContent = 'Press play. Tap a layer to make it yours.';
+}
+if (play) {
+  let starting = false;
+  play.addEventListener('click', async () => {
+    if (playing) { stopAudio(); return; }
+    if (starting) return; starting = true;
+    try {
+      if (!ctx) initAudio(); await ctx.resume();
+      playing = true; step = 0; nextTime = ctx.currentTime + .06;
+      mixer.dataset.playing = 'true'; mixer.style.setProperty('--loop-time', `${60 / bpm * 16}s`);
+      play.setAttribute('aria-pressed', 'true'); play.setAttribute('aria-label', 'Pause demo loop'); play.innerHTML = '<span aria-hidden="true">Ⅱ</span>';
+      statusA.textContent = 'Looping. Tap any layer to bring it in or out.';
+      schedule(); timer2 = setInterval(schedule, 25);
+    } catch (e) { statusA.textContent = 'Sound couldn’t start. Try another browser or press play again.'; }
+    finally { starting = false; }
   });
+}
+$$('[data-track]').forEach(b => b.addEventListener('click', () => {
+  const i = Number(b.dataset.track); activeTrk[i] = !activeTrk[i];
+  b.setAttribute('aria-pressed', String(activeTrk[i]));
+  b.setAttribute('aria-label', `${trackNames[i]} layer, ${activeTrk[i] ? 'on; click to mute' : 'muted; click to enable'}`);
+  b.querySelector('.sw-track-state').textContent = activeTrk[i] ? 'On' : 'Off';
+  if (ctx) gains[i].gain.setTargetAtTime(activeTrk[i] ? 1 : 0, ctx.currentTime, .025);
+}));
+const tempoEl = $('#sw-tempo');
+if (tempoEl) tempoEl.addEventListener('input', e => { bpm = Number(e.target.value); $('#sw-bpm').textContent = `${bpm} BPM`; if (mixer) mixer.style.setProperty('--loop-time', `${60 / bpm * 16}s`); });
+const volEl = $('#sw-volume');
+if (volEl) volEl.addEventListener('input', e => { if (ctx) master.gain.setTargetAtTime(Number(e.target.value) / 100, ctx.currentTime, .03); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && playing) stopAudio(); });
+window.addEventListener('pagehide', stopAudio);
+
+/* FAQ toggles change page height */
+$$('.sw-faq details').forEach(d => d.addEventListener('toggle', postHeight));
+
+/* HEIGHT + THEME to host, on every layout change ----------------------------- */
+if (IS_EMBEDDED) {
+  try { new ResizeObserver(() => postHeight()).observe(document.documentElement); } catch {}
+  addEventListener('load', () => { postBg(); postHeight(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(postHeight);
+  $$('img').forEach(im => { if (!im.complete) im.addEventListener('load', postHeight, { once: true }); });
+  postBg(); postHeight();
+  requestAnimationFrame(postHeight);
+}
 })();

@@ -1,652 +1,83 @@
 <!doctype html>
-<!-- ======================================================================
-  HOOK — clayandkelsy.com/songwriting  (LIVE; Clay & Kelsy's reference page for every future web page)
-
-  If you are a chat asked to "look at the Hook page and learn from it", start here. Three files:
-    index.html          the page. Sections are marked  ============ NAME ============  in HTML comments
-    styles.css          tokens at the top (:root, dark theme), then one block per section,
-                        marked  /* ---------- name ---------- */
-    app.js              behaviour; header explains STANDALONE vs EMBEDDED (inside the WordPress
-                        auto-growing iframe). Blocks marked  /* ---------- name ---------- */
-    wordpress-embed.html the Custom HTML block pasted into WordPress; the host↔page message contract.
-    notify.html         the standalone email-signup page (a button, not an embedded form; see memory).
-
-  Reusable on any C&K page: tokens + dark theme, the nav (hides under the C&K menu bar, pins when it
-  scrolls away), scroll-driven reveals and "reading light", nightfall, the sticky-phone walkthrough,
-  the marquee (review-marquee-export.md), the FAQ, pricing cards, the notify page.
-  Hook-only: hold-to-catch hero, the record mark (assets/hook-spin.png), the rhyme demo, and the
-  wordmark (inline SVG, class "wordmark", nav + footer + notify.html; geometry and the app's SwiftUI
-  version live in Hook/icon/wordmark/).
-
-  Rules that made it good: copy is Kelsy's verbatim; one bold move per page, everything else quiet;
-  no placeholders live; every scroll effect is position-driven (no observers/rAF) so it never lags.
-  Old site archived at v1/. The premium redesign was built 2026-09-02.
-  ====================================================================== -->
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Songwriting by Clay and Kelsy</title>
-<meta name="description" content="Songwriting is a songwriter's quick-capture looper for iPhone. Feel a tempo, put an idea down, stack layers on any headphones, write the words. One sitting, before it's gone. By Clay and Kelsy.">
-<meta name="theme-color" content="#F6EFE4">
-<meta property="og:title" content="Songwriting by Clay and Kelsy">
-<meta property="og:description" content="A writer's looper for iPhone. Quick as a voice memo, and it becomes a song.">
-<meta property="og:type" content="website">
+<meta name="description" content="Catch a melody, stack your layers, find the words. Songwriting by Clay and Kelsy. Coming soon for iPhone and Apple Watch.">
+<!-- The embedded document is intentionally noindex: the indexable page is the WordPress page at clayandkelsy.com/songwriting/. -->
 <meta name="robots" content="noindex">
-<!-- Runs two ways. STANDALONE (this document scrolls): sticky nav + smooth scroll.
-     EMBEDDED in clayandkelsy.com's auto-growing iframe (which never scrolls itself): the host
-     posts its viewport on every scroll and everything that follows the page is driven from
-     that — the Hook nav stays hidden while the C&K menu bar is on screen and pins to the top
-     the moment it scrolls away. See app.js. -->
-<link rel="icon" id="favicon" href="assets/songwriting-favicon-light.png?v=20260916">
-<link rel="apple-touch-icon" href="assets/songwriting-icon-384.png?v=20260916">
-<link rel="preload" as="image" href="assets/recording-lyrics-light.webp?v=20260915" fetchpriority="high">
+<meta name="theme-color" content="#f5efe3">
+<link rel="icon" href="assets/songwriting-favicon-light.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=85">
+<link rel="stylesheet" href="styles.css?v=a1">
 </head>
-<body>
-<div class="grain" aria-hidden="true"></div>
-
-<!-- ============ NAV (follows the page) ============ -->
-<header class="nav" id="nav">
-  <div class="wrap nav-in">
-    <a class="brand" href="#top" aria-label="Songwriting by Clay and Kelsy, back to top">
-      <img class="nav-mark" src="assets/songwriting-mark.webp?v=20260916" alt="" width="168" height="176" decoding="async"><svg class="bm-wordmark livewm wm-nav" viewBox="0 0 1000 220" role="img" aria-label="Songwriting"><defs><mask id="bm-mask-nav" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="220" style="mask-type:alpha"><text x="500" y="166" text-anchor="middle" class="bm-title bm-mask-text">Songwriting</text></mask></defs><text x="500" y="166" text-anchor="middle" class="bm-title">Songwriting</text><g mask="url(#bm-mask-nav)" aria-hidden="true"><path class="bm-sweep"></path></g><circle class="bm-dot" cx="152" cy="118" r="11" aria-hidden="true"></circle></svg><span class="tag">by Clay and Kelsy</span>
-    </a>
-    <nav class="nav-links" aria-label="Sections">
-      <a href="#loop">Loop</a>
-      <a href="#words">Words</a>
-      <a href="#keep">Keep it</a>
-      <a href="#pricing">Pricing</a>
-    </nav>
-    <a class="pill-cta" href="notify.html" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>Notify me</a>
-  </div>
-</header>
-
-<main id="top">
-
-<!-- ============ HERO ============ -->
-<section class="hero">
-  <div class="wrap hero-grid">
-    <div class="hero-copy">
-      <h1 class="rise brandmark" id="brandmark">
-        <img class="hero-mark" src="assets/songwriting-mark.webp?v=20260916" alt="" width="168" height="176" decoding="async">
-        <svg class="bm-wordmark livewm" viewBox="0 0 1000 330" role="img" aria-label="Songwriting by Clay and Kelsy">
-          <defs>
-            <mask id="bm-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="220" style="mask-type:alpha">
-              <text x="500" y="166" text-anchor="middle" class="bm-title bm-mask-text">Songwriting</text>
-            </mask>
-          </defs>
-          <text x="500" y="166" text-anchor="middle" class="bm-title">Songwriting</text>
-          <g mask="url(#bm-mask)" aria-hidden="true"><path class="bm-sweep"></path></g>
-          <circle class="bm-dot" cx="152" cy="118" r="11" aria-hidden="true"></circle>
-          <text class="bm-byline" x="500" y="270" text-anchor="middle">by Clay and Kelsy</text>
-        </svg>
-      </h1>
-      <p class="lede rise">Feel a tempo, put the idea down, and it&rsquo;s already looping.
-        Stack your layers. Write the words, fill in the chords and hit export.
-        One sitting, one app and you&rsquo;re writing your next song.</p>
-
-      <!-- THE SIGNATURE: hold to catch. Press and hold: it counts you in. Let go: it loops.
-           Hold again: a new layer rings the button in the app's colors and adds a voice. -->
-      <div class="catch rise" id="catch">
-        <!-- The record mark: the O is a thick ink ring around the coral dot. Hold and the current
-             layer colour (COLORS[layers.length] in app.js) sweeps all the way around the O as the
-             count-in fills; let go and it rests as just the O, with the caught take as a colour ring
-             outside. Each hold is the next layer colour, so five build the chord. -->
-        <div class="catch-stage">
-          <svg class="catch-rings" viewBox="0 0 320 320" aria-hidden="true">
-            <circle class="o-ring" cx="160" cy="160" r="104"></circle>
-            <circle class="o-sweep" id="oSweep" cx="160" cy="160" r="104" pathLength="100"></circle>
-            <g id="layerRings"></g>
-          </svg>
-          <button class="rec" id="recBtn" aria-label="Record button. Hold to record a loop, let go and it loops, hold again to stack a layer." aria-pressed="false"></button>
-        </div>
-        <div class="catch-meta">
-          <p class="tape" aria-live="polite"><span class="tape-dot" id="tapeDot" aria-hidden="true">●</span><span id="tapeTime">00:00.0</span><span class="tape-beats" id="beats" aria-hidden="true"><i></i><i></i><i></i><i></i></span>100 BPM<span class="tape-sep">·</span>4/4<span class="tape-take" id="tapeTake">no takes yet</span></p>
-          <p class="catch-hint" id="catchHint">Try it. Hold to record a loop.</p>
-          <div class="catch-tools">
-            <button type="button" class="tiny" id="muteBtn" aria-pressed="true">Sound on</button>
-            <button type="button" class="tiny" id="clearBtn" hidden>Clear takes</button>
-          </div>
-        </div>
-      </div>
-
-      <p class="badge-row rise"><span class="soon-pill">Coming soon to the App Store</span></p>
-    </div>
-
-    <!-- The app, in use: the phone cycles through real screens on its own. Drop a screen
-         recording at assets/hook-demo.mp4 and it takes over this slot automatically. -->
-    <figure class="phone hero-phone" id="heroPhone">
-      <div class="screen">
-        <video class="hero-video" id="heroVideo" muted playsinline loop preload="metadata" hidden></video>
-        <img data-cycle="0" class="s-light on" src="assets/recording-lyrics-light.webp?v=20260915" alt="A recording in the app: tempo, sections, and lyrics with rhyming words colored by sound, chords set over the words" width="664" height="1440" fetchpriority="high" decoding="async">
-        <!-- swapped in by script, so eager: a lazy screen would flash blank when its turn came -->
-        <img data-cycle="0" class="s-dark on"  src="assets/recording-lyrics-dark.webp?v=20260915"  alt="" width="664" height="1440" decoding="async">
-        <img data-cycle="1" class="s-light" src="assets/set-the-feel-light.webp?v=20260915" alt="" width="664" height="1440" decoding="async" style="--focus:52%">
-        <img data-cycle="1" class="s-dark"  src="assets/set-the-feel-dark.webp?v=20260915"  alt="" width="664" height="1440" decoding="async" style="--focus:52%">
-        <img data-cycle="2" class="s-light" src="assets/04-recording-live.webp?v=20260915"  alt="" width="664" height="1440" decoding="async" style="--focus:22%">
-        <img data-cycle="2" class="s-dark"  src="assets/get-counted-in-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async" style="--focus:22%">
-        <img data-cycle="3" class="s-light" src="assets/13-stack-layers.webp?v=20260915"    alt="" width="664" height="1440" decoding="async" style="--focus:20%">
-        <img data-cycle="3" class="s-dark"  src="assets/D6-stack-vocals-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async" style="--focus:34%">
-      </div>
-      <figcaption class="hero-cap"><span class="tape-dot live" aria-hidden="true">●</span><span id="heroCap">Words &amp; chords</span></figcaption>
-    </figure>
-  </div>
+<body class="sw-site">
+<noscript><style>.sw-lyric-editor textarea{color:var(--sw-ink);-webkit-text-fill-color:var(--sw-ink)}.sw-lyric-editor>div{display:none}.sw-mixer,.sw-screen-picker,.sw-theme,.sw-billing,.sw-language,#sw-night-switch{display:none}</style><p style="padding:12px 24px;text-align:center">Turn on JavaScript to try the sound, rhyme, and theme demos.</p></noscript>
+<a class="sw-skip" href="#main">Skip to content</a>
+<!-- 01 / NAVIGATION -->
+<header class="sw-nav"><div class="sw-wrap sw-nav-inner">
+<a class="sw-brand" href="#top" aria-label="Songwriting by Clay and Kelsy, home"><img src="assets/songwriting-mark.webp" alt="" width="30" height="32"><span>Songwriting<small>by Clay and Kelsy</small></span></a>
+<nav class="sw-nav-links" aria-label="Main"><a href="#loop">The feel</a><a href="#words">The words</a><a href="#pricing">The price</a></nav>
+<div class="sw-nav-actions"><button class="sw-theme" type="button" aria-label="Turn on dark mode" aria-pressed="false"><span aria-hidden="true">◐</span></button><a class="sw-button sw-button-small" href="https://clayburton.github.io/hook-site/notify.html" target="_blank" rel="noopener">Notify me <span aria-hidden="true">↗</span></a></div>
+</div></header>
+<main id="main">
+<!-- 02 / HERO: REAL APP SCREENS + NEW EDITORIAL DIRECTION -->
+<section class="sw-hero sw-wrap" id="top">
+<div class="sw-hero-copy">
+<div class="sw-brand sw-hero-brand"><img src="assets/songwriting-mark.webp" alt="" width="36" height="38"><span>Songwriting<small>by Clay and Kelsy</small></span></div>
+<h1>An idea.<br>A little time.<br><em>A song.</em></h1>
+<p class="sw-lede">Feel a tempo, put the idea down, and it’s already looping. Stack your layers. Write the words. One sitting, one app, and you’re writing your next song.</p>
+<div class="sw-hero-actions"><a class="sw-button" href="https://clayburton.github.io/hook-site/notify.html" target="_blank" rel="noopener">Be the first to play it <span aria-hidden="true">↗</span></a><a class="sw-text-link" href="#loop">Take it for a spin <span aria-hidden="true">↓</span></a></div>
+<p class="sw-availability">Coming soon · iPhone & Apple Watch</p>
+</div>
+<div class="sw-hero-art">
+<div class="sw-orbit" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+<figure class="sw-phone" id="sw-hero-phone"><img id="sw-hero-screen" src="assets/recording-lyrics-light.webp" alt="The Songwriting lyric editor with chords above words and rhymes colored by sound" width="664" height="1440" fetchpriority="high"></figure>
+<div class="sw-hero-label"><span class="sw-dot"></span> Real app. Your next song.</div>
+<div class="sw-screen-picker" role="group" aria-label="Explore app screens"><button type="button" data-screen="layers" aria-pressed="false">Layers</button><button type="button" data-screen="lyrics" aria-pressed="true">Lyrics</button><button type="button" data-screen="perform" aria-pressed="false">Perform</button></div>
+</div>
 </section>
-
-<!-- ============ THE 4AM PROBLEM (nightfall lands here) ============ -->
-<section class="problem" id="problem">
-  <div class="wrap narrow">
-    <div class="sec-head reveal">
-      <p class="micro">The 4am problem</p>
-      <h2>Ideas don&rsquo;t wait. At best they resurface.</h2>
-    </div>
-    <div class="sec-body big">
-      <p class="rl">Voice memos will record your idea, but you can&rsquo;t build on a memo. A DAW will build it,
-      but by the time the session&rsquo;s open, the spark has moved on.</p>
-      <p class="rl">Songwriting is the missing middle: quick as a memo, and providing enough tools to write a song.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============ LOOP & LAYERS — the walkthrough (phone stays, steps scroll) ============ -->
-<section class="loop" id="loop">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="micro">Loop &amp; Layers</p>
-      <h2>Play it through once and it starts looping.</h2>
-    </div>
-    <div class="sec-body">
-      <p class="rl">Put on your headphones and pick out your tempo and time signature: 4/4, 3/4, 6/8, 5/8, 7/8.
-      Songwriting counts you in, you put the idea down, and the loop is going right when you play, sing, or say your part.</p>
-      <p class="rl">Not one for counting bars? Go Endless: just record until you&rsquo;re done. Trade the bar counter for a plain clock if you like. The musical stuff is all still there; it just steps out of the way.</p>
-    </div>
-
-    <div class="walk">
-      <figure class="phone walk-phone" id="walkPhone" aria-hidden="true">
-        <div class="screen">
-          <img data-step="0" class="s-light on" src="assets/set-the-feel-light.webp?v=20260915" alt="" width="664" height="1440" decoding="async" style="--focus:52%">
-          <img data-step="0" class="s-dark on"  src="assets/set-the-feel-dark.webp?v=20260915"  alt="" width="664" height="1440" decoding="async" style="--focus:52%">
-          <img data-step="1" class="s-light" src="assets/04-recording-live.webp?v=20260915"  alt="" width="664" height="1440" decoding="async" style="--focus:22%">
-          <img data-step="1" class="s-dark"  src="assets/get-counted-in-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async" style="--focus:22%">
-          <img data-step="2" class="s-light" src="assets/13-stack-layers.webp?v=20260915"    alt="" width="664" height="1440" decoding="async" style="--focus:20%">
-          <img data-step="2" class="s-dark"  src="assets/D6-stack-vocals-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async" style="--focus:34%">
-        </div>
-      </figure>
-
-      <ol class="walk-steps">
-        <li class="walk-step" data-step="0">
-          <p class="stepno" aria-hidden="true">01</p>
-          <h3>Set the feel</h3>
-          <p>Tempo, time signature, bars, or Endless when you&rsquo;d rather just hit record and go. And a &ldquo;hear this tempo&rdquo; button so you can trust it before you commit.</p>
-          <figure class="phone walk-mob"><div class="screen">
-            <img class="s-light on" src="assets/set-the-feel-light.webp?v=20260915" alt="New recording setup: loop length with an Endless option, tempo, and time signature" width="664" height="1440" decoding="async" style="--focus:52%">
-            <img class="s-dark on"  src="assets/set-the-feel-dark.webp?v=20260915"  alt="" width="664" height="1440" decoding="async" style="--focus:52%">
-          </div></figure>
-        </li>
-        <li class="walk-step" data-step="1">
-          <p class="stepno" aria-hidden="true">02</p>
-          <h3>Get counted in</h3>
-          <p>Four beats, an accent on one, and you&rsquo;re rolling. The moment you finish, it loops.</p>
-          <span class="countin" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          <figure class="phone walk-mob"><div class="screen">
-            <img class="s-light on" src="assets/04-recording-live.webp?v=20260915"  alt="Recording live: count-in and beat display mid-take" width="664" height="1440" decoding="async" style="--focus:22%">
-            <img class="s-dark on"  src="assets/get-counted-in-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async" style="--focus:22%">
-          </div></figure>
-        </li>
-        <li class="walk-step" data-step="2">
-          <p class="stepno" aria-hidden="true">03</p>
-          <h3>Stack your layers</h3>
-          <p>Layer up to 6 layers per stack on headphones, each with its own waveform, volume, mute, and name. Group the stacks. Keep writing new parts.</p>
-          <figure class="phone walk-mob"><div class="screen">
-            <img class="s-light on" src="assets/13-stack-layers.webp?v=20260915"    alt="Four colored layers stacked: blue, gold, green, purple waveforms" width="664" height="1440" decoding="async" style="--focus:20%">
-            <img class="s-dark on"  src="assets/D6-stack-vocals-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async" style="--focus:34%">
-          </div></figure>
-        </li>
-      </ol>
-    </div>
-  </div>
-</section>
-
-<!-- ============ WORDS — the lyric sheet, live ============ -->
-<section class="words" id="words">
-  <div class="wrap words-grid">
-    <div>
-      <div class="sec-head reveal">
-        <p class="micro">Words, lyrics &amp; chords</p>
-        <h2>Write your words in rainbows.</h2>
-      </div>
-      <div class="sec-body">
-        <p class="rl">As you type, rhymes find each other, matched by sound, not spelling,
-        so the slant rhymes count too. Each rhyme family takes a color, and you
-        can see the shape of a verse the way you&rsquo;d hear it. And when you want them,
-        chords go right over the words as letters or Roman numerals, whichever you prefer.
-        Export your song to take to any gig or keep for your own records.</p>
-      </div>
-
-      <!-- The app's REAL rhyme engine runs in this box (assets/rhyme-engine.js) -->
-      <div class="sheet-demo reveal" id="rhymeDemo" data-es="Bailamos toda la noche sin parar,&#10;la luna nos mira, nos deja soñar,&#10;me miras y sé que te quiero besar,&#10;tú brillas, mi amor, como una star.">
-        <div class="sheet-top">
-          <p class="sheet-title">Velvet Night <span class="sheet-meta">76 BPM &middot; 6/8</span></p>
-          <div class="rhyme-lang" role="group" aria-label="Demo language">
-            <button type="button" data-lang="en" aria-pressed="true">English</button>
-            <button type="button" data-lang="es" aria-pressed="false">Espa&ntilde;ol</button>
-          </div>
-        </div>
-        <label class="sr-only" for="rhymeInput">Try your own line. Rhymes light up as you type.</label>
-        <div class="rhyme-editor">
-          <div class="rhyme-mirror" id="rhymeMirror" aria-hidden="true"></div>
-          <textarea id="rhymeInput" class="rhyme-input" rows="4" maxlength="420" spellcheck="false" autocapitalize="off" autocomplete="off">Falling through the velvet night
+<div class="sw-tracklist sw-wrap" aria-label="From idea to song"><a href="#loop"><span>01</span> Catch the spark <b aria-hidden="true">↘</b></a><a href="#words"><span>02</span> Find the words <b aria-hidden="true">↘</b></a><a href="#keep"><span>03</span> Take it with you <b aria-hidden="true">↘</b></a></div>
+<!-- 03 / THE REASON -->
+<section class="sw-intro sw-wrap"><p class="sw-eyebrow">The 4am problem</p><h2>Ideas don’t wait.<br><span>At best they resurface.</span></h2><div class="sw-intro-bottom"><span class="sw-asterisk" aria-hidden="true">✳</span><p>Voice memos will record your idea, but you can’t build on a memo. A DAW will build it, but by the time the session’s open, the spark has moved on.<br><br>Songwriting is the missing middle: quick as a memo, with enough room to turn it into a song.</p></div></section>
+<!-- 04 / PLAYABLE LAYERS: SYNTHESIZED WEB DEMO, NOT MICROPHONE RECORDING -->
+<section class="sw-loop" id="loop"><div class="sw-wrap">
+<div class="sw-section-heading"><div><p class="sw-eyebrow">01 / Catch the spark</p><h2>One little loop.<br><em>And then another.</em></h2></div><p>Play it through once and it starts looping. Add the harmony. Try the odd idea. Keep the part that makes you feel something.</p></div>
+<div class="sw-mixer" id="sw-mixer">
+<div class="sw-mixer-top"><div><p class="sw-eyebrow">A little loop to play with</p><h3>Something like a beginning.</h3></div><div class="sw-transport"><button id="sw-play" type="button" aria-label="Play demo loop" aria-pressed="false"><span aria-hidden="true">▶</span></button><div class="sw-beats" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="sw-meter">4/4</span></div></div>
+<div class="sw-tracks">
+<button class="sw-track" style="--track:#b75f49" data-track="0" aria-pressed="true" aria-label="Keys layer, on; click to mute"><span class="sw-track-number">01</span><span class="sw-track-name">The first thought<small>Soft keys</small></span><span class="sw-wave" data-wave="0" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
+<button class="sw-track" style="--track:#b58836" data-track="1" aria-pressed="true" aria-label="Bass layer, on; click to mute"><span class="sw-track-number">02</span><span class="sw-track-name">A little grounding<small>Round bass</small></span><span class="sw-wave" data-wave="1" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
+<button class="sw-track" style="--track:#667f57" data-track="2" aria-pressed="true" aria-label="Melody layer, on; click to mute"><span class="sw-track-number">03</span><span class="sw-track-name">The thing you hum<small>Plucked melody</small></span><span class="sw-wave" data-wave="2" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
+<button class="sw-track" style="--track:#9b668e" data-track="3" aria-pressed="true" aria-label="Percussion layer, on; click to mute"><span class="sw-track-number">04</span><span class="sw-track-name">Something to lean on<small>Soft percussion</small></span><span class="sw-wave" data-wave="3" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
+</div>
+<div class="sw-mixer-bottom"><label>Tempo <input id="sw-tempo" type="range" min="60" max="120" value="84"><output id="sw-bpm" for="sw-tempo">84 BPM</output></label><span id="sw-audio-status" role="status">Press play. Tap a layer to make it yours.</span><label class="sw-volume">Volume <input id="sw-volume" type="range" min="0" max="100" value="55" aria-label="Demo volume"></label></div>
+</div><p class="sw-demo-note">An illustrative sound demo, made for this page. Your microphone stays off.</p>
+<div class="sw-feature-row"><article><span>01 — Set the feel</span><h3>Trust your timing.</h3><p>Pick a tempo, a time signature, and your bars. Or go Endless and just hit record.</p></article><article><span>02 — Build it up</span><h3>Make room for the harmony.</h3><p>Up to six layers per stack, each with its own waveform, volume, mute, and name.</p></article><article><span>03 — Keep it together</span><h3>Your headphones are welcome.</h3><p>Wired or Bluetooth. The app measures the delay and remembers your gear, so the layers land in time.</p></article></div>
+</div></section>
+<!-- 05 / RHYMES: REUSES THE EXISTING SITE'S REAL ENGINE -->
+<section class="sw-words sw-wrap" id="words"><div class="sw-words-copy"><p class="sw-eyebrow">02 / Find the words</p><h2>Hear it.<br>Write it.<br><em class="sw-rainbow">See it rhyme.</em></h2><p>As you type, rhymes find each other, matched by sound, not spelling. Each rhyme family takes a color, and you can see the shape of a verse the way you’d hear it.</p><p>And when you want them, chords go right over the words. Letters or Roman numerals. Whichever way you think.</p><span class="sw-hand-note">Your words. A little more color. ↗</span></div>
+<div class="sw-lyric-paper"><div class="sw-paper-top"><span>SONG NOTES / 001</span><div class="sw-language" role="group" aria-label="Lyric demo language"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="es" aria-pressed="false">ES</button></div></div><h3 id="sw-song-title">Velvet Night</h3><p class="sw-song-meta">76 BPM <span>·</span> 6/8 <span>·</span> A work in progress</p><div class="sw-lyric-editor"><div id="sw-rhyme-mirror" aria-hidden="true"></div><textarea id="sw-rhyme-input" spellcheck="false" aria-label="Try your own lyrics. Rhyme families are announced as you type" maxlength="2400">Falling through the velvet night
 Every streetlight burning bright
-Hold me where the water's deep
-Secrets that the sycamores keep</textarea>
-        </div>
-        <p class="demo-note">This box is live. Add a line, watch the rhymes find each other.</p>
-      </div>
-    </div>
-    <figure class="phone floaty">
-      <div class="screen">
-        <img class="s-light on" src="assets/recording-lyrics-light.webp?v=20260915" alt="The lyric editor with real chords set over the words and rhymes colored by sound" width="664" height="1440" decoding="async">
-        <img class="s-dark on"  src="assets/recording-lyrics-dark.webp?v=20260915"  alt="" width="664" height="1440" decoding="async">
-      </div>
-      <figcaption>Chords over the words, rhymes matched by sound.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- ============ CALIBRATION ============ -->
-<section class="calib">
-  <div class="wrap calib-grid">
-    <div>
-      <div class="sec-head reveal">
-        <p class="micro">The part we needed to solve</p>
-        <h2>Your layers loop in time. On any headphones.</h2>
-      </div>
-      <div class="sec-body">
-        <p class="rl">Here&rsquo;s the quiet problem with recording on a phone mic with Bluetooth headphones:
-        latency, something any recording engineer fears. Most apps ignore it, and your looped
-        layers drift late. Songwriting listens instead. The first time you record with a new pair of
-        Bluetooth headphones, it plays a small sound and listens for it to come back. It remembers
-        each pair forever. It doesn&rsquo;t guess, it&rsquo;s smarter than that.</p>
-      </div>
-      <div class="bignum reveal">
-        <p class="n">74<small>&thinsp;ms</small></p>
-        <p class="set">You&rsquo;re set.</p>
-        <p class="expl">Done in seconds and you only gotta do it once.</p>
-      </div>
-    </div>
-    <div class="calib-shots">
-      <figure class="phone sm reveal"><div class="screen">
-        <img class="s-light on" src="assets/calib-listen.webp?v=20260915" alt="Calibration: the app plays a sound and listens for it coming back" width="664" height="1440" decoding="async">
-        <img class="s-dark on"  src="assets/calib-listen-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async">
-      </div><figcaption>It listens</figcaption></figure>
-      <figure class="phone sm reveal"><div class="screen">
-        <img class="s-light on" src="assets/09-settings-measured-headphones.webp?v=20260915" alt="Your headphones, measured and remembered" width="664" height="1440" decoding="async">
-        <img class="s-dark on"  src="assets/D3-settings-measured-headphones-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async">
-      </div><figcaption>It remembers your gear</figcaption></figure>
-      <figure class="phone sm reveal"><div class="screen">
-        <img class="s-light on" src="assets/calib-tryagain.webp?v=20260915" alt="When a reading isn't clean, the app says so and offers Try Again" width="664" height="1440" decoding="async">
-        <img class="s-dark on"  src="assets/calib-tryagain-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async">
-      </div><figcaption>It never guesses</figcaption></figure>
-    </div>
-  </div>
-</section>
-
-<!-- ============ AFTER DARK ============ -->
-<section class="nightband">
-  <div class="wrap narrow reveal">
-    <p class="micro">Light or dark</p>
-    <h2 class="wm-h2-wrap"><svg class="bm-wordmark livewm wm-h2" viewBox="0 0 1500 220" role="img" aria-label="Songwriting, after dark."><defs><mask id="bm-mask-h2" maskUnits="userSpaceOnUse" x="0" y="0" width="1500" height="220" style="mask-type:alpha"><text x="750" y="166" text-anchor="middle" class="bm-title bm-mask-text">Songwriting, after dark.</text></mask></defs><text x="750" y="166" text-anchor="middle" class="bm-title">Songwriting, after dark.</text><g mask="url(#bm-mask-h2)" aria-hidden="true"><path class="bm-sweep"></path></g><circle class="bm-dot" cx="152" cy="118" r="11" aria-hidden="true"></circle></svg></h2>
-    <p class="nf-p">A full dark mode for the late-night sessions.</p>
-    <button class="nf-toggle" id="themeToggle" aria-label="Switch light and dark">
-      <span class="nf-ics" aria-hidden="true">
-        <svg class="ic-moon" viewBox="0 0 24 24"><path d="M20.2 14.9A8.4 8.4 0 0 1 9.1 3.8a8.4 8.4 0 1 0 11.1 11.1Z" fill="currentColor"/></svg>
-        <svg class="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6" fill="currentColor"/><g stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><line x1="12" y1="1.6" x2="12" y2="4.4"/><line x1="12" y1="19.6" x2="12" y2="22.4"/><line x1="1.6" y1="12" x2="4.4" y2="12"/><line x1="19.6" y1="12" x2="22.4" y2="12"/><line x1="4.6" y1="4.6" x2="6.6" y2="6.6"/><line x1="17.4" y1="17.4" x2="19.4" y2="19.4"/><line x1="17.4" y1="6.6" x2="19.4" y2="4.6"/><line x1="4.6" y1="19.4" x2="6.6" y2="17.4"/></g></svg>
-      </span>
-      <span class="nf-label" id="nfLabel">Turn off dark mode</span>
-    </button>
-  </div>
-</section>
-
-<!-- ============ KEEP IT (bento) ============ -->
-<section class="keep" id="keep">
-  <div class="wrap keep-grid">
-    <div>
-      <div class="sec-head reveal">
-        <p class="micro">Keep it</p>
-        <h2>From loop to song to stems.</h2>
-      </div>
-      <div class="bento">
-        <div class="card reveal wide"><h3>Export real files</h3><p>A mixed master, the stems, or a beautifully set lyrics-and-chord sheet. Off your phone and into the session.</p></div>
-        <div class="card reveal"><h3>Parts become recordings</h3><p>Sketch a verse, a chorus, a bridge, then hear the whole idea back.</p></div>
-        <div class="card reveal"><h3>Private backup</h3><p>Optional iCloud sync, off by default. Your recordings live in your iCloud, and nobody else can see them.</p></div>
-        <div class="card reveal"><h3>A metronome you can watch</h3><p>A pulse on screen, or a flash from the torch. Keep time with the sound down.</p></div>
-        <div class="card reveal"><h3>Widgets</h3><p>Start a recording from the Lock Screen (for all you ADHD queens).</p></div>
-        <div class="card reveal wide"><h3>Every kind of layer</h3><p>The world is your soundbox, record your layers and most importantly have fun creating with it.</p></div>
-      </div>
-    </div>
-    <figure class="phone floaty">
-      <div class="screen">
-        <img class="s-light on" src="assets/01-home-library.webp?v=20260915" alt="The library, full of recordings" width="664" height="1440" decoding="async">
-        <img class="s-dark on"  src="assets/D1-home-library-dark.webp?v=20260915" alt="" width="664" height="1440" decoding="async">
-      </div>
-      <figcaption>Your library. Every idea, kept.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- ============ PERFORM ============ -->
-<section class="perform">
-  <div class="wrap perform-grid">
-    <figure class="phone floaty">
-      <div class="screen">
-        <img class="s-light on" src="assets/perform-light.webp?v=20260915" alt="Perform mode: big lyrics with chords set above the words and rhyme colors, a speed slider and play controls" width="664" height="1440" decoding="async">
-        <img class="s-dark on"  src="assets/perform-dark.webp?v=20260915"  alt="" width="664" height="1440" decoding="async">
-      </div>
-      <figcaption>Perform. Your words, hands-free.</figcaption>
-    </figure>
-    <div>
-      <div class="sec-head reveal">
-        <p class="micro">When it&rsquo;s time to play it</p>
-        <h2>Big enough to sing from.</h2>
-      </div>
-      <div class="sec-body">
-        <p class="rl">Tap Perform and the screen clears down to just your words, sized to read from across the room, moving at your pace while the loop plays underneath. Line up a folder and it becomes a setlist: play the whole night straight through, nothing to fumble for between songs.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ ON YOUR WRIST (Apple Watch) ============ -->
-<section class="wrist" id="wrist">
-  <div class="wrap">
-    <div class="sec-head centered reveal">
-      <p class="micro">On your wrist</p>
-      <h2>Hum it into your Watch.</h2>
-    </div>
-    <div class="sec-body centered reveal">
-      <p class="rl">It is on your wrist too. Set a tempo with the crown, feel the count-in, hum the idea into your Watch, and it is waiting on your phone as a new song when you get home. A metronome, a tuner and a pitch pipe live there as well.</p>
-    </div>
-    <ul class="watches reveal" aria-label="Four screens from the Apple Watch app">
-      <li>
-        <figure class="watch floaty" style="--d:0s">
-          <span class="band top"></span>
-          <div class="case"><div class="face"><img class="s-dark" src="assets/watch-home.webp?v=20260917" alt="The Watch home screen: the Songwriting wordmark, a coral Record slab at 100 bpm, then Ideas, Metronome, Tuner and Pitch Pipe as a list" width="416" height="496" decoding="async"><img class="s-light" src="assets/watch-home-paper.webp?v=20260917" alt="" width="416" height="496" decoding="async"></div><span class="crown"></span><span class="side"></span></div>
-          <span class="band bottom"></span>
-          <figcaption><span class="mono">01</span>Home</figcaption>
-        </figure>
-      </li>
-      <li>
-        <figure class="watch floaty" style="--d:-1.9s">
-          <span class="band top"></span>
-          <div class="case"><div class="face"><img class="s-dark" src="assets/watch-recording.webp?v=20260916" alt="A take in progress on the Watch: a red recording dot, bar 2, four beat dots with the current beat lit, a timeline at five seconds and a Stop button" width="416" height="496" decoding="async"><img class="s-light" src="assets/watch-recording-paper.webp?v=20260917" alt="" width="416" height="496" decoding="async"></div><span class="crown"></span><span class="side"></span></div>
-          <span class="band bottom"></span>
-          <figcaption><span class="mono">02</span>A take, bar 2</figcaption>
-        </figure>
-      </li>
-      <li>
-        <figure class="watch floaty" style="--d:-3.8s">
-          <span class="band top"></span>
-          <div class="case"><div class="face"><img class="s-dark" src="assets/watch-idea.webp?v=20260916" alt="An idea recorded on the Watch, looping back: beat dots over a coral progress line, 2 bars at 76 bpm, a note that it lands when your phone is near, and Retake and Stop buttons" width="416" height="496" decoding="async"><img class="s-light" src="assets/watch-idea-paper.webp?v=20260917" alt="" width="416" height="496" decoding="async"></div><span class="crown"></span><span class="side"></span></div>
-          <span class="band bottom"></span>
-          <figcaption><span class="mono">03</span>An idea, looping</figcaption>
-        </figure>
-      </li>
-      <li>
-        <figure class="watch floaty" style="--d:-5.7s">
-          <span class="band top"></span>
-          <div class="case"><div class="face"><img class="s-dark" src="assets/watch-pitchpipe.webp?v=20260916" alt="The pitch pipe on the Watch: a ring of twelve stops with A4 lit, 440 Hz beneath it, minus and plus buttons and a coral Sound button" width="416" height="496" decoding="async"><img class="s-light" src="assets/watch-pitchpipe-paper.webp?v=20260917" alt="" width="416" height="496" decoding="async"></div><span class="crown"></span><span class="side"></span></div>
-          <span class="band bottom"></span>
-          <figcaption><span class="mono">04</span>Pitch pipe, A4</figcaption>
-        </figure>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<!-- ============ IN AND OUT OF THE STUDIO ============ -->
-<section class="roundtrip">
-  <div class="wrap rt-grid">
-    <div>
-      <div class="sec-head reveal">
-        <p class="micro">In and out of the studio</p>
-        <h2>Leave with a demo. Come back with your part.</h2>
-      </div>
-      <div class="sec-body">
-        <p class="rl">Take the session with you. Pull a rough mix or the stems out of your DAW and into the app.
-        Spend the time you need to work out the harmony, the second verse, the line that never sat
-        right in the session. Then walk back in with your part ready to record.</p>
-      </div>
-    </div>
-    <figure class="phone floaty">
-      <div class="screen">
-        <img class="s-light on" src="assets/13-stack-layers.webp?v=20260915" alt="Layers stacked in the app" width="664" height="1440" decoding="async" style="--focus:12%">
-        <img class="s-dark on"  src="assets/D7-stacks-dark.webp?v=20260915"  alt="" width="664" height="1440" decoding="async" style="--focus:12%">
-      </div>
-      <figcaption>Import your demo, write your parts, work like a pro.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- ============ PDF EXPORT ============ -->
-<section class="sheet">
-  <div class="wrap sheet-grid">
-    <div>
-      <div class="sec-head reveal">
-        <p class="micro">PDF export</p>
-        <h2>Your band will like you more.</h2>
-      </div>
-      <div class="sec-body">
-        <p class="rl">The app creates a beautiful PDF featuring your title, tempo and chords over your lyrics.</p>
-        <p class="rl">Print it and tape it to the wall. Hand it to whoever&rsquo;s playing on your track.
-        Treasure your work, because it&rsquo;s worth it.</p>
-      </div>
-    </div>
-    <figure class="sheet-stack reveal" aria-label="An exported chord sheet from the app: the song Velvet Night, chords set over the lyrics">
-      <img class="sheet-back" src="assets/sheet-velvet-1.webp?v=20260915" alt="" width="865" height="1120" decoding="async">
-      <img class="sheet-front" src="assets/sheet-velvet-1.webp?v=20260915" alt="Exported chord sheet: 'Velvet Night', 6/8 at 76 BPM, chords set over the lyric lines" width="865" height="1120" decoding="async">
-    </figure>
-  </div>
-</section>
-
-<!-- ============ THE MAKERS ============ -->
-<section class="makers">
-  <div class="wrap narrow reveal">
-    <span class="mark big"><img src="assets/songwriting-mark.webp?v=20260916" alt="" width="168" height="176" decoding="async"></span>
-    <blockquote class="manifesto">
-      <p>&ldquo;If you want to catch the big fish, you&rsquo;ve got to go deeper.&rdquo;</p>
-      <p class="mf-cite">David Lynch</p>
-      <p>Songwriting is built to honor your creative time. Write out entire <strong>ideas</strong> in a single sitting.</p>
-    </blockquote>
-    <p class="signature">Clay and Kelsy</p>
-    <p class="cki">Songwriting is made by <a href="https://clayandkelsy.com">Clay and Kelsy</a>, our cute little software company. We build the instruments and the tools we need to keep producing music. <a href="https://open.spotify.com/artist/3k3KHtPj3Luiyo49iJXBmT">Our music</a> has been streamed over 2 million times, and our instruments downloaded over 10,000 times.</p>
-  </div>
-</section>
-
-<!-- ============ THE PROMISE (the app's first-open screen, in brief) ============
-     Four promises, every one checked against the app (no analytics, no ad kits, no network calls of
-     our own, iCloud backup off until the person turns it on). Copy is the app's welcome screen, word
-     for word. Keep it quiet: no card, no colour but the four layer rings. ============ -->
-<section class="promise" id="promise">
-  <div class="wrap narrow">
-    <div class="sec-head reveal">
-      <p class="micro">Before you start</p>
-      <h2>Your songs are yours.</h2>
-      <p class="lede-sm">Songwriting is made by two people, not a data company. Here&rsquo;s the whole deal:</p>
-    </div>
-    <ul class="promise-list reveal">
-      <li style="--c:var(--terra)"><i class="ring" aria-hidden="true"></i><div><b>Your recordings stay on your phone.</b><span>They leave only if you switch on your own iCloud backup. Even then, we can&rsquo;t hear them.</span></div></li>
-      <li style="--c:var(--ochre)"><i class="ring" aria-hidden="true"></i><div><b>No account. No tracking. No ads.</b><span>Nothing in the app watches what you do. No analytics, no pixels, no ad kits.</span></div></li>
-      <li style="--c:var(--sage)"><i class="ring" aria-hidden="true"></i><div><b>We never sell your data.</b><span>We never collect it, so there&rsquo;s nothing to sell.</span></div></li>
-      <li style="--c:var(--plum)"><i class="ring" aria-hidden="true"></i><div><b>No tricks.</b><span>No countdowns, no fake urgency, no cancel mazes. The free version stays free.</span></div></li>
-    </ul>
-    <p class="promise-foot reveal">Made to honor your creative time. That&rsquo;s it.</p>
-  </div>
-</section>
-
-<!-- ============ VOICES (PREVIEW: placeholder quotes — swap for real tester words) ============ -->
-<!-- Testimonials: HIDDEN until there are real tester quotes (Clay, 2026-09-02: no placeholders
-     on the live site). To bring it back: swap in the real quotes below and remove the `hidden`
-     attribute from this section. -->
-<section class="voices" hidden>
-  <div class="wrap">
-    <p class="micro">From early writers <span class="preview-tag">preview &middot; placeholder quotes</span></p>
-  </div>
-  <div class="vmarquee" role="region" aria-label="What early writers are saying">
-    <ul class="vtrack">
-      <li class="vcard"><p class="vq">I caught a whole chorus at a red light. It was still there when I got home.</p><p class="vwho"><span class="mono" data-c="terra" aria-hidden="true">EL</span><b>Elise L.</b> · writes in the car</p></li>
-      <li class="vcard"><p class="vq">The harmonies land exactly where I sang them. On my AirPods, first try.</p><p class="vwho"><span class="mono" data-c="clay" aria-hidden="true">MR</span><b>Maya R.</b> · topline writer</p></li>
-      <li class="vcard"><p class="vq">The only thing between a voice memo and a real session that doesn&rsquo;t kill the mood.</p><p class="vwho"><span class="mono" data-c="sage" aria-hidden="true">DS</span><b>Dev S.</b> · bedroom producer</p></li>
-      <li class="vcard"><p class="vq">I don&rsquo;t read music. The app never once made me feel like I had to.</p><p class="vwho"><span class="mono" data-c="denim" aria-hidden="true">RL</span><b>Renée L.</b> · singer-songwriter</p></li>
-      <li class="vcard"><p class="vq">Four layers deep before I noticed I was &ldquo;producing.&rdquo; Then it handed me a chord sheet.</p><p class="vwho"><span class="mono" data-c="plum" aria-hidden="true">JK</span><b>Jordan K.</b> · session singer</p></li>
-      <li class="vcard"><p class="vq">Took it on tour. Caught three ideas in green rooms that would&rsquo;ve been gone by soundcheck.</p><p class="vwho"><span class="mono" data-c="ochre" aria-hidden="true">MO</span><b>Marcus O.</b> · touring guitarist</p></li>
-      <li class="vcard" aria-hidden="true"><p class="vq">I caught a whole chorus at a red light. It was still there when I got home.</p><p class="vwho"><span class="mono" data-c="terra">EL</span><b>Elise L.</b> · writes in the car</p></li>
-      <li class="vcard" aria-hidden="true"><p class="vq">The harmonies land exactly where I sang them. On my AirPods, first try.</p><p class="vwho"><span class="mono" data-c="clay">MR</span><b>Maya R.</b> · topline writer</p></li>
-      <li class="vcard" aria-hidden="true"><p class="vq">The only thing between a voice memo and a real session that doesn&rsquo;t kill the mood.</p><p class="vwho"><span class="mono" data-c="sage">DS</span><b>Dev S.</b> · bedroom producer</p></li>
-      <li class="vcard" aria-hidden="true"><p class="vq">I don&rsquo;t read music. The app never once made me feel like I had to.</p><p class="vwho"><span class="mono" data-c="denim">RL</span><b>Renée L.</b> · singer-songwriter</p></li>
-      <li class="vcard" aria-hidden="true"><p class="vq">Four layers deep before I noticed I was &ldquo;producing.&rdquo; Then it handed me a chord sheet.</p><p class="vwho"><span class="mono" data-c="plum">JK</span><b>Jordan K.</b> · session singer</p></li>
-      <li class="vcard" aria-hidden="true"><p class="vq">Took it on tour. Caught three ideas in green rooms that would&rsquo;ve been gone by soundcheck.</p><p class="vwho"><span class="mono" data-c="ochre">MO</span><b>Marcus O.</b> · touring guitarist</p></li>
-    </ul>
-  </div>
-</section>
-
-<!-- ============ FAQ ============ -->
-<section class="faq">
-  <div class="wrap narrow">
-    <div class="sec-head reveal">
-      <p class="micro">Good questions</p>
-      <h2>A few honest answers.</h2>
-    </div>
-    <div class="faq-list">
-      <details class="faq-item reveal">
-        <summary>Will it work with my headphones, even Bluetooth?<span class="faq-x" aria-hidden="true"></span></summary>
-        <p>Any headphones, wired or Bluetooth. The first time you use a new pair, the app plays a quick sound and listens for it to come back, so it learns exactly how much delay to cancel. After that, every layer lands right where you sang it, and it remembers each pair for next time. Nothing to set, nothing to tune.</p>
-      </details>
-      <details class="faq-item reveal">
-        <summary>Why can&rsquo;t I hear my own vocals in my headphones?<span class="faq-x" aria-hidden="true"></span></summary>
-        <p>Just like a vocal booth: once the takes start piling up and it gets hard to hear yourself, slip your headphones off one ear and keep layering. Nothing&rsquo;s wrong. One ear on the mix, one on the room is how singers have tracked forever.</p>
-      </details>
-      <details class="faq-item reveal">
-        <summary>Do you keep or sell my recordings?<span class="faq-x" aria-hidden="true"></span></summary>
-        <p>No. Your recordings stay on your phone unless you switch on your own iCloud backup, and nothing in the app watches what you do. We never collect your data, so there is nothing to sell. The whole promise is just above.</p>
-      </details>
-      <details class="faq-item reveal">
-        <summary>Does the app replace Ableton, or any DAW?<span class="faq-x" aria-hidden="true"></span></summary>
-        <p>No. It&rsquo;s the step before. It&rsquo;s for catching and shaping the song while it&rsquo;s still alive; when it&rsquo;s ready for full production, export your masters and stems and take them into Ableton, or any DAW. It gets the song down; your DAW turns it into a record.</p>
-      </details>
-    </div>
-  </div>
-</section>
-
-<!-- ============ PRICING ============ -->
-<section class="pricing" id="pricing">
-  <div class="wrap">
-    <div class="sec-head centered reveal">
-      <p class="micro">What it costs</p>
-      <h2>Free to start. Really start.</h2>
-      <p class="lede-sm">Start free and make three recordings with everything the app can do. Want more room?
-      $7.99 a month, or $29.99 for a year.</p>
-    </div>
-    <div class="plans">
-      <div class="plan reveal">
-        <p class="micro">Free</p>
-        <p class="price">$0<small>forever</small></p>
-        <ul>
-          <li>Everything the app does</li>
-          <li>Up to three recordings in your library</li>
-          <li>No ads, no watermarks</li>
-        </ul>
-      </div>
-      <div class="plan featured reveal">
-        <span class="save-badge">Best value</span>
-        <p class="micro">Songwriting, wide open</p>
-        <p class="price">$29.99<small>a year</small></p>
-        <p class="price-permo">just <b>$2.50</b> / month, billed annually</p>
-        <div class="save-meter" aria-hidden="true"><span class="save-fill"></span></div>
-        <p class="save-note"><b>69% off</b> vs monthly: <s>$95.88/yr</s> at $7.99/mo. About <b>8 months free</b>.</p>
-        <ul>
-          <li>Unlimited recordings</li>
-          <li>Everything we add next</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="notify reveal">
-      <p class="notify-h">Be the first to play it.</p>
-      <p class="notify-sub">Leave your email and we&rsquo;ll tell you the day it goes live. Now and then, something else we&rsquo;ve made.</p>
-      <a class="pill-cta lg" href="notify.html" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>Notify me</a>
-    </div>
-    <p class="reassure">No card to start &middot; Cancel anytime &middot; Free forever, not a trial.</p>
-    <p class="cta-note">The download is free. Whatever you&rsquo;re chasing, we hope you catch it.</p>
-  </div>
-</section>
-
-</main>
-
-<footer class="foot">
-  <div class="wrap foot-in">
-    <svg class="bm-wordmark livewm wm-foot" viewBox="0 0 1000 220" role="img" aria-label="Songwriting"><defs><mask id="bm-mask-foot" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="220" style="mask-type:alpha"><text x="500" y="166" text-anchor="middle" class="bm-title bm-mask-text">Songwriting</text></mask></defs><text x="500" y="166" text-anchor="middle" class="bm-title">Songwriting</text><g mask="url(#bm-mask-foot)" aria-hidden="true"><path class="bm-sweep"></path></g><circle class="bm-dot" cx="152" cy="118" r="11" aria-hidden="true"></circle></svg>
-    <p>by Clay and Kelsy</p>
-    <nav><a href="https://clayandkelsy.com">clayandkelsy.com</a><a href="#promise">Privacy</a></nav>
-  </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js" defer></script>
-<script type="module" src="app.js?v=52"></script>
-<!-- animated brandmark: the sweep orbits the o, cycling the four layer colours; a full turn holds, then eases to the next -->
-<script>
-(function(){
-  var wms=[].slice.call(document.querySelectorAll('.livewm')); if(!wms.length) return;
-  var cs=getComputedStyle(document.documentElement);
-  function toRGB(v){var m=(v||'').trim().match(/#([0-9a-fA-F]{6})/); if(m){var h=m[1];return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];} var n=(v||'').match(/[0-9]+/g); return n?[+n[0],+n[1],+n[2]]:[184,106,74];}
-  var palette=['--terra','--ochre','--sage','--plum'].map(function(t){return toRGB(cs.getPropertyValue(t));});
-  var meter=document.createElement('canvas').getContext('2d');
-  var elapsed=0, last=0, loopMs=4800;
-  var reduce=matchMedia('(prefers-reduced-motion:reduce)');
-  function measure(wm){
-    var word=wm.querySelector('.bm-title:not(.bm-mask-text)'), maskText=wm.querySelector('.bm-mask-text');
-    if(!word || word.getNumberOfChars()<2) return;
-    var vbw=(wm.viewBox && wm.viewBox.baseVal && wm.viewBox.baseVal.width) || 1000;
-    word.style.fontSize='184px'; if(maskText) maskText.style.fontSize='184px';
-    var wdt=word.getComputedTextLength();
-    if(wdt>vbw){ var fs=(184*vbw/wdt)+'px'; word.style.fontSize=fs; if(maskText) maskText.style.fontSize=fs; }
-    var type=getComputedStyle(word);
-    meter.font=type.fontWeight+' '+type.fontSize+' '+type.fontFamily;
-    var g=meter.measureText('o');
-    var start=word.getStartPositionOfChar(1);
-    var left=start.x-g.actualBoundingBoxLeft, right=start.x+g.actualBoundingBoxRight;
-    var top=166-g.actualBoundingBoxAscent, bot=166+g.actualBoundingBoxDescent;
-    wm.__geo={cx:(left+right)/2, cy:(top+bot)/2, r:Math.max(right-left,bot-top)*0.56};
-    var dr=(bot-top)*0.123, dot=wm.querySelector('.bm-dot');
-    if(dot){ dot.setAttribute('cx',wm.__geo.cx.toFixed(2)); dot.setAttribute('cy',wm.__geo.cy.toFixed(2)); dot.setAttribute('r',dr.toFixed(2)); }
-  }
-  function paintOne(wm, rgbStr, phase){
-    var geo=wm.__geo; if(!geo) return;
-    var sweep=wm.querySelector('.bm-sweep'); if(!sweep) return;
-    sweep.style.fill=rgbStr;
-    var cx=geo.cx, cy=geo.cy, r=geo.r, ang=phase*Math.PI*2-Math.PI/2, ext=Math.PI*0.52, a=ang-ext;
-    var x1=cx+r*Math.cos(a), y1=cy+r*Math.sin(a), x2=cx+r*Math.cos(ang), y2=cy+r*Math.sin(ang);
-    sweep.setAttribute('d','M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+(ext>Math.PI?1:0)+' 1 '+x2+' '+y2+' Z');
-  }
-  function frame(t){
-    if(!reduce.matches && last) elapsed+=Math.min(t-last,100); last=t;
-    var turns=elapsed/loopMs, cur=Math.floor(turns)%4, phase=turns%1;
-    var blend=Math.min(1,Math.max(0,(phase-0.77)/0.23)), ease=blend*blend*(3-2*blend), nxt=(cur+1)%4;
-    var rgb=palette[cur].map(function(v,i){return Math.round(v+(palette[nxt][i]-v)*ease);});
-    var rgbStr='rgb('+rgb.join(',')+')';
-    for(var i=0;i<wms.length;i++) paintOne(wms[i], rgbStr, phase);
-    requestAnimationFrame(frame);
-  }
-  function measureAll(){ for(var i=0;i<wms.length;i++) measure(wms[i]); }
-  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(measureAll);
-  measureAll();
-  try{ var ro=new ResizeObserver(measureAll); for(var i=0;i<wms.length;i++) ro.observe(wms[i]); }catch(e){}
-  requestAnimationFrame(frame);
-})();
-</script>
-</body>
-</html>
+Hold me where the water’s deep
+Secrets that the sycamores keep</textarea></div><p id="sw-rhyme-status" class="sw-paper-note" role="status">Try your own line. Rhymes light up as you type.</p><div class="sw-rhyme-legend" aria-hidden="true"><span><i></i>night / bright</span><span><i></i>deep / keep</span></div><div id="sw-rhyme-accessible" class="sw-sr-only" aria-live="polite"></div></div></section>
+<!-- 06 / TAKE IT WITH YOU -->
+<section class="sw-keep sw-wrap" id="keep"><div class="sw-section-heading"><div><p class="sw-eyebrow">03 / Take it with you</p><h2>A song has places to go.</h2></div><p>From the first hum to the rehearsal room. Keep the whole idea together, then take it wherever you’re headed.</p></div><div class="sw-keep-grid">
+<article class="sw-export-card"><div class="sw-card-copy"><p class="sw-eyebrow">Out of your phone. Into the room.</p><h3>Your band will<br>like you more.</h3><p>Export a mixed master, individual stems, or a beautifully set lyrics-and-chord sheet.</p></div><div class="sw-sheet-stack"><div aria-hidden="true"></div><img src="assets/sheet-velvet-1.webp" width="865" height="1120" alt="Real PDF export: Velvet Night, with tempo and chords above the lyrics" loading="lazy"></div><span class="sw-corner-note">Keep something real. ↗</span></article>
+<article class="sw-watch-card"><div class="sw-card-copy"><p class="sw-eyebrow">On your wrist</p><h3>The idea got here<br>before your phone did.</h3><p>Set a tempo with the crown. Feel the count-in. Hum it into your Watch. It’s waiting on your phone when you get home.</p></div><div class="sw-watches"><figure><img src="assets/watch-home.webp" width="416" height="496" alt="Songwriting Apple Watch home screen with record control" loading="lazy"></figure><figure><img src="assets/watch-recording.webp" width="416" height="496" alt="Apple Watch recording screen with count-in and beat display" loading="lazy"></figure></div><span class="sw-watch-caption">A metronome, tuner & pitch pipe, too.</span></article></div></section>
+<!-- 07 / THE LATE-NIGHT SESSION -->
+<section class="sw-night"><div class="sw-wrap sw-night-inner"><span class="sw-night-symbol" aria-hidden="true">☾</span><div><p class="sw-eyebrow">Whenever the song shows up</p><h2>For the ones who<br>write after dark.</h2><p>A full dark mode for the late-night sessions.</p></div><button type="button" class="sw-button sw-button-outline" id="sw-night-switch">Turn the lights down <span aria-hidden="true">↗</span></button></div></section>
+<!-- 08 / HUMAN COMPANY + PRIVACY -->
+<section class="sw-promise sw-wrap" id="promise"><div class="sw-promise-title"><p class="sw-eyebrow">Made by two people who make music</p><h2>Your songs.<br><em>Your business.</em></h2><img src="assets/songwriting-mark.webp" width="60" height="63" alt="" loading="lazy"></div><div class="sw-promise-copy"><p class="sw-promise-lede">Songwriting is made by Clay and Kelsy, our cute little software company. We build the instruments and the tools we need to keep producing music.</p><ul><li><strong>Your recordings stay yours.</strong><span>On your phone, with optional backup to your own iCloud. We can’t hear them.</span></li><li><strong>No account. No tracking. No ads.</strong><span>We never collect your data, so there’s nothing to sell.</span></li><li><strong>Made to honor your creative time.</strong><span>No countdowns, no fake urgency. The free version stays free.</span></li></ul><a href="https://open.spotify.com/artist/3k3KHtPj3Luiyo49iJXBmT" class="sw-text-link" target="_blank" rel="noopener">Meet us through our music <span aria-hidden="true">↗</span></a></div></section>
+<!-- 09 / PRICING: EXISTING PRICES, EXPLICIT BILLING -->
+<section class="sw-pricing" id="pricing"><div class="sw-wrap"><div class="sw-pricing-heading"><p class="sw-eyebrow">Leave a little room for the next one</p><h2>Free to start.<br><em>Really start.</em></h2><p>Everything the app does. Three recordings to make it yours.</p></div><div class="sw-plans"><article class="sw-plan"><p class="sw-eyebrow">Your first three</p><p class="sw-price">$0<small>forever</small></p><p>The whole app. Room for three recordings.</p><ul><li>Every feature, from the first note</li><li>Up to three recordings in your library</li><li>No ads. No watermarks.</li></ul><span class="sw-plan-foot">Free forever. Not a trial.</span></article><article class="sw-plan sw-plan-paid"><div class="sw-plan-title"><p class="sw-eyebrow">Songwriting, wide open</p><div class="sw-billing" role="group" aria-label="Billing period"><button type="button" data-billing="year" aria-pressed="true">Yearly</button><button type="button" data-billing="month" aria-pressed="false">Monthly</button></div></div><div aria-live="polite"><p class="sw-price"><span id="sw-price">$29.99</span><small id="sw-period">a year</small></p><p id="sw-price-detail">About $2.50 a month, billed annually.</p></div><ul><li>Unlimited recordings</li><li>Every feature in the free version</li><li>Everything we add next</li></ul><span class="sw-plan-foot">More room to keep going.</span></article></div><p class="sw-pricing-note">No card to start · Cancel anytime</p></div></section>
+<!-- 10 / FAQ -->
+<section class="sw-faq sw-wrap"><div><p class="sw-eyebrow">Good questions</p><h2>A few<br>honest answers.</h2></div><div class="sw-faq-list"><details><summary>Will it work with my Bluetooth headphones?<span aria-hidden="true">+</span></summary><p>Yes. The first time you use a new pair, the app plays a quick sound and listens for it to come back. It measures the delay, then remembers that pair for next time. Wired headphones work too.</p></details><details><summary>Can I hear my own vocals in my headphones?<span aria-hidden="true">+</span></summary><p>You won’t hear live monitoring of your own voice. Once the layers build up, slip your headphones off one ear. One ear on the mix, one on the room, just like tracking in a vocal booth.</p></details><details><summary>Does it replace my DAW?<span aria-hidden="true">+</span></summary><p>It’s the step before. Catch and shape the song while it’s still alive, then export your mixed master or stems into Ableton, or any DAW, when you’re ready for full production. You can also bring a rough mix or stems into Songwriting to work out your next part.</p></details><details><summary>Do you keep or sell my recordings?<span aria-hidden="true">+</span></summary><p>No. They stay on your phone unless you turn on your own iCloud backup, which is off by default. We never collect your data, so there’s nothing to sell.</p></details></div></section>
+<!-- 11 / FINAL INVITATION -->
+<section class="sw-finale sw-wrap"><p class="sw-eyebrow"><span class="sw-dot"></span> Coming soon to the App Store</p><h2>Whatever you’re chasing,<br><em>we hope you catch it.</em></h2><a class="sw-button" href="https://clayburton.github.io/hook-site/notify.html" target="_blank" rel="noopener">Tell me when it’s ready <span aria-hidden="true">↗</span></a><p>We’ll email you the day it goes live.<br>Now and then, something else we’ve made.</p><div class="sw-finale-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div></section>
+</main><footer class="sw-footer sw-wrap"><a class="sw-brand" href="#top"><img src="assets/songwriting-mark.webp" width="28" height="29" alt=""><span>Songwriting<small>by Clay and Kelsy</small></span></a><p>Made to honor your creative time.</p><nav aria-label="Footer"><a href="https://clayandkelsy.com/" target="_blank" rel="noopener">Clay & Kelsy ↗</a><a href="#promise">Our promise</a></nav></footer>
+<script src="app.js?v=a1" defer></script>
+</body></html>
