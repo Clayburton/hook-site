@@ -21,24 +21,24 @@
 #hook-nav a,#hook-nav button{color:inherit;text-decoration:none;box-shadow:none;border:0;background:none;font:inherit}
 #hook-nav .hn-brand{display:inline-flex;align-items:center;gap:11px}
 #hook-nav .hn-mark{height:30px;width:auto;display:block}
-#hook-nav .hn-name{font-family:"Source Serif 4",Georgia,serif;font-size:22px;line-height:1.02;letter-spacing:-.02em}
-#hook-nav .hn-name small{display:block;margin-top:2px;font-family:Nunito,sans-serif;font-size:11px;font-style:italic;letter-spacing:0;color:#716c60}
+#hook-nav .hn-name{font-family:"Source Serif 4",Georgia,serif;font-size:22px;line-height:1;letter-spacing:-.02em;white-space:nowrap}
+#hook-nav .hn-name small{font-family:"Source Serif 4",Georgia,serif;font-size:14px;font-style:italic;font-weight:400;letter-spacing:0;color:#716c60;margin-left:.6em}
 #hook-nav.dark .hn-name small{color:#bdb4a4}
-#hook-nav .hn-links{margin-left:auto;display:flex;gap:30px}
-#hook-nav .hn-links a{font-weight:700;font-size:13px;opacity:.82}
+#hook-nav .hn-links{margin-left:auto;display:flex;gap:28px}
+#hook-nav .hn-links a{font-weight:700;font-size:16px;opacity:.84}
 #hook-nav .hn-links a:hover{opacity:1;color:#ca4d37}
 #hook-nav.dark .hn-links a:hover{color:#f28c72}
 #hook-nav .hn-theme{cursor:pointer;font-size:20px;line-height:1;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;opacity:.85}
 #hook-nav .hn-theme:hover{opacity:1}
-#hook-nav .hn-pill{cursor:pointer;font-weight:800;font-size:13px;color:#fff9f1;background:#ca4d37;border-radius:4px;padding:.72em 1.15em;white-space:nowrap;transition:transform .2s ease}
-#hook-nav .hn-pill:hover{transform:translateY(-1px)}
-#hook-nav.dark .hn-pill{background:#f28c72;color:#211f1c}
+#hook-nav .hn-pill{cursor:pointer;font-weight:800;font-size:15px;color:#FDF8EF;background:#F04E3C;border-radius:999px;padding:.62em 1.2em;white-space:nowrap;transition:background-color .2s ease}
+#hook-nav .hn-pill:hover{background:#D83E2C;color:#FDF8EF}
+#hook-nav.dark .hn-pill{background:#FA5E48;color:#FDF8EF}
 @media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-name small{display:none}}
 @media (prefers-reduced-motion:reduce){#hook-nav{transition:none}#hook-nav .hn-pill{transition:none}}
 </style>
 <div id="hook-nav" aria-label="Songwriting menu">
   <a class="hn-brand" href="https://clayandkelsy.com/songwriting/" data-go="#top"><img class="hn-mark" src="https://clayburton.github.io/hook-site/assets/songwriting-mark.webp?v=20260916" alt="" width="168" height="176"><span class="hn-name">Songwriting<small>by Clay and Kelsy</small></span></a>
-  <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/songwriting/#loop" data-go="#loop">The feel</a><a href="https://clayandkelsy.com/songwriting/#words" data-go="#words">The words</a><a href="https://clayandkelsy.com/songwriting/#pricing" data-go="#pricing">The price</a></nav>
+  <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/songwriting/#loop" data-go="#loop">Loop</a><a href="https://clayandkelsy.com/songwriting/#words" data-go="#words">Words</a><a href="https://clayandkelsy.com/songwriting/#keep" data-go="#keep">Keep it</a><a href="https://clayandkelsy.com/songwriting/#pricing" data-go="#pricing">Pricing</a></nav>
   <button class="hn-theme" type="button" aria-label="Toggle dark mode" aria-pressed="false">&#9680;</button>
   <a class="hn-pill" href="https://clayburton.github.io/hook-site/notify.html">Notify me</a>
 </div>
@@ -79,8 +79,10 @@
     /* section navigation: the frame never scrolls itself, so the page hands us the target's Y inside
        the document and we scroll this window to it, landing below the fixed bar */
     if (e.data.hook === "scrollto" && typeof e.data.y === "number") {
-      var NAVH = 80, base = frame.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0);
-      window.scrollTo({ top: Math.max(0, Math.round(base + e.data.y - NAVH)), behavior: "smooth" });
+      var adminBar = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--wp-admin--admin-bar--height")) || 0;
+      var NAVH = adminBar + 80, base = frame.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0);
+      var dest = Math.max(0, Math.round(base + e.data.y - NAVH));
+      if (window.__swLenis) window.__swLenis.scrollTo(dest, { duration: 1.1 }); else window.scrollTo({ top: dest, behavior: "smooth" });
     }
   });
   /* tell the page where the viewport is, and show our menu bar once the C&K header has scrolled away */
@@ -112,7 +114,7 @@
 <script>
 (function () {  /* smooth, inertial scrolling on desktop only — delete this block if it ever misbehaves */
   if (!window.Lenis || !matchMedia("(pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  var lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
+  var lenis = new Lenis({ lerp: 0.085, smoothWheel: true }); window.__swLenis = lenis;
   function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
   requestAnimationFrame(raf);
 })();

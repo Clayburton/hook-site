@@ -341,6 +341,21 @@ if (volEl) volEl.addEventListener('input', e => { if (ctx) master.gain.setTarget
 document.addEventListener('visibilitychange', () => { if (document.hidden && playing) stopAudio(); });
 window.addEventListener('pagehide', stopAudio);
 
+/* SPEED PASS — nothing pops in. Every screenshot the hero can show (three screens,
+   both themes) is fetched and decoded up front, and every image on the page is
+   decoded off-thread as it arrives, so a scroll, a screen switch or a theme flip
+   never paints a blank. Lossless: the files themselves are untouched. */
+(() => {
+  const warm = im => { if (im.decode) im.decode().catch(() => {}); };
+  const start = () => {
+    Object.values(screens).forEach(([light, dark]) => [light, dark].forEach(f => {
+      const im = new Image(); im.src = 'assets/' + f; warm(im);
+    }));
+    $$('img').forEach(im => { if (im.complete) warm(im); else im.addEventListener('load', () => warm(im), { once: true }); });
+  };
+  if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true });
+})();
+
 /* FAQ toggles change page height */
 $$('.sw-faq details').forEach(d => d.addEventListener('toggle', postHeight));
 
