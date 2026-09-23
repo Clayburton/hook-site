@@ -103,7 +103,7 @@ const screens = {
 const heroScreen = $('#sw-hero-screen');
 function setScreen() {
   const s = screens[screen], dark = document.documentElement.dataset.theme === 'dark';
-  heroScreen.src = 'assets/' + s[dark ? 1 : 0];
+  heroScreen.src = 'assets/' + s[dark ? 1 : 0] + '?v=20260923';
   heroScreen.alt = s[2];
 }
 $$('[data-screen]').forEach(b => b.addEventListener('click', () => {
@@ -349,7 +349,7 @@ window.addEventListener('pagehide', stopAudio);
   const warm = im => { if (im.decode) im.decode().catch(() => {}); };
   const start = () => {
     Object.values(screens).forEach(([light, dark]) => [light, dark].forEach(f => {
-      const im = new Image(); im.src = 'assets/' + f; warm(im);
+      const im = new Image(); im.src = 'assets/' + f + '?v=20260923'; warm(im);
     }));
     $$('img').forEach(im => { if (im.complete) warm(im); else im.addEventListener('load', () => warm(im), { once: true }); });
   };
