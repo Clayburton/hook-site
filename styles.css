@@ -1794,3 +1794,148 @@ body.embedded { padding-top: 0; }
 /* embedded: breathing room under clayandkelsy.com's global menu */
 body.embedded .sw-hero { padding-top:92px; }
 @media (max-width:640px) { body.embedded .sw-hero { padding-top:64px; } }
+
+
+/* ============================================================
+   2026-09-28 PASS: the iPad card, then a phone layout of its own.
+   ============================================================ */
+
+/* ---- iPad card: the third place the song goes, full width under the pair ---- */
+.sw-ipad-card { grid-column:1 / -1; position:relative; border:1px solid var(--sw-line); border-radius:6px; background:var(--sw-card); overflow:hidden; display:grid; grid-template-columns:minmax(260px,.72fr) 1.6fr; align-items:center; gap:10px; }
+.sw-ipad-card .sw-card-copy { padding:40px; }
+.sw-ipad { margin:40px 40px 40px 0; padding:9px; background:#1f1d1a; border-radius:22px; box-shadow:0 0 0 1px #3a3631, 18px 28px 50px var(--sw-shadow); }
+.sw-ipad img { display:block; width:100%; height:auto; border-radius:13px; }
+html[data-theme=dark] .sw-ipad-light, html:not([data-theme=dark]) .sw-ipad-dark { display:none; }
+html[data-theme=dark] .sw-ipad { box-shadow:0 0 0 1px #4b443b, 18px 28px 50px var(--sw-shadow); }
+@media (max-width:1100px) {
+  .sw-ipad-card { grid-template-columns:1fr; gap:0; }
+  .sw-ipad { margin:0 30px 34px; }
+}
+
+/* ---- PHONE PASS (Kelsy, 2026-09-28: "long, a lot to read, a lot going on", fine
+   print, "the desktop page shrunk"). A layout shaped for a phone: one idea per
+   screen, nothing under 12px, rounder cards, swipe rows instead of tall stacks,
+   and the explaining paragraphs stay on the desktop page. ---- */
+@media (max-width:760px) {
+  /* less to read: these explain or repeat on desktop and only add length here */
+  .sw-m-hide, .sw-tracklist, .sw-hero-actions .sw-text-link, .sw-hero-label, .sw-asterisk,
+  .sw-hand-note, .sw-loop .sw-section-heading > p, .sw-keep .sw-section-heading > p { display:none !important; }
+
+  /* the page's own bar (seen only when the page is opened directly) */
+  .sw-nav .sw-brand { font-size:20px; }
+  .sw-nav .sw-brand small { display:none; }
+  .sw-nav .sw-pill { white-space:nowrap; font-size:14px; padding:.55em 1.05em; }
+
+  /* a type floor: nothing reads as fine print */
+  .sw-site .sw-eyebrow { font-size:12px; letter-spacing:.12em; }
+  .sw-lede, .sw-words-copy > p:not(.sw-eyebrow), .sw-intro-bottom p { font-size:17px; line-height:1.55; }
+  .sw-section-heading h2, .sw-intro h2, .sw-promise h2, .sw-faq h2 { font-size:40px; line-height:1.02; }
+  .sw-words h2 { font-size:48px; }
+  .sw-pricing-heading h2 { font-size:44px; }
+  .sw-finale h2 { font-size:34px; }
+  .sw-button { font-size:16px; padding:16px 20px; border-radius:14px; justify-content:center; }
+  .sw-availability { font-size:12px; margin-top:14px; }
+
+  /* a tighter rhythm: sections breathe, but no screen is mostly empty */
+  .sw-intro, .sw-loop, .sw-words, .sw-keep, .sw-promise, .sw-pricing { padding-top:52px; padding-bottom:52px; }
+  .sw-faq { padding:52px 0 24px; }
+  .sw-finale { padding:52px 0 80px; }
+  .sw-night { padding:40px 0; }
+
+  /* hero */
+  .sw-hero { padding-top:30px; gap:6px; }
+  .sw-hero h1 { margin:18px 0 28px; }
+  .sw-site h1, .sw-site h2, .sw-site h3 { text-wrap:balance; }
+  .sw-hero-actions { margin-top:22px; }
+  .sw-hero-actions .sw-button { width:100%; }
+  .sw-hero-art { min-height:0; padding-top:18px; }
+  .sw-screen-picker { width:100%; max-width:360px; margin-top:22px; }
+  .sw-screen-picker button { flex:1; padding:9px 0; font-size:13px; }
+
+  /* the 4am problem: the headline and the answer */
+  .sw-intro-bottom { margin-top:16px; display:block; }
+
+  /* loop: the mixer stays the star, with labels you can read */
+  .sw-section-heading { margin-bottom:22px; }
+  .sw-mixer { border-radius:18px; padding:20px 16px 16px; }
+  .sw-mixer-top .sw-eyebrow { font-size:12px; max-width:none; }
+  .sw-mixer-top h3 { font-size:24px; max-width:none; }
+  .sw-track { grid-template-columns:22px minmax(0,1fr) 76px 38px; gap:8px; padding:13px 0; }
+  .sw-track-number { font-size:12px; }
+  .sw-track-name { font-size:14px; }
+  .sw-track small { font-size:12px; }
+  .sw-track-state { font-size:12px; }
+  .sw-wave i:nth-child(n+19) { display:none; }
+  .sw-mixer-bottom, .sw-mixer-bottom #sw-audio-status { font-size:13px; }
+  .sw-demo-note { font-size:12px; }
+  /* the three feature notes: a swipe row, not a tall stack */
+  .sw-feature-row { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:12px; margin:26px -20px 0; padding:0 20px 8px; scroll-padding:0 20px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .sw-feature-row::-webkit-scrollbar { display:none; }
+  .sw-feature-row article { flex:0 0 80%; scroll-snap-align:start; background:var(--sw-card); border:1px solid var(--sw-line); border-radius:18px; padding:20px; }
+  .sw-feature-row article + article { border-top:1px solid var(--sw-line); padding-top:20px; }
+  .sw-feature-row article > span { font-size:12px; }
+  .sw-feature-row h3 { font-size:22px; margin:10px 0 8px; }
+  .sw-feature-row p { font-size:15px; line-height:1.5; }
+
+  /* words: a flat, crisp sheet (rotated text blurs at this size) */
+  .sw-words { gap:26px; }
+  .sw-lyric-paper { transform:none; border-radius:14px; padding:22px 18px; margin-inline:0; }
+  .sw-paper-top { font-size:12px; }
+  .sw-song-meta { font-size:12px; }
+  .sw-paper-note, .sw-rhyme-legend { font-size:13px; }
+  .sw-language button { font-size:13px; padding:8px 11px; }
+
+  /* take it with you: three places the song goes, one swipe apart */
+  .sw-keep-grid { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:12px; margin:0 -20px; padding:0 20px 8px; scroll-padding:0 20px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .sw-keep-grid::-webkit-scrollbar { display:none; }
+  .sw-keep-grid > article { flex:0 0 86%; scroll-snap-align:start; min-height:0; height:520px; border-radius:18px; display:flex; flex-direction:column; }
+  .sw-card-copy { padding:22px 20px 0; }
+  .sw-card-copy h3 { font-size:28px; margin:12px 0 10px; }
+  .sw-card-copy p:not(.sw-eyebrow) { font-size:15px; line-height:1.5; }
+  /* the sheet as a close-up, so its title and chords actually read */
+  .sw-export-card .sw-sheet-stack { position:absolute; left:18px; top:224px; width:520px; height:auto; margin:0; transform:rotate(4deg); transform-origin:0 0; }
+  .sw-export-card .sw-sheet-stack > div { display:none; }
+  .sw-export-card .sw-sheet-stack img { width:100%; height:auto; }
+  .sw-watches { margin:26px auto 0; gap:16px; padding:0 12px; }
+  .sw-watches figure { width:118px; border-radius:32px; border-width:4px; padding:5px; }
+  .sw-watches img { border-radius:22px; }
+  .sw-watch-caption { font-size:12px; margin:28px 0 0; }
+  .sw-ipad { margin:auto 16px; padding:5px; border-radius:14px; }
+  .sw-ipad img { border-radius:9px; }
+
+  /* night */
+  .sw-night p:not(.sw-eyebrow) { font-size:15px; }
+  .sw-night-symbol { font-size:48px; }
+
+  /* promise */
+  .sw-promise { gap:18px; }
+  .sw-promise-lede { font-size:18px; line-height:1.5; }
+  .sw-promise-copy li strong { font-size:17px; }
+  .sw-promise-copy li span { font-size:15px; }
+
+  /* pricing: two compact plans, not two screens of white */
+  .sw-pricing-heading > p:last-child { font-size:16px; }
+  .sw-plans { gap:14px; }
+  .sw-plan { padding:22px 20px; border-radius:18px; }
+  .sw-plan-paid { padding-top:20px; }
+  .sw-price { font-size:50px; margin:14px 0 8px !important; }
+  .sw-price small { font-size:14px; }
+  .sw-plan > p:not(.sw-eyebrow):not(.sw-price), .sw-plan #sw-price-detail { font-size:15px; }
+  .sw-plan ul { margin:14px 0; font-size:15px; }
+  .sw-plan li { padding:5px 0; }
+  .sw-plan-foot { font-size:13px; padding-top:14px; }
+  .sw-billing button { font-size:13px; padding:7px 11px; }
+  .sw-pricing-note { font-size:13px; }
+
+  /* faq */
+  .sw-faq summary { font-size:16px; }
+  .sw-faq details { padding:18px 0; }
+  .sw-faq details p { font-size:15px; line-height:1.6; padding-right:10px; }
+
+  /* finale + footer */
+  .sw-finale .sw-button { width:100%; }
+  .sw-site .sw-finale > p:not(.sw-eyebrow) { font-size:15px; }
+  .sw-mixer-bottom output { font-size:13px; }
+  .sw-footer nav { font-size:13px; }
+  .sw-footer .sw-brand small { font-size:12px; }
+}

@@ -1,5 +1,5 @@
 <!-- ============================================================
-     SONGWRITING — WordPress embed for clayandkelsy.com/songwriting  (paste this whole file as ONE Custom HTML block)
+     SONGWRITING: WordPress embed for clayandkelsy.com/songwriting  (paste this whole file as ONE Custom HTML block)
      What it does:
      · Embeds the Songwriting page (GitHub Pages) full-bleed in an iframe that grows to fit its
        content, so there is exactly one scrollbar on the page: this one.
@@ -7,7 +7,7 @@
        zero lag. It appears the moment the C&K global header scrolls away and hides while it is on screen.
      · Tells the page where the viewport is on every scroll, paints this page the same colour as the
        page's theme, routes menu clicks (and the theme control) down into the page.
-     · Smooth, inertial scrolling on desktop (Lenis) — the last <script>; safe to delete if it misbehaves.
+     · Smooth, inertial scrolling on desktop only (Lenis, loaded by the last script; phones skip it).
      · Hides the WordPress theme's own footer (#colophon) on this page only.
      Message contract with the page (app.js): page then here {hook:"h",h} {hook:"bg",color} {hook:"go",href};
      here then page {hookHost:"vp",top,vh,nav:true} {hookHost:"go",id} {hookHost:"theme"}.
@@ -33,7 +33,7 @@
 #hook-nav .hn-pill{cursor:pointer;font-weight:800;font-size:15px;color:#FDF8EF;background:#F04E3C;border-radius:999px;padding:.62em 1.2em;white-space:nowrap;transition:background-color .2s ease}
 #hook-nav .hn-pill:hover{background:#D83E2C;color:#FDF8EF}
 #hook-nav.dark .hn-pill{background:#FA5E48;color:#FDF8EF}
-@media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-name small{display:none}}
+@media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-name small{display:none}#hook-nav{gap:14px}#hook-nav .hn-theme{margin-left:auto}}
 @media (prefers-reduced-motion:reduce){#hook-nav{transition:none}#hook-nav .hn-pill{transition:none}}
 </style>
 <div id="hook-nav" aria-label="Songwriting menu">
@@ -56,7 +56,7 @@
   var ORIGIN = "https://clayburton.github.io";
   var frame = document.getElementById("hook-frame"), nav = document.getElementById("hook-nav");
   var themeBtn = nav.querySelector(".hn-theme");
-  /* load the page fresh every visit — defeats the iframe-document cache that once served a stale copy */
+  /* load the page fresh every visit: this defeats the iframe cache that once served a stale copy */
   frame.src = ORIGIN + "/hook-site/?v=" + Date.now();
   var lastH = 0;
   function go(href) { window.scrollTo(0, 0); frame.src = ORIGIN + "/hook-site/" + href + "?v=" + Date.now(); }
@@ -110,12 +110,17 @@
   nav.querySelector(".hn-pill").addEventListener("click", function (e) { e.preventDefault(); go("notify.html"); });
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
 <script>
-(function () {  /* smooth, inertial scrolling on desktop only — delete this block if it ever misbehaves */
-  if (!window.Lenis || !matchMedia("(pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  var lenis = new Lenis({ lerp: 0.085, smoothWheel: true }); window.__swLenis = lenis;
-  function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
-  requestAnimationFrame(raf);
+(function () {  /* smooth, inertial scrolling, desktop only: phones never download it. Safe to delete this block if it ever misbehaves. */
+  if (!matchMedia("(pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var s = document.createElement("script");
+  s.src = "https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"; s.async = true;
+  s.onload = function () {
+    if (!window.Lenis) return;
+    var lenis = new Lenis({ lerp: 0.085, smoothWheel: true }); window.__swLenis = lenis;
+    function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+  };
+  document.head.appendChild(s);
 })();
 </script>

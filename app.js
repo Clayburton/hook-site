@@ -94,16 +94,32 @@ $$('a[href*="notify.html"]').forEach(a => a.addEventListener('click', e => {
 }));
 
 /* HERO SCREEN SELECTOR + THEME ----------------------------------------------- */
+/* The hero phone is the app tour, in the order you use it: start a recording,
+   stack layers, write the lyrics, set the chords, perform. Screens are warmed
+   quietly after load (current theme only) and the other theme's set is warmed
+   when the theme flips, so a tap never paints a blank screen. */
+const V = '?v=20260928';
 let screen = 'lyrics';
 const screens = {
-  layers: ['13-stack-layers.webp', 'D6-stack-vocals-dark.webp', 'The real app showing four recorded layers with individual waveforms and controls'],
-  lyrics: ['recording-lyrics-light.webp', 'recording-lyrics-dark.webp', 'The real lyric editor with chords above words and rhymes colored by sound'],
+  record:  ['record-light.webp', 'record-dark.webp', 'The real New Recording screen: Velvet Night set to 76 BPM in 6/8, four bars, ready to record'],
+  layers:  ['13-stack-layers.webp', 'D6-stack-vocals-dark.webp', 'The real app showing four recorded layers with individual waveforms and controls'],
+  lyrics:  ['recording-lyrics-light.webp', 'recording-lyrics-dark.webp', 'The real lyric editor with chords above words and rhymes colored by sound'],
+  chords:  ['chords-light.webp', 'chords-dark.webp', 'The real chord picker: Em over the word night, with recent chords and the root, quality and extension keys'],
   perform: ['perform-light.webp', 'perform-dark.webp', 'The real Perform screen with large lyrics and chords for hands-free singing']
 };
 const heroScreen = $('#sw-hero-screen');
+const isDark = () => document.documentElement.dataset.theme === 'dark';
+const warmed = new Set();
+function warmFile(f) {
+  if (warmed.has(f)) return;
+  warmed.add(f);
+  const im = new Image(); im.decoding = 'async'; im.src = 'assets/' + f + V;
+  if (im.decode) im.decode().catch(() => {});
+}
+function warmTheme() { const i = isDark() ? 1 : 0; Object.values(screens).forEach(s => warmFile(s[i])); }
 function setScreen() {
-  const s = screens[screen], dark = document.documentElement.dataset.theme === 'dark';
-  heroScreen.src = 'assets/' + s[dark ? 1 : 0] + '?v=20260923';
+  const s = screens[screen];
+  heroScreen.src = 'assets/' + s[isDark() ? 1 : 0] + V;
   heroScreen.alt = s[2];
 }
 $$('[data-screen]').forEach(b => b.addEventListener('click', () => {
@@ -112,13 +128,14 @@ $$('[data-screen]').forEach(b => b.addEventListener('click', () => {
   setScreen();
 }));
 function toggleTheme() {
-  const dark = document.documentElement.dataset.theme !== 'dark';
+  const dark = !isDark();
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
   $('.sw-theme').setAttribute('aria-pressed', String(dark));
   $('.sw-theme').setAttribute('aria-label', dark ? 'Turn on light mode' : 'Turn on dark mode');
   $('#sw-night-switch').innerHTML = (dark ? 'Bring back the daylight' : 'Turn the lights down') + ' <span aria-hidden="true">↗</span>';
   document.querySelector('meta[name="theme-color"]').content = dark ? '#211f1c' : '#f5efe3';
   setScreen();
+  warmTheme();
   postBg();
   postHeight();
 }
@@ -136,9 +153,11 @@ $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
 }));
 
 /* REAL RHYME ENGINE ---------------------------------------------------------- */
-/* The app's actual phonetic engine (assets/rhyme-engine.js) + the same English /
-   Spanish dictionaries the live page has always used, loaded lazily so the hero
-   stays fast. Not the preview's 5.8 MB embedded copy. */
+/* The app's actual phonetic engine (assets/rhyme-engine.js) with the same English
+   and Spanish dictionaries. The opening verse arrives already coloured: the
+   engine's own result for it is baked in below, so most visitors never download
+   the 2 MB dictionary. It loads the moment someone touches the paper or picks a
+   language, and from then on every keystroke is coloured live. */
 (() => {
   const input = $('#sw-rhyme-input'), mirror = $('#sw-rhyme-mirror');
   const legend = $('.sw-rhyme-legend'), a11y = $('#sw-rhyme-accessible'), statusEl = $('#sw-rhyme-status');
@@ -149,18 +168,14 @@ $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
     en: input.value,
     es: 'Cae la noche sobre el mar\nTengo una canción por terminar\nGuardo tu voz en mi canción\nComo una luz en el corazón'
   };
-  let engine = null, lang = 'en', booted = false, timer;
+  /* engine.analyze(DEFAULTS.en) with the real engine and English dictionary, 2026-09-28 */
+  const BAKED_EN = [{start:27,end:32,group:0},{start:39,end:50,group:0},{start:59,end:65,group:0},{start:71,end:73,group:1},{start:92,end:96,group:1},{start:124,end:128,group:1}];
+  const bakedOk = DEFAULTS.en.slice(27, 32) === 'night' && DEFAULTS.en.slice(124, 128) === 'keep';
+  let engine = null, lang = 'en', booting = null, timer;
   const loaded = {};
   const ready = () => engine && engine.englishReady() && (lang === 'en' || engine.spanishReady());
 
-  function render() {
-    const text = input.value;
-    if (!ready()) {
-      mirror.textContent = text + (text.endsWith('\n') || text === '' ? '​' : '');
-      mirror.scrollTop = input.scrollTop;
-      return;
-    }
-    const spans = engine.analyze(text);
+  function paint(text, spans) {
     const frag = document.createDocumentFragment();
     const groups = new Map();
     let pos = 0;
@@ -180,7 +195,6 @@ $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
     if (text.endsWith('\n') || text === '') frag.appendChild(document.createTextNode('​'));
     mirror.replaceChildren(frag);
     mirror.scrollTop = input.scrollTop;
-
     if (legend) {
       legend.replaceChildren();
       [...groups].filter(([, w]) => w.length > 1).slice(0, 3).forEach(([group, words]) => {
@@ -196,8 +210,15 @@ $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
       a11y.textContent = fams.length ? 'Rhyme families: ' + fams.map(w => w.join(', ')).join('; ') : 'No repeated rhyme families yet.';
     }
   }
+  function render() {
+    const text = input.value;
+    if (ready()) return paint(text, engine.analyze(text));
+    if (lang === 'en' && bakedOk && text === DEFAULTS.en) return paint(text, BAKED_EN);
+    mirror.textContent = text + (text.endsWith('\n') || text === '' ? '​' : '');
+    mirror.scrollTop = input.scrollTop;
+  }
 
-  input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(render, 90); });
+  input.addEventListener('input', () => { boot(); clearTimeout(timer); timer = setTimeout(render, 90); });
   input.addEventListener('scroll', () => { mirror.scrollTop = input.scrollTop; });
 
   function loadDict(which) {
@@ -211,18 +232,24 @@ $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
     return loaded[which];
   }
   function boot() {
-    if (booted) return; booted = true;
-    if (paper) paper.classList.add('sw-rhyme-warming');
-    import('./assets/rhyme-engine.js?v=1')
-      .then(mod => { engine = mod; return loadDict('en'); })
-      .then(() => { if (paper) paper.classList.remove('sw-rhyme-warming'); })
-      .catch(() => {
-        if (paper) paper.classList.remove('sw-rhyme-warming');
-        if (statusEl) statusEl.textContent = 'The rhyme preview could not load. You can still write here.';
-      });
+    if (!booting) {
+      if (paper) paper.classList.add('sw-rhyme-warming');
+      booting = import('./assets/rhyme-engine.js?v=1')
+        .then(mod => { engine = mod; return loadDict('en'); })
+        .catch(() => { if (statusEl) statusEl.textContent = 'The rhyme preview could not load. You can still write here.'; })
+        .finally(() => { if (paper) paper.classList.remove('sw-rhyme-warming'); });
+    }
+    return booting;
   }
-  /* lazy: boot as the lyric box nears the viewport, or the moment it's touched */
-  scrollHandlers.push(() => { if (!booted && relTop(input) < vpH() + 900) boot(); });
+  /* the Spanish dictionary only loads for someone who picks ES */
+  function ensureLang() {
+    return boot().then(() => {
+      if (lang === 'es' && engine && !engine.spanishReady()) {
+        if (paper) paper.classList.add('sw-rhyme-warming');
+        return loadDict('es').finally(() => { if (paper) paper.classList.remove('sw-rhyme-warming'); });
+      }
+    }).then(render);
+  }
   input.addEventListener('focus', boot, { once: true });
   input.addEventListener('pointerdown', boot, { once: true });
 
@@ -234,11 +261,8 @@ $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
     input.value = DEFAULTS[lang] || input.value;
     input.lang = lang;
     if (title) title.textContent = lang === 'en' ? 'Velvet Night' : 'Una canción por terminar';
-    if (!booted) { boot(); }
-    else if (lang === 'es' && engine && !engine.spanishReady()) {
-      if (paper) paper.classList.add('sw-rhyme-warming');
-      loadDict('es').then(() => { if (paper) paper.classList.remove('sw-rhyme-warming'); });
-    } else render();
+    render();
+    ensureLang();
     input.focus();
   }));
   render();
@@ -341,19 +365,22 @@ if (volEl) volEl.addEventListener('input', e => { if (ctx) master.gain.setTarget
 document.addEventListener('visibilitychange', () => { if (document.hidden && playing) stopAudio(); });
 window.addEventListener('pagehide', stopAudio);
 
-/* SPEED PASS — nothing pops in. Every screenshot the hero can show (three screens,
-   both themes) is fetched and decoded up front, and every image on the page is
-   decoded off-thread as it arrives, so a scroll, a screen switch or a theme flip
-   never paints a blank. Lossless: the files themselves are untouched. */
+/* SPEED PASS: a light first paint, and nothing pops in later.
+   · The hero's first screen is preloaded in the head (same URL as the img).
+   · The other hero screens in the current theme are fetched once the page is
+     idle, or the moment someone reaches for the picker. The other theme's set
+     waits for a theme flip. On a phone that keeps about 350 KB out of the load.
+   · Every image decodes off the main thread as it arrives. Files are untouched. */
 (() => {
-  const warm = im => { if (im.decode) im.decode().catch(() => {}); };
-  const start = () => {
-    Object.values(screens).forEach(([light, dark]) => [light, dark].forEach(f => {
-      const im = new Image(); im.src = 'assets/' + f + '?v=20260923'; warm(im);
-    }));
-    $$('img').forEach(im => { if (im.complete) warm(im); else im.addEventListener('load', () => warm(im), { once: true }); });
-  };
+  const idle = cb => ('requestIdleCallback' in window) ? requestIdleCallback(cb, { timeout: 3000 }) : setTimeout(cb, 1500);
+  const start = () => idle(warmTheme);
   if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true });
+  const picker = $('.sw-screen-picker');
+  if (picker) ['pointerenter', 'touchstart', 'focusin'].forEach(ev => picker.addEventListener(ev, warmTheme, { once: true, passive: true }));
+  $$('img').forEach(im => {
+    const warm = () => { if (im.decode) im.decode().catch(() => {}); };
+    if (im.complete) warm(); else im.addEventListener('load', warm, { once: true });
+  });
 })();
 
 /* FAQ toggles change page height */
