@@ -143,12 +143,20 @@ $('.sw-theme').addEventListener('click', toggleTheme);
 $('#sw-night-switch').addEventListener('click', toggleTheme);
 
 /* PRICING -------------------------------------------------------------------- */
+const plans = {
+  year:  ['$29.99', 'a year',  'About $2.50 a month, billed annually.'],
+  month: ['$7.99',  'a month', 'Billed monthly. Cancel anytime.'],
+  life:  ['$79.99', 'once',    'One payment. No subscription.']
+};
 $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
-  const year = b.dataset.billing === 'year';
+  const plan = plans[b.dataset.billing] || plans.year;
   $$('[data-billing]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-  $('#sw-price').textContent = year ? '$29.99' : '$7.99';
-  $('#sw-period').textContent = year ? 'a year' : 'a month';
-  $('#sw-price-detail').textContent = year ? 'About $2.50 a month, billed annually.' : 'Billed monthly. Cancel anytime.';
+  $('#sw-price').textContent = plan[0];
+  $('#sw-period').textContent = plan[1];
+  $('#sw-price-detail').textContent = plan[2];
+  /* "Cancel anytime" belongs to the two subscriptions, never to Lifetime */
+  const cancel = $('#sw-cancel');
+  if (cancel) cancel.hidden = b.dataset.billing === 'life';
   postHeight();
 }));
 

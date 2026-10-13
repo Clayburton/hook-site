@@ -1925,6 +1925,10 @@ html[data-theme=dark] .sw-ipad { box-shadow:0 0 0 1px #4b443b, 18px 28px 50px va
   .sw-plan li { padding:5px 0; }
   .sw-plan-foot { font-size:13px; padding-top:14px; }
   .sw-billing button { font-size:13px; padding:7px 11px; }
+  /* three ways to pay: the name keeps one line, the choice sits under it at full width */
+  .sw-plan-title { flex-direction:column; align-items:stretch; gap:12px; }
+  .sw-billing { width:100%; }
+  .sw-billing button { flex:1; padding:10px 0; }
   .sw-pricing-note { font-size:13px; }
 
   /* faq */
