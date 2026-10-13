@@ -106,7 +106,7 @@ const screens = {
   helper:  ['helper-light.webp', 'helper-dark.webp', 'The real Chord Helper: G, Em, C and D in G major on Tine Piano, with rhythms to choose from and a Vary button'],
   lyrics:  ['recording-lyrics-light.webp', 'recording-lyrics-dark.webp', 'The real lyric editor with chords above words and rhymes colored by sound'],
   chords:  ['chords-light.webp', 'chords-dark.webp', 'The real chord picker: G over the first word, Falling, with a Letter or Roman switch, the Chord Helper chords, and the root, quality and extension keys'],
-  perform: ['perform-light.webp', 'perform-dark.webp', 'The real Perform screen: your words and chords up big, like a teleprompter']
+  perform: ['perform-light.webp', 'perform-dark.webp', 'The real Perform screen with large lyrics and chords for hands-free singing']
 };
 const heroScreen = $('#sw-hero-screen');
 const isDark = () => document.documentElement.dataset.theme === 'dark';
