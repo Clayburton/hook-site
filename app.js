@@ -98,7 +98,7 @@ $$('a[href*="notify.html"]').forEach(a => a.addEventListener('click', e => {
    stack layers, write the lyrics, set the chords, perform. Screens are warmed
    quietly after load (current theme only) and the other theme's set is warmed
    when the theme flips, so a tap never paints a blank screen. */
-const V = '?v=20260928';
+const V = '?v=20261013';
 let screen = 'lyrics';
 const screens = {
   record:  ['record-light.webp', 'record-dark.webp', 'The real New Recording screen: Velvet Night set to 76 BPM in 6/8, four bars, ready to record'],
