@@ -102,9 +102,10 @@ const V = '?v=20261013b';
 let screen = 'lyrics';
 const screens = {
   record:  ['record-light.webp', 'record-dark.webp', 'The real New Recording screen: Velvet Night set to 76 BPM in 6/8, four bars, ready to record'],
-  layers:  ['13-stack-layers.webp', 'D6-stack-vocals-dark.webp', 'The real app showing four recorded layers with individual waveforms and controls'],
+  layers:  ['13-stack-layers.webp', 'D6-stack-vocals-dark.webp', 'The real app showing five layers, two made with the helpers and three recorded, each with its own waveform and controls'],
+  helper:  ['helper-light.webp', 'helper-dark.webp', 'The real Chord Helper: G, Em, C and D in G major on Tine Piano, with rhythms to choose from and a Vary button'],
   lyrics:  ['recording-lyrics-light.webp', 'recording-lyrics-dark.webp', 'The real lyric editor with chords above words and rhymes colored by sound'],
-  chords:  ['chords-light.webp', 'chords-dark.webp', 'The real chord picker: Em over the word night, with recent chords and the root, quality and extension keys'],
+  chords:  ['chords-light.webp', 'chords-dark.webp', 'The real chord picker: G over the first word, Falling, with a Letter or Roman switch, the Chord Helper chords, and the root, quality and extension keys'],
   perform: ['perform-light.webp', 'perform-dark.webp', 'The real Perform screen with large lyrics and chords for hands-free singing']
 };
 const heroScreen = $('#sw-hero-screen');
