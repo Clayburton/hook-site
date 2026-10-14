@@ -1816,12 +1816,12 @@ html[data-theme=dark] .sw-ipad { box-shadow:0 0 0 1px #4b443b, 18px 28px 50px va
    print, "the desktop page shrunk"). A layout shaped for a phone: one idea per
    screen, nothing under 12px, rounder cards, swipe rows instead of tall stacks,
    and the explaining paragraphs stay on the desktop page. ---- */
-/* ALSO INSIDE: one quiet line for what the page has no section for. Room, not weight:
-   the tools' names sit in ink and the words around them in the muted tone, so the line
-   scans as a list without a bullet or a bold. */
+/* ALSO INSIDE: a quiet list for what the page has no section for, in Kelsy's store words.
+   Room, not weight: the names sit in ink and the words around them in the muted tone,
+   so it scans without bullets or bold. */
 .sw-also { margin-top:64px; padding-top:30px; border-top:1px solid var(--sw-line); display:grid; grid-template-columns:minmax(150px,.34fr) 1fr; gap:30px; align-items:baseline; }
-.sw-also .sw-also-line { max-width:35em; font-family:var(--sw-serif); font-size:clamp(20px,1.9vw,24px); line-height:1.5; color:var(--sw-muted); text-wrap:pretty; }
-.sw-also .sw-also-line b { font-weight:inherit; color:var(--sw-ink); }
+.sw-also .sw-also-list { list-style:none; margin:0; padding:0; display:grid; gap:12px; max-width:38em; font-family:var(--sw-serif); font-size:clamp(18px,1.6vw,21px); line-height:1.45; color:var(--sw-muted); }
+.sw-also .sw-also-list b { font-weight:inherit; color:var(--sw-ink); }
 
 @media (max-width:760px) {
   /* less to read: these explain or repeat on desktop and only add length here */
@@ -1934,7 +1934,7 @@ html[data-theme=dark] .sw-ipad { box-shadow:0 0 0 1px #4b443b, 18px 28px 50px va
   .sw-billing button { font-size:13px; padding:7px 11px; }
   /* also inside: stacked, with the same quiet rule above it */
   .sw-also { display:block; margin-top:36px; padding-top:22px; }
-  .sw-also .sw-also-line { margin-top:12px; font-size:18px; line-height:1.55; }
+  .sw-also .sw-also-list { margin-top:14px; gap:10px; font-size:17px; line-height:1.5; }
   /* three ways to pay: the name keeps one line, the choice sits under it at full width */
   .sw-plan-title { flex-direction:column; align-items:stretch; gap:12px; }
   .sw-billing { width:100%; }
