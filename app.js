@@ -44,9 +44,15 @@ function postBg() {
 }
 /* Release: name the host bar's button and its link. The host keeps "Notify me" until
    this arrives, and takes only an App Store or clayandkelsy.com link, as text. */
-const CTA = { label: 'App Store', href: 'https://apps.apple.com/app/apple-store/id6817031276?pt=129169856&ct=site&mt=8' };
+/* Apple's official badge everywhere. Apple's own service draws "Pre-order" until the release
+   date in the link and "Download" after it; the words read aloud switch at the same moment. */
+const RELEASED = Date.now() >= 1792738800000;
+const BADGE_ALT = RELEASED ? 'Download on the App Store' : 'Pre-order on the App Store';
+$$('.sw-badge img').forEach(i => { i.alt = BADGE_ALT; });
+const CTA = { label: 'App Store', alt: BADGE_ALT, href: 'https://apps.apple.com/app/apple-store/id6817031276?pt=129169856&ct=site&mt=8',
+  badge: 'https://toolbox.marketingtools.apple.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1792738800' };
 let ctaSent = false;
-function postCta() { if (!IS_EMBEDDED) return; parent.postMessage({ hook: 'cta', label: CTA.label, href: CTA.href }, '*'); ctaSent = true; }
+function postCta() { if (!IS_EMBEDDED) return; parent.postMessage({ hook: 'cta', label: CTA.label, href: CTA.href, badge: CTA.badge, alt: CTA.alt }, '*'); ctaSent = true; }
 postCta();
 /* Scroll to a section. Standalone the iframe scrolls itself. Embedded, the frame
    never scrolls and scrollIntoView does not reach the host, so the page hands the

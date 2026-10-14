@@ -1955,3 +1955,10 @@ html[data-theme=dark] .sw-ipad { box-shadow:0 0 0 1px #4b443b, 18px 28px 50px va
   .sw-footer nav { font-size:13px; }
   .sw-footer .sw-brand small { font-size:12px; }
 }
+
+/* APP STORE BADGE: Apple's own artwork, untouched, as the link itself (Clay, Oct 14) */
+.sw-badge { display:inline-flex; line-height:0; border-radius:9px; transition:opacity .2s ease; }
+.sw-badge:hover { opacity:.86; }
+.sw-badge:focus-visible { outline:2px solid var(--sw-coral); outline-offset:4px; }
+.sw-badge img { display:block; height:54px; width:auto; }
+.sw-badge-small img { height:40px; }
