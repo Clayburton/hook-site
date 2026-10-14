@@ -9,7 +9,8 @@
        page's theme, routes menu clicks (and the theme control) down into the page.
      · Smooth, inertial scrolling on desktop only (Lenis, loaded by the last script; phones skip it).
      · Hides the WordPress theme's own footer (#colophon) on this page only.
-     Message contract with the page (app.js): page then here {hook:"h",h} {hook:"bg",color} {hook:"go",href};
+     Message contract with the page (app.js): page then here {hook:"h",h} {hook:"bg",color} {hook:"go",href}
+     {hook:"cta",label,href} (release: renames the Notify me button; App Store or clayandkelsy.com links only);
      here then page {hookHost:"vp",top,vh,nav:true} {hookHost:"go",id} {hookHost:"theme"}.
      ============================================================ -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
@@ -56,6 +57,7 @@
   var ORIGIN = "https://clayburton.github.io";
   var frame = document.getElementById("hook-frame"), nav = document.getElementById("hook-nav");
   var themeBtn = nav.querySelector(".hn-theme");
+  var pill = nav.querySelector(".hn-pill"), pillHref = "";  /* "" means the button is still Notify me */
   /* load the page fresh every visit: this defeats the iframe cache that once served a stale copy */
   frame.src = ORIGIN + "/hook-site/?v=" + Date.now();
   var lastH = 0;
@@ -76,6 +78,13 @@
     }
     /* the page asks to open one of its own pages (Notify me): scroll up first, then swap the frame */
     if (e.data.hook === "go" && typeof e.data.href === "string" && /^[a-z0-9-]+\.html$/.test(e.data.href)) go(e.data.href);
+    /* release: the page names the button and its link; the label is set as text, and the link must go to the App Store or our own site */
+    if (e.data.hook === "cta" && typeof e.data.label === "string" && typeof e.data.href === "string") {
+      var label = e.data.label.trim(), href = e.data.href;
+      if (label && 33 > label.length && (href.indexOf("https://apps.apple.com/") === 0 || href.indexOf("https://clayandkelsy.com/") === 0)) {
+        pill.textContent = label; pill.href = href; pill.target = "_blank"; pill.rel = "noopener"; pillHref = href;
+      }
+    }
     /* section navigation: the frame never scrolls itself, so the page hands us the target's Y inside
        the document and we scroll this window to it, landing below the fixed bar */
     if (e.data.hook === "scrollto" && typeof e.data.y === "number") {
@@ -107,7 +116,7 @@
   });
   /* theme control: the page owns the theme; we just ask it to toggle and reflect the result via {hook:"bg"} */
   themeBtn.addEventListener("click", function () { if (frame.contentWindow) frame.contentWindow.postMessage({ hookHost: "theme" }, ORIGIN); });
-  nav.querySelector(".hn-pill").addEventListener("click", function (e) { e.preventDefault(); go("notify.html"); });
+  pill.addEventListener("click", function (e) { if (pillHref) return; e.preventDefault(); go("notify.html"); });
 })();
 </script>
 <script>
