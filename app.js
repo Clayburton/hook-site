@@ -42,6 +42,12 @@ function postBg() {
   const dark = document.documentElement.dataset.theme === 'dark';
   parent.postMessage({ hook: 'bg', color: THEME_BG[dark ? 'dark' : 'light'] }, '*');
 }
+/* Release: name the host bar's button and its link. The host keeps "Notify me" until
+   this arrives, and takes only an App Store or clayandkelsy.com link, as text. */
+const CTA = { label: 'Download', href: 'https://apps.apple.com/us/app/songwriting-by-clay-and-kelsy/id6817031276' };
+let ctaSent = false;
+function postCta() { if (!IS_EMBEDDED) return; parent.postMessage({ hook: 'cta', label: CTA.label, href: CTA.href }, '*'); ctaSent = true; }
+postCta();
 /* Scroll to a section. Standalone the iframe scrolls itself. Embedded, the frame
    never scrolls and scrollIntoView does not reach the host, so the page hands the
    host the target's Y and the host scrolls the outer window. */
@@ -68,6 +74,7 @@ if (IS_EMBEDDED) {
     host.top = d.top;
     if (typeof d.vh === 'number' && d.vh > 0) host.vh = d.vh;
     host.ready = true;
+    if (!ctaSent) postCta();
     tick();
   });
 } else {
