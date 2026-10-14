@@ -295,7 +295,7 @@ $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
    back onto its start, so the loop has no seam. Loaded on the first play (about 1 MB);
    never records or asks for a microphone. */
 const STEMS = ['mixer-1-wurli.m4a', 'mixer-2-bass.m4a', 'mixer-3-kick.m4a', 'mixer-4-vocals.m4a'];
-const STEM_V = '?v=20261014c';
+const STEM_V = '?v=20261014d';
 const BPM = 93, BEATS_PER_BAR = 4, LOOP_SEC = 910452 / 44100;
 /* AAC carries 2112 frames of encoder delay. Browsers that read the file's own trim
    info decode exactly one loop; one that does not keeps the delay, so skip it. */
