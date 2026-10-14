@@ -10,7 +10,8 @@
      · Smooth, inertial scrolling on desktop only (Lenis, loaded by the last script; phones skip it).
      · Hides the WordPress theme's own footer (#colophon) on this page only.
      Message contract with the page (app.js): page then here {hook:"h",h} {hook:"bg",color} {hook:"go",href}
-     {hook:"cta",label,href} (release: renames the Notify me button; App Store or clayandkelsy.com links only);
+     {hook:"cta",label,href,badge,alt} (renames the Notify me button, or shows Apple's official badge from Apple's own badge service;
+     App Store or clayandkelsy.com links only);
      here then page {hookHost:"vp",top,vh,nav:true} {hookHost:"go",id} {hookHost:"theme"}.
      ============================================================ -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
@@ -34,6 +35,9 @@
 #hook-nav .hn-pill{cursor:pointer;font-weight:800;font-size:15px;color:#FDF8EF;background:#F04E3C;border-radius:999px;padding:.62em 1.2em;white-space:nowrap;transition:background-color .2s ease}
 #hook-nav .hn-pill:hover{background:#D83E2C;color:#FDF8EF}
 #hook-nav.dark .hn-pill{background:#FA5E48;color:#FDF8EF}
+#hook-nav .hn-pill.hn-badge,#hook-nav.dark .hn-pill.hn-badge,#hook-nav .hn-pill.hn-badge:hover{background:none;padding:0;border-radius:7px;line-height:0}
+#hook-nav .hn-pill.hn-badge:hover{opacity:.86}
+#hook-nav .hn-pill.hn-badge img{height:40px;width:auto;display:block}
 @media (max-width:640px){#hook-nav .hn-links,#hook-nav .hn-name small{display:none}#hook-nav{gap:14px}#hook-nav .hn-theme{margin-left:auto}}
 @media (prefers-reduced-motion:reduce){#hook-nav{transition:none}#hook-nav .hn-pill{transition:none}}
 </style>
@@ -83,6 +87,12 @@
       var label = e.data.label.trim(), href = e.data.href;
       if (label && 33 > label.length && (href.indexOf("https://apps.apple.com/") === 0 || href.indexOf("https://clayandkelsy.com/") === 0)) {
         pill.textContent = label; pill.href = href; pill.target = "_blank"; pill.rel = "noopener"; pillHref = href;
+        /* Apple's official badge, only from Apple's own badge service, with its words for screen readers */
+        var badge = e.data.badge, alt = typeof e.data.alt === "string" ? e.data.alt.trim() : "";
+        if (typeof badge === "string" && badge.indexOf("https://toolbox.marketingtools.apple.com/api/badges/") === 0 && alt && 41 > alt.length) {
+          var img = document.createElement("img"); img.src = badge; img.alt = alt; img.height = 40;
+          pill.textContent = ""; pill.appendChild(img); pill.classList.add("hn-badge");
+        }
       }
     }
     /* section navigation: the frame never scrolls itself, so the page hands us the target's Y inside
