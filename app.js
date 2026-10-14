@@ -290,68 +290,81 @@ $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
   render();
 })();
 
-/* PLAYABLE MIXER — synthesized illustrative arrangement, never records or asks
-   for a microphone. */
-$$('[data-wave]').forEach(w => {
-  const k = Number(w.dataset.wave);
-  for (let i = 0; i < 88; i++) {
-    const bar = document.createElement('i');
-    bar.style.setProperty('--bar', `${5 + Math.abs(Math.sin(i * (.54 + k * .08)) * Math.cos(i * .31 + k)) * 31}px`);
-    w.append(bar);
-  }
-});
-let ctx, master, gains, noiseBuffer, playing = false, timer2, step = 0, nextTime = 0, bpm = 84, beatTimeouts = [], nodes = new Set();
-const activeTrk = [true, true, true, true], trackNames = ['Keys', 'Bass', 'Melody', 'Percussion'];
+/* PLAYABLE MIXER: four real stems from a song idea Clay recorded in Songwriting (Oct 14),
+   8 bars of 4/4 at 93 BPM. Each file is exactly one loop, with its effect tail folded
+   back onto its start, so the loop has no seam. Loaded on the first play (about 1 MB);
+   never records or asks for a microphone. */
+const STEMS = ['mixer-1-wurli.m4a', 'mixer-2-bass.m4a', 'mixer-3-kick.m4a', 'mixer-4-vocals.m4a'];
+const STEM_V = '?v=20261014b';
+const BPM = 93, BEATS_PER_BAR = 4, LOOP_SEC = 910452 / 44100;
+/* AAC carries 2112 frames of encoder delay. Browsers that read the file's own trim
+   info decode exactly one loop; one that does not keeps the delay, so skip it. */
+const AAC_DELAY = 2112 / 44100;
+/* the real waveform of each stem, 176 points (0 to 100), drawn to fit each row */
+const PEAKS = [
+  [34,34,68,56,42,38,33,28,80,69,49,42,31,37,45,35,40,29,25,40,36,27,33,28,41,33,28,42,32,35,70,48,35,51,51,72,74,69,90,57,55,74,73,68,60,49,59,63,51,51,37,33,62,61,57,53,26,47,51,51,58,31,24,59,61,60,39,34,47,50,45,49,27,20,74,71,69,81,69,87,89,61,77,74,67,94,70,51,69,71,74,82,36,39,33,29,38,31,28,31,22,41,41,24,29,24,19,49,40,28,38,30,45,38,34,63,54,54,88,57,76,70,71,78,72,62,75,68,67,81,82,65,70,59,65,71,53,57,39,36,43,44,48,38,27,33,32,33,39,25,22,32,25,42,35,28,70,69,55,57,50,54,89,80,85,78,72,99,100,69,80,69,65,97,86,70],
+  [86,61,43,60,64,52,44,33,23,35,44,46,39,22,25,28,29,25,19,12,14,18,19,17,11,11,13,14,14,10,7,8,36,63,57,46,40,48,40,41,27,23,23,24,85,89,76,51,56,72,71,65,44,40,45,57,53,50,32,37,37,39,36,26,18,22,25,27,26,19,15,20,19,18,15,9,31,83,98,93,59,45,61,63,65,55,37,10,70,100,94,66,44,59,63,58,51,43,27,44,58,56,50,19,29,32,31,27,23,16,16,22,23,20,14,12,15,17,15,12,48,50,42,59,57,35,35,38,37,28,21,55,79,79,84,88,61,47,59,66,64,55,48,34,46,61,61,51,33,29,32,35,32,28,14,20,27,28,24,17,14,17,17,17,20,59,59,78,97,98,67,56,69,63,73,80],
+  [86,21,14,9,4,97,26,17,11,6,7,99,21,14,9,4,98,26,17,11,6,3,98,21,14,9,4,98,26,17,11,6,3,99,21,14,9,4,98,26,17,11,6,3,99,21,14,9,4,98,26,16,11,6,3,100,21,14,9,4,99,26,17,11,6,3,100,21,14,9,4,98,26,17,11,6,3,100,21,14,9,4,99,26,17,11,6,4,100,21,14,9,4,98,26,17,11,6,3,100,21,14,9,4,97,26,17,11,6,3,99,21,14,9,4,99,26,17,11,6,3,100,21,14,9,4,98,26,17,11,6,3,100,21,14,9,4,98,26,17,11,6,3,100,21,14,9,4,98,26,17,11,6,3,100,21,14,9,4,98,26,17,11,6,5,99,21,14,9,4,98,26,17,11,6,3],
+  [24,27,29,28,29,31,30,29,36,34,32,66,58,58,59,58,42,47,45,45,45,44,44,38,32,23,21,17,19,18,20,19,41,51,59,64,69,58,50,56,54,59,59,49,36,44,35,31,28,27,28,30,25,24,26,95,59,52,53,44,36,40,41,38,36,25,33,21,27,31,24,96,100,70,61,50,45,37,71,69,54,60,50,50,46,46,65,51,43,22,25,26,31,33,32,32,32,33,70,77,76,64,57,73,40,67,85,54,36,52,43,32,32,26,31,33,24,23,25,30,68,87,58,57,61,47,61,54,43,47,67,51,47,25,22,22,43,50,46,29,36,38,40,77,78,81,70,75,86,74,81,98,71,73,70,67,58,54,51,56,42,47,46,57,71,83,93,79,65,93,52,61,79,75,54,30]
+];
+function drawWaves() {
+  $$('[data-wave]').forEach(w => {
+    const p = PEAKS[Number(w.dataset.wave)]; if (!p) return;
+    const n = Math.max(12, Math.min(88, Math.floor((w.clientWidth || 360) / 5)));
+    if (w.childElementCount === n) return;
+    w.textContent = '';
+    for (let i = 0; i !== n; i++) {
+      const a = Math.floor(i * p.length / n), b = Math.max(a + 1, Math.floor((i + 1) * p.length / n));
+      const v = Math.max(...p.slice(a, b));
+      const bar = document.createElement('i');
+      bar.style.setProperty('--bar', `${4 + v * 0.32}px`);
+      w.append(bar);
+    }
+  });
+}
+drawWaves();
+let waveTimer = 0;
+addEventListener('resize', () => { clearTimeout(waveTimer); waveTimer = setTimeout(drawWaves, 150); });
+
+let ctx, master, gains, buffers = null, loading = null, playing = false, sources = [], t0 = 0, beatTimer = 0, lastBeat = -1;
+const activeTrk = [true, true, true, true], trackNames = ['Wurli', 'Bass', 'Kick', 'Vocals'];
 const mixer = $('#sw-mixer'), play = $('#sw-play'), statusA = $('#sw-audio-status');
 function initAudio() {
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC) throw Error('Audio is unavailable in this browser');
   ctx = new AC(); master = ctx.createGain(); master.gain.value = Number($('#sw-volume').value) / 100; master.connect(ctx.destination);
   gains = activeTrk.map(on => { const g = ctx.createGain(); g.gain.value = on ? 1 : 0; g.connect(master); return g; });
-  noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * .12, ctx.sampleRate);
-  const data = noiseBuffer.getChannelData(0); for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
 }
-function tone(midi, time, duration, volume, layer, type = 'sine') {
-  const osc = ctx.createOscillator(), env = ctx.createGain(); osc.type = type;
-  osc.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
-  env.gain.setValueAtTime(0, time); env.gain.linearRampToValueAtTime(volume, time + .014); env.gain.exponentialRampToValueAtTime(.0001, time + duration);
-  osc.connect(env); env.connect(gains[layer]); osc.start(time); osc.stop(time + duration + .03);
-  nodes.add(osc); osc.onended = () => { nodes.delete(osc); osc.disconnect(); env.disconnect(); };
-}
-function percussion(time, kick) {
-  if (kick) {
-    const osc = ctx.createOscillator(), g = ctx.createGain();
-    osc.frequency.setValueAtTime(90, time); osc.frequency.exponentialRampToValueAtTime(42, time + .14);
-    g.gain.setValueAtTime(.24, time); g.gain.exponentialRampToValueAtTime(.0001, time + .24);
-    osc.connect(g); g.connect(gains[3]); osc.start(time); osc.stop(time + .25);
-    nodes.add(osc); osc.onended = () => { nodes.delete(osc); osc.disconnect(); g.disconnect(); };
-  } else {
-    const n = ctx.createBufferSource(), g = ctx.createGain(), filter = ctx.createBiquadFilter();
-    n.buffer = noiseBuffer; filter.type = 'highpass'; filter.frequency.value = 6200;
-    g.gain.setValueAtTime(.045, time); g.gain.exponentialRampToValueAtTime(.0001, time + .08);
-    n.connect(filter); filter.connect(g); g.connect(gains[3]); n.start(time);
-    nodes.add(n); n.onended = () => { nodes.delete(n); n.disconnect(); filter.disconnect(); g.disconnect(); };
+function loadStems() {
+  if (!loading) {
+    loading = Promise.all(STEMS.map(f => fetch('assets/mixer/' + f + STEM_V)
+      .then(r => { if (!r.ok) throw Error(f); return r.arrayBuffer(); })
+      .then(data => new Promise((ok, bad) => ctx.decodeAudioData(data, ok, bad)))))
+      .then(b => { buffers = b; return b; })
+      .catch(e => { loading = null; throw e; });
   }
+  return loading;
 }
-const chords = [[48, 55, 59, 64], [45, 52, 55, 60], [41, 48, 52, 57], [43, 50, 55, 59]];
-const melody = [76, null, 79, null, 74, null, 72, null, 76, null, 72, null, 71, null, 69, null, 72, null, 76, null, 79, null, 76, null, 74, null, 71, null, 67, null, 71, null];
-function schedule() {
-  while (playing && nextTime < ctx.currentTime + .13) {
-    const s = step % 32, beat = 60 / bpm, chord = chords[Math.floor(s / 8)];
-    if (s % 8 === 0) { chord.forEach((note, i) => tone(note, nextTime + i * .018, beat * 3.9, .045, 0, 'triangle')); }
-    if (s % 4 === 0) tone(chord[0] - 12, nextTime, beat * 1.85, .19, 1);
-    if (melody[s] !== null) tone(melody[s], nextTime, beat * .85, .065, 2);
-    percussion(nextTime, s % 4 === 0);
-    if (s % 2 === 0) {
-      const n = (s / 2) % 4;
-      const id = setTimeout(() => { if (playing) $$('.sw-beats i').forEach((el, i) => el.classList.toggle('active', i === n)); beatTimeouts = beatTimeouts.filter(x => x !== id); }, Math.max(0, (nextTime - ctx.currentTime) * 1000));
-      beatTimeouts.push(id);
-    }
-    nextTime += beat / 2; step++;
-  }
+function tickBeat() {
+  const t = ctx.currentTime - t0; if (0 > t) return;
+  const beat = Math.floor((t % LOOP_SEC) / (60 / BPM)) % BEATS_PER_BAR;
+  if (beat === lastBeat) return;
+  lastBeat = beat;
+  $$('.sw-beats i').forEach((el, i) => el.classList.toggle('active', i === beat));
+}
+function startLoop() {
+  const when = ctx.currentTime + 0.08;
+  sources = buffers.map((b, i) => {
+    const s = ctx.createBufferSource(), off = (b.duration - LOOP_SEC) > 0.03 ? AAC_DELAY : 0;
+    s.buffer = b; s.loop = true; s.loopStart = off; s.loopEnd = off + LOOP_SEC;
+    s.connect(gains[i]); s.start(when, off);
+    return s;
+  });
+  t0 = when; lastBeat = -1;
+  beatTimer = setInterval(tickBeat, 25);
 }
 function stopAudio() {
-  playing = false; clearInterval(timer2); beatTimeouts.forEach(clearTimeout); beatTimeouts = [];
-  for (const n of nodes) { try { n.stop(); } catch {} } nodes.clear();
+  playing = false; clearInterval(beatTimer);
+  for (const s of sources) { try { s.stop(); } catch {} s.disconnect(); } sources = [];
   if (mixer) mixer.dataset.playing = 'false';
   if (play) { play.setAttribute('aria-pressed', 'false'); play.setAttribute('aria-label', 'Play demo loop'); play.innerHTML = '<span aria-hidden="true">▶</span>'; }
   $$('.sw-beats i').forEach(i => i.classList.remove('active'));
@@ -359,17 +372,22 @@ function stopAudio() {
 }
 if (play) {
   let starting = false;
+  /* start fetching the moment someone reaches for play, so the first press is quick */
+  const warm = () => { try { if (!ctx) initAudio(); loadStems().catch(() => {}); } catch {} };
+  play.addEventListener('pointerenter', warm, { once: true });
+  play.addEventListener('touchstart', warm, { once: true, passive: true });
+  play.addEventListener('focus', warm, { once: true });
   play.addEventListener('click', async () => {
     if (playing) { stopAudio(); return; }
     if (starting) return; starting = true;
     try {
       if (!ctx) initAudio(); await ctx.resume();
-      playing = true; step = 0; nextTime = ctx.currentTime + .06;
-      mixer.dataset.playing = 'true'; mixer.style.setProperty('--loop-time', `${60 / bpm * 16}s`);
+      if (!buffers) { statusA.textContent = 'Loading the song…'; await loadStems(); }
+      playing = true; startLoop();
+      mixer.dataset.playing = 'true'; mixer.style.setProperty('--loop-time', `${LOOP_SEC}s`);
       play.setAttribute('aria-pressed', 'true'); play.setAttribute('aria-label', 'Pause demo loop'); play.innerHTML = '<span aria-hidden="true">Ⅱ</span>';
       statusA.textContent = 'Looping. Tap any layer to bring it in or out.';
-      schedule(); timer2 = setInterval(schedule, 25);
-    } catch (e) { statusA.textContent = 'Sound couldn’t start. Try another browser or press play again.'; }
+    } catch (e) { playing = false; statusA.textContent = 'Sound couldn’t start. Try another browser or press play again.'; }
     finally { starting = false; }
   });
 }
@@ -380,8 +398,6 @@ $$('[data-track]').forEach(b => b.addEventListener('click', () => {
   b.querySelector('.sw-track-state').textContent = activeTrk[i] ? 'On' : 'Off';
   if (ctx) gains[i].gain.setTargetAtTime(activeTrk[i] ? 1 : 0, ctx.currentTime, .025);
 }));
-const tempoEl = $('#sw-tempo');
-if (tempoEl) tempoEl.addEventListener('input', e => { bpm = Number(e.target.value); $('#sw-bpm').textContent = `${bpm} BPM`; if (mixer) mixer.style.setProperty('--loop-time', `${60 / bpm * 16}s`); });
 const volEl = $('#sw-volume');
 if (volEl) volEl.addEventListener('input', e => { if (ctx) master.gain.setTargetAtTime(Number(e.target.value) / 100, ctx.currentTime, .03); });
 document.addEventListener('visibilitychange', () => { if (document.hidden && playing) stopAudio(); });

@@ -600,6 +600,11 @@ html[data-theme=dark] .sw-button {
   min-width:47px;
   font:10px var(--sw-mono)
 }
+.sw-mixer-bottom .sw-tempo-fixed {
+  display:flex;
+  align-items:center;
+  gap:12px
+}
 .sw-mixer-bottom input {
   width:90px;
   accent-color:var(--sw-coral);
@@ -1506,9 +1511,6 @@ to {
 .sw-wave i {
   min-width:2px
 }
-.sw-wave i:nth-child(n+23) {
-  display:none
-}
 .sw-mixer-bottom {
   gap:8px;
   font-size:9px
@@ -1874,7 +1876,6 @@ html[data-theme=dark] .sw-ipad { box-shadow:0 0 0 1px #4b443b, 18px 28px 50px va
   .sw-track-name { font-size:14px; }
   .sw-track small { font-size:12px; }
   .sw-track-state { font-size:12px; }
-  .sw-wave i:nth-child(n+19) { display:none; }
   .sw-mixer-bottom, .sw-mixer-bottom #sw-audio-status { font-size:13px; }
   .sw-demo-note { font-size:12px; }
   /* the three feature notes: a swipe row, not a tall stack */

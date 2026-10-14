@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/recording-lyrics-light.webp?v=20261013b">
 <link rel="preload" as="image" href="assets/songwriting-mark.webp">
-<link rel="stylesheet" href="styles.css?v=a10">
+<link rel="stylesheet" href="styles.css?v=a9">
 </head>
 <body class="sw-site">
 <noscript><style>.sw-lyric-editor textarea{color:var(--sw-ink);-webkit-text-fill-color:var(--sw-ink)}.sw-lyric-editor>div{display:none}.sw-mixer,.sw-screen-picker,.sw-theme,.sw-billing,.sw-language,#sw-night-switch{display:none}</style><p style="padding:12px 24px;text-align:center">Turn on JavaScript to try the sound, rhyme, and theme demos.</p></noscript>
@@ -51,13 +51,13 @@
 <div class="sw-mixer" id="sw-mixer">
 <div class="sw-mixer-top"><div><p class="sw-eyebrow">A little loop to play with</p><h3>Something like a beginning.</h3></div><div class="sw-transport"><button id="sw-play" type="button" aria-label="Play demo loop" aria-pressed="false"><span aria-hidden="true">▶</span></button><div class="sw-beats" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="sw-meter">4/4</span></div></div>
 <div class="sw-tracks">
-<button class="sw-track" style="--track:#b75f49" data-track="0" aria-pressed="true" aria-label="Keys layer, on; click to mute"><span class="sw-track-number">01</span><span class="sw-track-name">The first thought<small>Soft keys</small></span><span class="sw-wave" data-wave="0" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
-<button class="sw-track" style="--track:#b58836" data-track="1" aria-pressed="true" aria-label="Bass layer, on; click to mute"><span class="sw-track-number">02</span><span class="sw-track-name">A little grounding<small>Round bass</small></span><span class="sw-wave" data-wave="1" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
-<button class="sw-track" style="--track:#667f57" data-track="2" aria-pressed="true" aria-label="Melody layer, on; click to mute"><span class="sw-track-number">03</span><span class="sw-track-name">The thing you hum<small>Plucked melody</small></span><span class="sw-wave" data-wave="2" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
-<button class="sw-track" style="--track:#9b668e" data-track="3" aria-pressed="true" aria-label="Percussion layer, on; click to mute"><span class="sw-track-number">04</span><span class="sw-track-name">Something to lean on<small>Soft percussion</small></span><span class="sw-wave" data-wave="3" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
+<button class="sw-track" style="--track:#b75f49" data-track="0" aria-pressed="true" aria-label="Wurli layer, on; click to mute"><span class="sw-track-number">01</span><span class="sw-track-name">The first thought<small>Wurli</small></span><span class="sw-wave" data-wave="0" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
+<button class="sw-track" style="--track:#b58836" data-track="1" aria-pressed="true" aria-label="Bass layer, on; click to mute"><span class="sw-track-number">02</span><span class="sw-track-name">A little grounding<small>Bass</small></span><span class="sw-wave" data-wave="1" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
+<button class="sw-track" style="--track:#667f57" data-track="2" aria-pressed="true" aria-label="Kick layer, on; click to mute"><span class="sw-track-number">03</span><span class="sw-track-name">Something to lean on<small>Kick</small></span><span class="sw-wave" data-wave="2" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
+<button class="sw-track" style="--track:#9b668e" data-track="3" aria-pressed="true" aria-label="Vocals layer, on; click to mute"><span class="sw-track-number">04</span><span class="sw-track-name">The thing you hum<small>Vocals</small></span><span class="sw-wave" data-wave="3" aria-hidden="true"></span><span class="sw-track-state">On</span></button>
 </div>
-<div class="sw-mixer-bottom"><label>Tempo <input id="sw-tempo" type="range" min="60" max="120" value="84"><output id="sw-bpm" for="sw-tempo">84 BPM</output></label><span id="sw-audio-status" role="status">Press play. Tap a layer to make it yours.</span><label class="sw-volume">Volume <input id="sw-volume" type="range" min="0" max="100" value="55" aria-label="Demo volume"></label></div>
-</div><p class="sw-demo-note">An illustrative sound demo, made for this page. Your microphone stays off.</p>
+<div class="sw-mixer-bottom"><span class="sw-tempo-fixed">Tempo <output id="sw-bpm">93 BPM</output></span><span id="sw-audio-status" role="status">Press play. Tap a layer to make it yours.</span><label class="sw-volume">Volume <input id="sw-volume" type="range" min="0" max="100" value="55" aria-label="Demo volume"></label></div>
+</div><p class="sw-demo-note">A real song idea, recorded in Songwriting. Your microphone stays off.</p>
 <div class="sw-feature-row"><article><span>01 · Set the feel</span><h3>Trust your timing.</h3><p>Pick a tempo, a time signature, and your bars. Or go Endless and just hit record.</p></article><article><span>02 · Build it up</span><h3>Make room for the harmonies.</h3><p>Stack up to 12 layers. Every layer has its own waveform, volume, mute, and FX.</p></article><article><span>03 · Keep it together</span><h3>Your headphones are welcome.</h3><p>Wired or Bluetooth. The app measures the delay and remembers your gear, so the layers land in time.</p></article></div>
 </div></section>
 <!-- 05 / RHYMES: REUSES THE EXISTING SITE'S REAL ENGINE -->
@@ -81,5 +81,5 @@ Secrets that the sycamores keep</textarea></div><p id="sw-rhyme-status" class="s
 <!-- 11 / FINAL INVITATION -->
 <section class="sw-finale sw-wrap"><p class="sw-eyebrow"><span class="sw-dot"></span> On the App Store</p><h2>Whatever you’re chasing,<br><em>we hope you catch it.</em></h2><a class="sw-badge" href="https://apps.apple.com/app/apple-store/id6817031276?pt=129169856&amp;ct=site&amp;mt=8" target="_blank" rel="noopener"><img src="https://toolbox.marketingtools.apple.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1792738800" alt="Pre-order on the App Store" width="159" height="54" decoding="async"></a><p>The whole app, with room for three recordings.<br>Made by songwriters for songwriters. Free to start.</p><div class="sw-finale-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div></section>
 </main><footer class="sw-footer sw-wrap"><a class="sw-brand" href="#top"><img src="assets/songwriting-mark.webp" width="28" height="29" alt=""><span>Songwriting<small>by Clay and Kelsy</small></span></a><p>Made to honor your creative time.</p><nav aria-label="Footer"><a href="https://clayandkelsy.com/" target="_blank" rel="noopener">Clay & Kelsy ↗</a><a href="#promise">Our promise</a></nav></footer>
-<script src="app.js?v=a15" defer></script>
+<script src="app.js?v=a13" defer></script>
 </body></html>
