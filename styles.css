@@ -1820,8 +1820,10 @@ html[data-theme=dark] .sw-ipad { box-shadow:0 0 0 1px #4b443b, 18px 28px 50px va
    the tools' names sit in ink and the words around them in the muted tone, so the line
    scans as a list without a bullet or a bold. */
 .sw-also { margin-top:64px; padding-top:30px; border-top:1px solid var(--sw-line); display:grid; grid-template-columns:minmax(150px,.34fr) 1fr; gap:30px; align-items:baseline; }
-.sw-also .sw-also-line { max-width:35em; font-family:var(--sw-serif); font-size:clamp(20px,1.9vw,24px); line-height:1.5; color:var(--sw-muted); text-wrap:pretty; }
-.sw-also .sw-also-line b { font-weight:inherit; color:var(--sw-ink); }
+.sw-also .sw-also-list { list-style:none; margin:0; padding:0; display:grid; gap:12px; max-width:38em; font-family:var(--sw-serif); font-size:clamp(18px,1.6vw,21px); line-height:1.45; color:var(--sw-muted); }
+.sw-also .sw-also-list b { font-weight:inherit; color:var(--sw-ink); }
+.sw-also .sw-also-list a { color:var(--sw-ink); text-decoration:underline; text-decoration-color:var(--sw-line); text-decoration-thickness:1px; text-underline-offset:3px; }
+.sw-also .sw-also-list a:hover { text-decoration-color:currentColor; }
 
 @media (max-width:760px) {
   /* less to read: these explain or repeat on desktop and only add length here */
