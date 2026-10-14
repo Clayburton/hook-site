@@ -11,7 +11,7 @@
      · Hides the WordPress theme's own footer (#colophon) on this page only.
      Message contract with the page (app.js): page then here {hook:"h",h} {hook:"bg",color} {hook:"go",href}
      {hook:"cta",label,href,badge,alt} (renames the Notify me button, or shows Apple's official badge from Apple's own badge service;
-     App Store or clayandkelsy.com links only);
+     App Store or clayandkelsy.com links only); {hook:"nav",links:[{label,id}]} (names the section links, so renaming them needs no paste);
      here then page {hookHost:"vp",top,vh,nav:true} {hookHost:"go",id} {hookHost:"theme"}.
      ============================================================ -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
@@ -43,7 +43,7 @@
 </style>
 <div id="hook-nav" aria-label="Songwriting menu">
   <a class="hn-brand" href="https://clayandkelsy.com/songwriting/" data-go="#top"><img class="hn-mark" src="https://clayburton.github.io/hook-site/assets/songwriting-mark.webp?v=20260916" alt="" width="168" height="176"><span class="hn-name">Songwriting<small>by Clay and Kelsy</small></span></a>
-  <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/songwriting/#loop" data-go="#loop">Loop</a><a href="https://clayandkelsy.com/songwriting/#words" data-go="#words">Words</a><a href="https://clayandkelsy.com/songwriting/#keep" data-go="#keep">Keep it</a><a href="https://clayandkelsy.com/songwriting/#pricing" data-go="#pricing">Pricing</a></nav>
+  <nav class="hn-links" aria-label="Sections"><a href="https://clayandkelsy.com/songwriting/#loop" data-go="#loop">Loop</a><a href="https://clayandkelsy.com/songwriting/#words" data-go="#words">Lyrics</a><a href="https://clayandkelsy.com/songwriting/#keep" data-go="#keep">Share</a><a href="https://clayandkelsy.com/songwriting/#pricing" data-go="#pricing">Pricing</a><a href="https://clayandkelsy.com/songwriting/#questions" data-go="#questions">Questions</a></nav>
   <button class="hn-theme" type="button" aria-label="Toggle dark mode" aria-pressed="false">&#9680;</button>
   <a class="hn-pill" href="https://clayburton.github.io/hook-site/notify.html">Notify me</a>
 </div>
@@ -95,6 +95,14 @@
         }
       }
     }
+    /* the page names the section links: plain text labels, and each link only to a section of this page */
+    if (e.data.hook === "nav" && Array.isArray(e.data.links) && e.data.links.length > 0 && 8 > e.data.links.length) {
+      var ok = e.data.links.every(function (l) { return l && typeof l.label === "string" && typeof l.id === "string" && /^#[a-z0-9-]{1,30}$/.test(l.id) && l.label.trim() && 21 > l.label.trim().length; });
+      if (ok) {
+        var box = nav.querySelector(".hn-links"); box.textContent = "";
+        e.data.links.forEach(function (l) { var a = document.createElement("a"); a.href = "https://clayandkelsy.com/songwriting/" + l.id; a.setAttribute("data-go", l.id); a.textContent = l.label.trim(); box.appendChild(a); });
+      }
+    }
     /* section navigation: the frame never scrolls itself, so the page hands us the target's Y inside
        the document and we scroll this window to it, landing below the fixed bar */
     if (e.data.hook === "scrollto" && typeof e.data.y === "number") {
@@ -117,12 +125,13 @@
   frame.addEventListener("load", postViewport);
   postViewport();
   /* menu clicks: sections glide inside the page (it scrolls this window); the brand goes to the top */
-  nav.querySelectorAll("[data-go]").forEach(function (a) {
-    a.addEventListener("click", function (e) {
-      e.preventDefault();
-      if (a.getAttribute("data-go") === "#top") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
-      frame.contentWindow.postMessage({ hookHost: "go", id: a.getAttribute("data-go") }, ORIGIN);
-    });
+  /* one listener for the whole bar, so links the page renames keep working */
+  nav.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest("[data-go]") : null;
+    if (!a || !nav.contains(a)) return;
+    e.preventDefault();
+    if (a.getAttribute("data-go") === "#top") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    frame.contentWindow.postMessage({ hookHost: "go", id: a.getAttribute("data-go") }, ORIGIN);
   });
   /* theme control: the page owns the theme; we just ask it to toggle and reflect the result via {hook:"bg"} */
   themeBtn.addEventListener("click", function () { if (frame.contentWindow) frame.contentWindow.postMessage({ hookHost: "theme" }, ORIGIN); });
