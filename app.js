@@ -52,7 +52,14 @@ $$('.sw-badge img').forEach(i => { i.alt = BADGE_ALT; });
 const CTA = { label: 'App Store', alt: BADGE_ALT, href: 'https://apps.apple.com/app/apple-store/id6817031276?pt=129169856&ct=site&mt=8',
   badge: 'https://toolbox.marketingtools.apple.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1792738800' };
 let ctaSent = false;
-function postCta() { if (!IS_EMBEDDED) return; parent.postMessage({ hook: 'cta', label: CTA.label, href: CTA.href, badge: CTA.badge, alt: CTA.alt }, '*'); ctaSent = true; }
+/* the bar's section links, named here so the WordPress block never needs a paste to rename them */
+const NAV = [['Loop', '#loop'], ['Lyrics', '#words'], ['Share', '#keep'], ['Pricing', '#pricing'], ['Questions', '#questions']];
+function postCta() {
+  if (!IS_EMBEDDED) return;
+  parent.postMessage({ hook: 'cta', label: CTA.label, href: CTA.href, badge: CTA.badge, alt: CTA.alt }, '*');
+  parent.postMessage({ hook: 'nav', links: NAV.map(([label, id]) => ({ label, id })) }, '*');
+  ctaSent = true;
+}
 postCta();
 /* Scroll to a section. Standalone the iframe scrolls itself. Embedded, the frame
    never scrolls and scrollIntoView does not reach the host, so the page hands the
@@ -295,7 +302,7 @@ $$('[data-billing]').forEach(b => b.addEventListener('click', () => {
    back onto its start, so the loop has no seam. Loaded on the first play (about 1 MB);
    never records or asks for a microphone. */
 const STEMS = ['mixer-1-wurli.m4a', 'mixer-2-bass.m4a', 'mixer-3-kick.m4a', 'mixer-4-vocals.m4a'];
-const STEM_V = '?v=20261014e';
+const STEM_V = '?v=20261014f';
 const BPM = 93, BEATS_PER_BAR = 4, LOOP_SEC = 910452 / 44100;
 /* AAC carries 2112 frames of encoder delay. Browsers that read the file's own trim
    info decode exactly one loop; one that does not keeps the delay, so skip it. */
