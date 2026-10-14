@@ -44,7 +44,7 @@ function postBg() {
 }
 /* Release: name the host bar's button and its link. The host keeps "Notify me" until
    this arrives, and takes only an App Store or clayandkelsy.com link, as text. */
-const CTA = { label: 'App Store', href: 'https://apps.apple.com/us/app/songwriting-by-clay-and-kelsy/id6817031276' };
+const CTA = { label: 'App Store', href: 'https://apps.apple.com/app/apple-store/id6817031276?pt=129169856&ct=site&mt=8' };
 let ctaSent = false;
 function postCta() { if (!IS_EMBEDDED) return; parent.postMessage({ hook: 'cta', label: CTA.label, href: CTA.href }, '*'); ctaSent = true; }
 postCta();
